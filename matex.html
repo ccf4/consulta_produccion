@@ -164,12 +164,23 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
     </div></div>
   </div>
 </main>
-<div style="text-align:center;padding:40px 0 24px;display:flex;align-items:center;justify-content:center;gap:8px;opacity:.3;transition:opacity .2s" onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='.3'">
+<div id="visit-counter" style="text-align:center;padding:40px 0 24px;display:flex;align-items:center;justify-content:center;gap:8px;opacity:.3;transition:opacity .2s" onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='.3'">
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
   </svg>
-  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fccf4.github.io%2Fconsulta_produccion%2Fmatex&count_bg=%23dbeafe&title_bg=%23eff6ff&icon=eye.svg&icon_color=%236b7280&title=consultas&edge_flat=true" style="height:16px;border-radius:3px" referrerpolicy="no-referrer" crossorigin="anonymous" alt="consultas">
+  <span id="visit-count" style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#9ca3af">···</span>
+  <span style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#9ca3af">consultas</span>
 </div>
+<script>
+fetch('https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fccf4.github.io%2Fconsulta_produccion%2Fmatex&format=json',{mode:'no-cors'})
+  .catch(function(){});
+fetch('https://api.countapi.xyz/hit/ccf4-github-io/matex')
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var el=document.getElementById('visit-count');
+    if(el&&d.value)el.textContent=d.value.toLocaleString('es-MX');
+  }).catch(function(){});
+</script>
 <div class="mo" id="modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="md"><button class="mc" onclick="document.getElementById('modal').classList.remove('open')">&#x2715;</button><h2 id="mt"></h2><div id="mb"></div></div>
 </div>
