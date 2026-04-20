@@ -459,21 +459,21 @@ function renderSemana(T,WS,WE){
 
   // MNET WARN — FProm vencida pero Fprod vigente
   if(mnetWarn.length){
-    var warnHtml='<div class="late-cards">'+mnetWarn.map(function(r){
-      var fp0=pd(r.FProm),daysL=fp0?daysDiff(fp0,T):0;
+    var warnHtml='<div style="font-size:11px;font-weight:700;color:var(--accent4);text-transform:uppercase;letter-spacing:1px;margin:8px 0 10px">Retrasadas \u2014 con nueva fecha de entrega</div>'+'<div class="late-cards">'+mnetWarn.map(function(r){
+      var fp0=pd(r.FProm),fprod=pd(r.Fprod||r.FProm),daysL=fp0?daysDiff(fp0,T):0;
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
       var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
       var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
       return '<div class="late-card" style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2);border-left:4px solid var(--warn)" onclick="showDetail(\''+r.OP+'\')">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
         +'<span style="font-size:14px;font-weight:700;color:'+ac(r.AREA)+'">'+normSub(r.SUBAREA)+'</span>'
-        +'<span style="background:rgba(249,115,22,.15);color:var(--warn);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">FProm '+daysL+' d\u00eda'+(daysL!==1?'s':'')+' vencida</span>'
+        +'<span style="background:rgba(249,115,22,.15);color:var(--warn);font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px">Fecha en OP: '+fd(fp0)+' (+'+daysL+'d)</span>'
         +'</div>'
         +'<div class="ped-ref" style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4);margin-bottom:2px">OP '+r.OP+(ped(r.OP)?'<span style="font-weight:400"> \u00b7 '+ped(r.OP)+'</span>':'')+' </div>'
-        +'<div style="font-size:10px;color:var(--muted);margin-bottom:5px">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
-        +'<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted)">'
-        +'<span>'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+'</span>'
-        +'<span>Fprod: '+fd(pd(r.Fprod||r.FProm))+'</span>'
+        +'<div style="font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.4">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">'
+        +'<span style="color:var(--muted)">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+'</span>'
+        +'<span style="background:rgba(5,150,105,.12);color:var(--accent3);font-weight:700;padding:3px 8px;border-radius:6px;font-family:IBM Plex Mono,monospace">Fecha de entrega: '+fd(fprod)+'</span>'
         +'</div>'
         +'</div>';
     }).join('')+'</div>';
