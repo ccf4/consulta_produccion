@@ -445,6 +445,7 @@ function renderSemana(T,WS,WE){
   if(!late.length){
     document.getElementById('lo').innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Sin ordenes vencidas.</div>';
   } else {
+    late.sort(function(a,b){return (parseInt(a.OP)||0)-(parseInt(b.OP)||0);});
     document.getElementById('lo').innerHTML='<div class="late-cards">'+late.map(function(r){
       var fp=pd(r.Fprod||r.FProm),fe=pd(r.FVALE),daysLate=fp?daysDiff(fp,T):0;
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
