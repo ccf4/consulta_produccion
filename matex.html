@@ -439,10 +439,8 @@ function renderSemana(T){
   document.getElementById('btnN').disabled=proxOff>=mx;
   document.getElementById('pl').textContent=proxOff===0?('Esta semana — '+fwk(WS)):fwk(WS);
   document.getElementById('wgTitle').textContent=proxOff===0?'Entregas esta semana':'Entregas '+fwk(WS);
-  document.getElementById('extraSecs').style.display=proxOff===0?'block':'none';
   renderWeekDots(T,mx);
   buildGrid(WS,'wg','wc');
-  if(proxOff!==0)return;
   var src=activeData().filter(function(d){var fe=pd(d.FEMIT);return !fe||Math.floor((T-fe)/86400000)<=100;});
   var seen1={};
   var late=src.filter(function(d){
