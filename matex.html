@@ -128,9 +128,9 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
     <div class="st"><span class="dot" style="background:var(--danger)"></span>Reprogramadas y vencidas<span id="lc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
     <div class="card"><div class="card-body" id="lo" style="padding:12px"></div></div>
     <div class="wknav" style="margin-top:20px">
-      <button class="nb" id="btnP" onclick="changeWeek(-1)">anterior</button>
+      <button class="nb" id="btnP" onclick="changeWeek(-1)">semana anterior</button>
       <div class="nwl" id="pl">--</div>
-      <button class="nb" id="btnN" onclick="changeWeek(1)">siguiente</button>
+      <button class="nb" id="btnN" onclick="changeWeek(1)">semana siguiente</button>
     </div>
     <div class="st"><span class="dot" style="background:var(--accent)"></span><span id="wgTitle">Entregas programadas</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
     <div class="card"><div class="card-body" style="padding:12px"><div style="overflow-x:auto"><div id="wg"></div></div></div></div>
@@ -367,7 +367,7 @@ function showDetail(op){
     '<div class="dr"><span class="dk">D\u00edas abierta</span><span style="font-weight:600;color:'+(daysOpen>180?'var(--danger)':daysOpen>60?'var(--accent4)':'var(--muted)')+'">'+daysOpen+' d\u00edas</span></div>'+
     
     '<div class="dr"><span class="dk">Fecha de entrega</span><span style="color:'+(isL?'var(--danger)':'var(--accent3)')+';font-weight:700">'+fd(fp2)+(isL?' \u2014 '+daysLate+' d\u00eda'+(daysLate!==1?'s':'')+' vencido':'')+'</span></div>'+
-    ((fp&&fd(fp)!==fd(fp2))?'<div class="dr"><span class="dk">Fecha promesa original</span><span style="font-weight:600">'+fd(fp)+'</span></div>':'')+
+    ((fp&&fd(fp)!==fd(fp2))?'<div class="dr"><span class="dk">Fecha programada original</span><span style="font-weight:600">'+fd(fp)+'</span></div>':'')+
     ((mf&&fd(mf)!==fd(pd(r.FProm)))?'<div class="dr"><span class="dk">Fecha promesa entrega en OP</span><span style="font-weight:600;color:var(--accent4)">'+fd(mf)+'</span></div>':'')+
     '<div class="dr"><span class="dk">Estado</span><span>'+sb(r.XSTATUS)+'</span></div>';
   document.getElementById('modal').classList.add('open');
@@ -417,7 +417,7 @@ function buildGrid(WS,gridId,countId,sumId){
   var areas=areaOrder.filter(function(a){return areaSet.has(a);}).concat([...areaSet].filter(function(a){return areaOrder.indexOf(a)===-1;}));
   var mnetTypes=[...new Set(mnetOps.map(function(m){return mnetTipo(m.ARTICULO);}))];
   if(!areas.length&&!mnetOps.length){
-    document.getElementById(gridId).innerHTML='<div style="color:var(--muted);font-size:12px;padding:16px 0">Sin ordenes con FProm esta semana.</div>';
+    document.getElementById(gridId).innerHTML='<div style="color:var(--muted);font-size:12px;padding:16px 0">Fin órdenes pendientes esta semana.</div>';
     if(sumId)document.getElementById(sumId).innerHTML='';
     return;
   }
