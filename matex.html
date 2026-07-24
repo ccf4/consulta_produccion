@@ -367,6 +367,7 @@ function showDetail(op){
     '<div class="dr"><span class="dk">D\u00edas abierta</span><span style="font-weight:600;color:'+(daysOpen>180?'var(--danger)':daysOpen>60?'var(--accent4)':'var(--muted)')+'">'+daysOpen+' d\u00edas</span></div>'+
     
     '<div class="dr"><span class="dk">Fecha de entrega</span><span style="color:'+(isL?'var(--danger)':'var(--accent3)')+';font-weight:700">'+fd(fp2)+(isL?' \u2014 '+daysLate+' d\u00eda'+(daysLate!==1?'s':'')+' vencido':'')+'</span></div>'+
+    ((fp&&fd(fp)!==fd(fp2))?'<div class="dr"><span class="dk">Fecha promesa original</span><span style="font-weight:600">'+fd(fp)+'</span></div>':'')+
     ((mf&&fd(mf)!==fd(pd(r.FProm)))?'<div class="dr"><span class="dk">Fecha promesa entrega en OP</span><span style="font-weight:600;color:var(--accent4)">'+fd(mf)+'</span></div>':'')+
     '<div class="dr"><span class="dk">Estado</span><span>'+sb(r.XSTATUS)+'</span></div>';
   document.getElementById('modal').classList.add('open');
