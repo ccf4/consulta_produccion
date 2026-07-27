@@ -110,7 +110,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
     <div style="display:grid;grid-template-columns:auto auto auto;gap:2px 6px;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
       <div style="grid-column:1/-1;font-size:9px;letter-spacing:.6px;opacity:.6;text-transform:uppercase;margin-bottom:2px;text-align:center">Última actualización</div>
       <span style="opacity:.75">Datos:</span><span style="text-align:right">23/jul/26</span><span></span>
-      <span style="opacity:.75">Entregas:</span><span style="text-align:right">24/jul/26</span><span>17:30</span>
+      <span style="opacity:.75" class="entregas-row">Entregas:</span><span style="text-align:right" class="entregas-row">24/jul/26</span><span class="entregas-row">17:30</span>
     </div>
   </div>
 </header>
@@ -234,6 +234,49 @@ function loadOverrides(){
     .then(function(arr){
       (arr||[]).forEach(function(o){OVERRIDES[String(o.op)]=o.fecha;});
       applyOverrides();
+      renderSemana(today());
+    })
+    .catch(function(){});
+}
+
+// ===== Cierres de OP en vivo (cierres.json) =====
+// Solo lectura aqui tambien: matex nunca cierra OPs, solo refleja lo que se
+// cerro desde el panel interno.
+var CIERRES = {};
+function applyCierres(){
+  Object.keys(CIERRES).forEach(function(op){
+    var info=CIERRES[op];
+    RAW.forEach(function(r){
+      if(String(r.OP)===String(op)&&r.STATUS==='V'){
+        r.STATUS='T';
+        r.FTERM=info.fecha;
+      }
+    });
+  });
+  updateEntregasHeader();
+}
+function updateEntregasHeader(){
+  var latest=null;
+  Object.keys(CIERRES).forEach(function(op){
+    var ts=CIERRES[op].timestamp;
+    if(ts&&(!latest||ts>latest))latest=ts;
+  });
+  if(!latest)return;
+  var d=new Date(latest);
+  var utcMs=d.getTime()+d.getTimezoneOffset()*60000;
+  var mx=new Date(utcMs+(-6*3600*1000));
+  var meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  var dd=String(mx.getDate()).padStart(2,'0'),mmm=meses[mx.getMonth()],yy=String(mx.getFullYear()).slice(-2);
+  var hh=String(mx.getHours()).padStart(2,'0'),mi=String(mx.getMinutes()).padStart(2,'0');
+  var rows=document.querySelectorAll('.entregas-row');
+  if(rows.length>=3){rows[1].textContent=dd+'/'+mmm+'/'+yy;rows[2].textContent=hh+':'+mi;}
+}
+function loadCierres(){
+  fetch('https://raw.githubusercontent.com/ccf4/Produccion/main/cierres.json')
+    .then(function(r){return r.ok?r.json():[];})
+    .then(function(arr){
+      (arr||[]).forEach(function(o){CIERRES[String(o.op)]={fecha:o.fecha,timestamp:o.timestamp};});
+      applyCierres();
       renderSemana(today());
     })
     .catch(function(){});
@@ -805,6 +848,7 @@ function init(){
   renderSemana(T);
   renderTable();
   loadOverrides();
+  loadCierres();
 }
 init();
 </script><div id="op-tooltip"></div>
