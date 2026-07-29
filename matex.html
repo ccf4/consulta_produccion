@@ -614,6 +614,7 @@ function renderSemana(T){
 
   // MNET WARN — FProm vencida pero Fprod vigente
   if(mnetWarn.length){
+    mnetWarn.sort(function(a,b){var fa=pd(a.Fprod||a.FProm),fb=pd(b.Fprod||b.FProm);return (fa||new Date(0))-(fb||new Date(0));});
     var warnHtml='<div style="font-size:11px;font-weight:700;color:var(--accent4);text-transform:uppercase;letter-spacing:1px;margin:8px 0 10px">Con nueva fecha de entrega</div>'+'<div class="late-cards">'+mnetWarn.map(function(r){
       var fp0=pd(r.FProm),fprod=pd(r.Fprod||r.FProm),daysL=fp0?daysDiff(fp0,T):0;
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
