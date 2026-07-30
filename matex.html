@@ -498,7 +498,7 @@ function buildGrid(WS,gridId,countId,sumId){
     days.forEach(function(dayH){var isTH=dayH.toDateString()===T.toDateString();html+='<div class="day-cell '+(isTH?'today':'')+'" style="height:22px;min-height:22px;background:'+(isTH?'rgba(249,115,22,.05)':'rgba(0,0,0,.04)')+'"></div>';});
     html+='</div>';
     var areaOps=ops.filter(function(o2){return o2.AREA===area;});
-    var _subOrd2=['Disco','Pack','Manual','Riñon','Oblongo/Manual','Riñon/Manual','Oblongo','Tiras','Tapas','Armar','Tubular','Tubulares','Remallado','Empaque','Criba','Eliminador','Placa filtrante','Embolsados','Nuevo','Pack Rect / Manual'];
+    var _subOrd2=['Disco','Pack','Manual','Oblongo/Manual','Riñon','Riñon/Manual','Oblongo','Tiras','Tapas','Armar','Tubular','Tubulares','Remallado','Empaque','Criba','Eliminador','Placa filtrante','Embolsados','Nuevo','Pack Rect / Manual'];
     var _allSubs2=[...new Set(RAW.filter(function(r){return weekOpSet&&weekOpSet.has(String(r.OP))&&r.AREA===area&&r.STATUS!=='T'&&r.STATUS!=='C';}).map(function(r){return r.SUBAREA;}).filter(Boolean))];
     var subareas=_subOrd2.filter(function(s){return _allSubs2.indexOf(s)>-1;}).concat(_allSubs2.filter(function(s){return _subOrd2.indexOf(s)===-1;}));
     subareas.forEach(function(subarea){
