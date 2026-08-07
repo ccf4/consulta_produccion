@@ -24,6 +24,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:8
 .hdr-brand{flex:1;min-width:0;}
 .hdr-search{flex:1;display:flex;justify-content:center;min-width:0;}
 .hdr-info{flex:1;display:flex;justify-content:flex-end;align-items:center;min-width:0;}
+.nb-short{display:none;}
 @media (max-width:640px){
   header{flex-wrap:wrap;padding:8px 14px;gap:6px;row-gap:6px;}
   .hdr-brand{flex:1 1 100%;order:1;}
@@ -41,7 +42,6 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:8
   .nb{padding:5px 9px;font-size:11px;}
   .nwl{font-size:11px;}
 }
-.nb-short{display:none;}
 .logo{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;line-height:1.3;}
 .title{font-size:14px;font-weight:700;line-height:1.2;}
 .week-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
@@ -541,7 +541,7 @@ function buildGrid(WS,gridId,countId,sumId){
       var totalGolpes=_subTot2.reduce(function(s,r2){return s+(parseInt(r2.GOLPE)||0);},0);
       var isGolpeSub=subarea==='Pack';
       var golpeLabel=isGolpeSub?fmtNum(totalGolpes)+' golpes':(totalGolpes!==totalCant2?fmtNum(totalCant2)+' pzas · '+fmtNum(totalGolpes)+' golpes':fmtNum(totalCant2)+' pzas');
-      var row='<div class="week-row"><div class="row-label" style="padding-left:10px;font-size:12px;font-weight:600;color:#4b5563;white-space:normal;line-height:1.3;align-items:flex-start;padding-top:5px;display:flex;align-items:center;">'+subIcon(subarea,area)+normSub(subarea)+'<span style="font-size:11px;font-weight:400;color:#9ca3af;margin-left:5px">('+golpeLabel+')</span></div>';
+      var row='<div class="week-row"><div class="row-label" style="padding:5px 8px 5px 10px;font-size:12px;font-weight:600;color:#4b5563;white-space:normal;line-height:1.3;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;"><span style="display:flex;align-items:center;">'+subIcon(subarea,area)+normSub(subarea)+'</span><span style="font-size:10px;font-weight:400;color:#9ca3af;padding-left:25px">('+golpeLabel+')</span></div>';
       days.forEach(function(dayS){
         var yr=dayS.getFullYear(),mo=dayS.getMonth()+1,dy=dayS.getDate();
         var dkS=yr+'-'+(mo<10?'0':'')+mo+'-'+(dy<10?'0':'')+dy;
@@ -589,6 +589,14 @@ function buildGrid(WS,gridId,countId,sumId){
     });
   }
   document.getElementById(gridId).innerHTML=html;
+  var _todayCol=document.getElementById(gridId).querySelector('.today-col');
+  if(_todayCol){
+    var _scrollWrap=document.getElementById(gridId).parentElement;
+    var _raf=(typeof requestAnimationFrame!=='undefined')?requestAnimationFrame:function(fn){setTimeout(fn,0);};
+    if(_scrollWrap)_raf(function(){
+      try{_scrollWrap.scrollLeft=Math.max(0,_todayCol.offsetLeft-118);}catch(e){}
+    });
+  }
   if(sumId&&document.getElementById(sumId))document.getElementById(sumId).innerHTML='';
 }
 
@@ -638,7 +646,7 @@ function renderSemana(T){
         +'<div style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4);margin-bottom:2px">OP '+r.OP+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> · '+ped(r.OP)+'</span>':'')+' </div>'
         +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;line-height:1.4">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
         +'<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted)">'
-        +'<span>'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+'</span>'
+        +'<span>'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
         +'<span>'+fd(fp)+'</span>'
         +'</div>'
         +'</div>';
@@ -660,9 +668,9 @@ function renderSemana(T){
         +'</div>'
         +'<div style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4);margin-bottom:2px">OP '+r.OP+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> \u00b7 '+ped(r.OP)+'</span>':'')+' </div>'
         +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.4">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">'
-        +'<span style="color:var(--muted)">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+'</span>'
-        +'<span style="background:rgba(5,150,105,.12);color:var(--accent3);font-weight:700;padding:3px 8px;border-radius:6px;font-family:IBM Plex Mono,monospace">Fecha de entrega: '+fd(fprod)+'</span>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;flex-wrap:wrap;gap:6px;row-gap:5px">'
+        +'<span style="color:var(--muted)">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
+        +'<span style="background:rgba(5,150,105,.12);color:var(--accent3);font-weight:700;padding:3px 8px;border-radius:6px;font-family:IBM Plex Mono,monospace;white-space:nowrap">Entrega: '+fd(fprod)+'</span>'
         +'</div>'
         +'</div>';
     }).join('')+'</div>';
@@ -746,7 +754,7 @@ function renderSemana(T){
           +'<div style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4);margin-bottom:2px">OP '+opId+(ped(opId)?'<span class="ped-ref" style="font-weight:400"> · '+ped(opId)+'</span>':'')+' </div>'
           +(arts.length?'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;line-height:1.4">'+(arts[0]||'').slice(0,70)+'</div>':'')
           +'<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted)">'
-          +'<span>'+pzasText+' · '+((rparts[0]&&rparts[0].MAT)||ref.MAT||'--')+'</span>'
+          +'<span>'+pzasText+' · '+((rparts[0]&&rparts[0].MAT)||ref.MAT||'--')+(((rparts[0]&&rparts[0].MESH)||ref.MESH)?' · M'+((rparts[0]&&rparts[0].MESH)||ref.MESH):'')+'</span>'
           +'<span>'+fd(pd(ref.FTERM))+'</span>'
           +'</div>'
           +'</div>';
