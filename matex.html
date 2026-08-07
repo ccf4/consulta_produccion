@@ -606,7 +606,8 @@ function renderSemana(T){
     if(seen1[d.OP]||seen2[d.OP])return false;
     if((d.FEMIT||'').endsWith('/2025'))return false;
     var fpr=pd(d.Fprod||d.FProm);if(!fpr||fpr<T)return false;
-    var fp0=pd(d.FProm);if(!fp0||fp0>=T)return false;
+    var fp0=pd(d.FProm);if(!fp0)return false;
+    if(fd(fp0)===fd(fpr))return false;
     seen2[d.OP]=true;return true;
   });
   document.getElementById('lc').textContent=' - '+late.length+' OP';
