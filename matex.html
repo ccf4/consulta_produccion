@@ -28,7 +28,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:8
 .logo{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;line-height:1.3;}
 .title{font-size:14px;font-weight:700;line-height:1.2;}
 .week-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
-.search-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 14px;border-radius:20px;font-size:11px;width:210px;max-width:100%;outline:none;transition:border .15s;}
+.search-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 14px;border-radius:20px;font-size:11px;width:210px;max-width:100%;outline:none;transition:border .15s;flex:0 1 210px;}
 .search-input:focus{border-color:var(--accent);}
 .vend-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:7px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .fl{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;}
@@ -116,7 +116,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
   .hdr-brand{flex:1 1 100%;order:1;}
   .hdr-search{flex:1 1 100%;order:2;}
   .hdr-info{display:none;}
-  .search-input{width:100%;}
+  .search-input{flex:1 1 auto;width:auto;}
   main{padding:14px;}
   .tabs{padding:0 10px;}
   .late-cards{grid-template-columns:1fr!important;gap:6px;}
@@ -133,8 +133,9 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
 <body>
 <header>
   <div class="hdr-brand"><div class="logo">Consulta de Entregas</div><div class="title">Ordenes de Produccion</div></div>
-  <div class="hdr-search">
+  <div class="hdr-search" style="gap:8px">
     <input id="searchBox" class="search-input" type="text" placeholder="Buscar OP o pedido..." oninput="refreshAll()">
+    <button onclick="location.href=location.pathname+'?t='+Date.now()" title="Actualizar datos" style="flex-shrink:0;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">&#8635;</button>
   </div>
   <div class="hdr-info" style="gap:10px;">
     <div style="display:grid;grid-template-columns:auto auto auto;gap:2px 6px;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
@@ -666,8 +667,8 @@ function renderSemana(T){
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">OP '+r.OP+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> \u00b7 '+ped(r.OP)+'</span>':'')+'</span>'
         +'<span style="font-size:10px;color:var(--muted);white-space:nowrap">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
         +'</div>'
-        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.4">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
-        +'<span style="display:inline-block;background:rgba(5,150,105,.12);color:var(--accent3);font-weight:700;padding:3px 8px;border-radius:6px;font-family:IBM Plex Mono,monospace;font-size:10px">Entrega: '+fd(fprod)+'</span>'
+        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;line-height:1.4">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
+        +'<div style="font-size:10px;color:var(--accent3);font-weight:700">Entrega: '+fd(fprod)+'</div>'
         +'</div>';
     }).join('')+'</div>';
     document.getElementById('lo').innerHTML=(document.getElementById('lo').innerHTML||'')+warnHtml;
