@@ -143,11 +143,6 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
     </div>
   </div>
 </header>
-<div class="vend-bar">
-  <span class="fl">Vendedor:</span>
-  <div class="fb active" onclick="filterVend('all',this)">Todos</div>
-  <div id="vendBtns" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-</div>
 <div class="tabs">
   <div class="tab active" onclick="switchTab('semana')">Semanal</div>
   <div class="tab" onclick="switchTab('todas')">Todas OP Abiertas</div>
@@ -226,7 +221,6 @@ _r.send();
 var urlParams=new URLSearchParams(window.location.search);
 var hideSinAsig=urlParams.get('prod')==='1';
 if(hideSinAsig){
-  var _vb=document.querySelector('.vend-bar');if(_vb)_vb.style.display='none';
   var _st=document.createElement('style');
   _st.textContent='.mnet-sep,.op-ped,.ped-ref,.col-ped{display:none!important;}';
   document.head.appendChild(_st);
@@ -403,7 +397,7 @@ function mnetTipo(art){
   return 'Otro';
 }
 function searchQ(){return ((document.getElementById('searchBox')||{}).value||'').trim().toLowerCase();}
-function matchSearch(opStr,pedStr){var q=searchQ();if(!q)return true;var qc=q.replace(/-/g,'');if(String(opStr).toLowerCase().indexOf(qc)>=0)return true;if((pedStr||'').toLowerCase().replace(/-/g,'').indexOf(qc)>=0)return true;var cli=CLIENTES[pedStr];if(cli){if((cli.num||'').toLowerCase().indexOf(qc)>=0)return true;if((cli.nombre||'').toLowerCase().indexOf(qc)>=0)return true;}return false;}
+function matchSearch(opStr,pedStr){var q=searchQ();if(!q)return true;var qc=q.replace(/-/g,'');if(String(opStr).toLowerCase().indexOf(qc)>=0)return true;if((pedStr||'').toLowerCase().replace(/-/g,'').indexOf(qc)>=0)return true;if(hideSinAsig)return false;var cli=CLIENTES[pedStr];if(cli){if((cli.num||'').toLowerCase().indexOf(qc)>=0)return true;if((cli.nombre||'').toLowerCase().indexOf(qc)>=0)return true;}return false;}
 function activeData(){
   var base=vflt==='all'?DATA:DATA.filter(function(d){return (d.VENDEDOR||'').trim()===vflt;});
   return base.filter(function(d){return matchSearch(d.OP,ped(d.OP));});
@@ -417,7 +411,6 @@ function switchTab(t){
   document.querySelectorAll('.view').forEach(function(e){e.classList.toggle('active',e.id==='view-'+t);});
 }
 function filterAll(s,btn){sflt=s;document.querySelectorAll('#view-todas .fb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderTable();}
-function filterVend(v,btn){vflt=v;document.querySelectorAll('.vend-bar .fb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');refreshAll();}
 function maxWeekOff(T){
   var src=activeData(),mnetSrc=activeMissing(),maxOff=0;
   function chk(dt){if(!dt)return;var diff=Math.floor((dt-wkS(T,0))/86400000);var off=Math.floor(diff/7);if(off>maxOff)maxOff=off;}
@@ -893,10 +886,6 @@ function normSub(s){
 
 function init(){
   var T=today(),WS=wkS(T,0),WE=wkE(WS);
-    var vendors=[...new Set(DATA.map(function(d){return (d.VENDEDOR||'').trim();}).filter(function(v){return v&&v!=='?'&&v!=='JF';}))].sort();
-  document.getElementById('vendBtns').innerHTML=vendors.map(function(v){
-    return '<div class="fb" onclick="filterVend(\''+v+'\',this)">'+v+'</div>';
-  }).join('');
   var areas=[...new Set(DATA.map(function(d){return d.AREA;}).filter(Boolean))];
   var sel=document.getElementById('af');
   areas.forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});
