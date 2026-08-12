@@ -644,7 +644,6 @@ function renderSemana(T){
         +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
         +'</div>'
         +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;line-height:1.4">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
-        +'<div style="font-size:10px;color:var(--muted)">Vence: '+fd(fp)+'</div>'
         +'</div>';
     }).join('')+'</div>';
   }
