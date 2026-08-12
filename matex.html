@@ -511,18 +511,18 @@ function buildGrid(WS,gridId,countId,sumId){
     html+='</div>';
     var areaOps=ops.filter(function(o2){return o2.AREA===area;});
     var _subOrd2=['Disco','Pack','Manual','Oblongo/Manual','Riñon','Riñon/Manual','Oblongo','Tiras','Tapas','Armar','Tubular','Tubulares','Remallado','Empaque','Criba','Eliminador','Placa filtrante','Embolsados','Nuevo','Pack Rect / Manual'];
-    var _allSubs2=[...new Set(RAW.filter(function(r){return weekOpSet&&weekOpSet.has(String(r.OP))&&r.AREA===area&&r.STATUS!=='T'&&r.STATUS!=='C';}).map(function(r){return r.SUBAREA;}).filter(Boolean))];
+    var _allSubs2=[...new Set(RAW.filter(function(r){return weekOpSet&&weekOpSet.has(String(r.OP))&&r.AREA===area&&r.STATUS!=='T'&&r.STATUS!=='C';}).map(function(r){return normSub(r.SUBAREA);}).filter(Boolean))];
     var subareas=_subOrd2.filter(function(s){return _allSubs2.indexOf(s)>-1;}).concat(_allSubs2.filter(function(s){return _subOrd2.indexOf(s)===-1;}));
     subareas.forEach(function(subarea){
       var _subAreaOpIds=new Set(weekOpSet ? [...weekOpSet].filter(function(opId){
-        return RAW.some(function(r){return String(r.OP)===opId&&r.AREA===area&&r.SUBAREA===subarea&&r.STATUS!=='T'&&r.STATUS!=='C';});
+        return RAW.some(function(r){return String(r.OP)===opId&&r.AREA===area&&normSub(r.SUBAREA)===subarea&&r.STATUS!=='T'&&r.STATUS!=='C';});
       }) : []);
       // Build subOps with correct SUBAREA so multi-subarea OPs appear in each row
       var subOps=[];var _seenOp2={};
       Array.from(_subAreaOpIds).forEach(function(opId){
         if(!_seenOp2[opId]){
           _seenOp2[opId]=true;
-          var base=ops.find(function(o2){return String(o2.OP)===opId;})||RAW.find(function(r){return String(r.OP)===opId&&r.AREA===area&&r.SUBAREA===subarea&&r.STATUS!=='T'&&r.STATUS!=='C';});
+          var base=ops.find(function(o2){return String(o2.OP)===opId;})||RAW.find(function(r){return String(r.OP)===opId&&r.AREA===area&&normSub(r.SUBAREA)===subarea&&r.STATUS!=='T'&&r.STATUS!=='C';});
           if(base){subOps.push(Object.assign({},base,{SUBAREA:subarea,AREA:area}));}
         }
       });
@@ -531,7 +531,7 @@ function buildGrid(WS,gridId,countId,sumId){
       var _subTot2=_subOpIds2.reduce(function(acc,opId){
         var opRows=RAW.filter(function(r2){return String(r2.OP)===opId&&r2.STATUS!=='T'&&r2.STATUS!=='C';});
         var isCross=opRows.some(function(r2){return r2.AREA!==area;});
-        return acc.concat(isCross?opRows:opRows.filter(function(r2){return r2.SUBAREA===subarea;}));
+        return acc.concat(isCross?opRows:opRows.filter(function(r2){return normSub(r2.SUBAREA)===subarea;}));
       },[]);
       var totalCant2=_subTot2.reduce(function(s,r2){return s+(parseInt(r2.CANT)||0);},0);
       var totalGolpes=_subTot2.reduce(function(s,r2){return s+(parseInt(r2.GOLPE)||0);},0);
@@ -552,8 +552,8 @@ function buildGrid(WS,gridId,countId,sumId){
           var fp2=pd(op2.Fprod||op2.FProm),cls2=fp2&&fp2<T?'late-op':fp2&&fp2.toDateString()===T.toDateString()?'today-op':'';
           var allParts2=RAW.filter(function(r2){return String(r2.OP)===String(op2.OP);});
           var _isCrossOp2=allParts2.some(function(r2){return r2.AREA!==op2.AREA;});
-          var totalCant2=(_isCrossOp2?allParts2:allParts2.filter(function(r2){return r2.SUBAREA===subarea;})).reduce(function(s,r2){return s+(parseInt(r2.CANT)||0);},0);
-          var _c2Rows=(_isCrossOp2?allParts2:allParts2.filter(function(r2){return r2.SUBAREA===subarea&&r2.STATUS!=='T'&&r2.STATUS!=='C';}));
+          var totalCant2=(_isCrossOp2?allParts2:allParts2.filter(function(r2){return normSub(r2.SUBAREA)===subarea;})).reduce(function(s,r2){return s+(parseInt(r2.CANT)||0);},0);
+          var _c2Rows=(_isCrossOp2?allParts2:allParts2.filter(function(r2){return normSub(r2.SUBAREA)===subarea&&r2.STATUS!=='T'&&r2.STATUS!=='C';}));
           var _c2Cant=_c2Rows.reduce(function(s,r2){return s+(parseInt(r2.CANT)||0);},0);
           var _c2Golpe=_c2Rows.reduce(function(s,r2){return s+(parseInt(r2.GOLPE)||0);},0);
           var cantStr2=fmtNum(_c2Cant)+' pzas';
