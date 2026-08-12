@@ -151,18 +151,18 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
 </div>
 <main>
   <div class="view active" id="view-semana">
-    <div class="st"><span class="dot" style="background:var(--danger)"></span>Reprogramadas y vencidas<span id="lc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
+    <div class="st">Reprogramadas y vencidas<span id="lc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
     <div class="card"><div class="card-body" id="lo" style="padding:9px"></div></div>
     <div class="wknav" style="margin-top:12px">
       <button class="nb" id="btnP" onclick="changeWeek(-1)"><span class="nb-full">semana anterior</span><span class="nb-short">&#8249;</span></button>
       <div class="nwl" id="pl">--</div>
       <button class="nb" id="btnN" onclick="changeWeek(1)"><span class="nb-full">semana siguiente</span><span class="nb-short">&#8250;</span></button>
     </div>
-    <div class="st"><span class="dot" style="background:var(--accent)"></span><span id="wgTitle">Entregas programadas</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
+    <div class="st"><span id="wgTitle">Entregas programadas</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
     <div class="card"><div class="card-body" style="padding:12px"><div style="overflow-x:auto"><div id="wg"></div></div></div></div>
     <div class="week-dots" id="weekDots"></div>
     <div id="extraSecs">
-      <div class="st" style="margin-top:20px"><span class="dot" style="background:var(--accent3)"></span>Cerradas recientemente<span id="cc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
+      <div class="st" style="margin-top:20px">Cerradas recientemente<span id="cc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
       <div class="card"><div class="card-body" id="cl" style="padding:12px"></div></div>
     </div>
   </div>
