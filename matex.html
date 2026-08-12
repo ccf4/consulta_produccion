@@ -141,7 +141,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
     <div style="display:grid;grid-template-columns:auto auto auto;gap:2px 6px;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
       <div style="grid-column:1/-1;font-size:9px;letter-spacing:.6px;opacity:.6;text-transform:uppercase;margin-bottom:2px;text-align:center">Última actualización</div>
       <span style="opacity:.75">Datos:</span><span style="text-align:right">05/ago/26</span><span></span>
-      <span style="opacity:.75" class="entregas-row">Entregas:</span><span style="text-align:right" class="entregas-row">06/ago/26</span><span class="entregas-row">17:05</span>
+      <span style="opacity:.75" class="entregas-row">Entregas:</span><span style="text-align:right" class="entregas-row">11/ago/26</span><span class="entregas-row">17:00</span>
     </div>
   </div>
 </header>
@@ -634,7 +634,7 @@ function renderSemana(T){
       var fp=pd(r.Fprod||r.FProm),fe=pd(r.FVALE),daysLate=fp?daysDiff(fp,T):0;
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
       var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
-      var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
+      var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
       return '<div class="late-card" style="background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.2);border-left:4px solid var(--danger)" onclick="showDetail(\''+r.OP+'\')">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
         +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:'+ac(r.AREA)+'">'+subIcon(r.SUBAREA,r.AREA)+(r.AREA==='Aros'&&r.SUBAREA==='NUEVO'?'Aro nuevo':normSub(r.SUBAREA))+'</span>'
@@ -642,7 +642,7 @@ function renderSemana(T){
         +'</div>'
         +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">OP '+r.OP+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> · '+ped(r.OP)+'</span>':'')+'</span>'
-        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
+        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
         +'</div>'
         +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;line-height:1.4">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
         +'<div style="font-size:10px;color:var(--muted)">Vence: '+fd(fp)+'</div>'
@@ -657,7 +657,7 @@ function renderSemana(T){
       var fp0=pd(r.FProm),fprod=pd(r.Fprod||r.FProm),daysL=(fp0&&fprod)?daysDiff(fp0,fprod):0;
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
       var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
-      var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
+      var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
       return '<div class="late-card" style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2);border-left:4px solid var(--warn)" onclick="showDetail(\''+r.OP+'\')">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
         +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:'+ac(r.AREA)+'">'+subIcon(r.SUBAREA,r.AREA)+(r.AREA==='Aros'&&r.SUBAREA==='NUEVO'?'Aro nuevo':normSub(r.SUBAREA))+'</span>'
@@ -665,7 +665,7 @@ function renderSemana(T){
         +'</div>'
         +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">OP '+r.OP+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> \u00b7 '+ped(r.OP)+'</span>':'')+'</span>'
-        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
+        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
         +'</div>'
         +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;line-height:1.4">'+(getArts(r.OP)[0]||'').slice(0,70)+'</div>'
         +'<div style="font-size:10px;color:var(--accent3);font-weight:700">Entrega: '+fd(fprod)+'</div>'
