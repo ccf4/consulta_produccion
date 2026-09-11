@@ -381,6 +381,7 @@ function wkE(s){var d=new Date(s);d.setDate(d.getDate()+6);d.setHours(23,59,59,9
 function inR(d,s,e){return d&&d>=s&&d<=e;}
 function pd(s){if(!s||!s.trim)return null;s=s.trim();if(!s)return null;var p=s.split('/');if(p.length===3){var m=parseInt(p[0])-1,dy=parseInt(p[1]),y=parseInt(p[2]);var dt=new Date(y,m,dy);if(!isNaN(dt.getTime()))return dt;}var dt2=new Date(s);return isNaN(dt2.getTime())?null:dt2;}
 function fd(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'2-digit'});}
+function fdShort(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});}
 function fds(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});}
 function fwk(s){return fds(s)+' - '+fds(wkE(s));}
 function sb(s){var m={'list x prod':'bl','X Rev':'br','Alm x ent':'ba','RECORTE':'bc'};return '<span class="badge '+(m[s]||'')+'">'+s+'</span>';}
@@ -674,16 +675,13 @@ function renderSemana(T){
         var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
         var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
         tarjetasHtmlM.push('<div class="late-card" style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2);border-left:4px solid var(--warn)" onclick="showDetail(\''+r.OP+'\')">'
-          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
-          +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:'+ac(r.AREA)+'">'+subIcon(r.SUBAREA,r.AREA)+(r.AREA==='Aros'&&r.SUBAREA==='NUEVO'?'Aro nuevo':normSub(r.SUBAREA))+'</span>'
-          +'<span style="background:rgba(249,115,22,.15);color:var(--warn);font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;font-family:IBM Plex Mono,monospace">'+fd(fp0)+' \u2192 '+fd(fprod)+'</span>'
-          +'</div>'
+          +'<div style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:'+ac(r.AREA)+';margin-bottom:6px">'+subIcon(r.SUBAREA,r.AREA)+(r.AREA==='Aros'&&r.SUBAREA==='NUEVO'?'Aro nuevo':normSub(r.SUBAREA))+'</div>'
           +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
           +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">OP '+r.OP+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> \u00b7 '+ped(r.OP)+'</span>':'')+'</span>'
           +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
           +'</div>'
-          +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(getArts(r.OP)[0]||'')+'</div>'
-          +(esHoy?'<div style="font-size:10px;color:var(--accent3);font-weight:700">Entrega hoy</div>':'<div style="font-size:10px;color:var(--accent3);font-weight:700">Entrega: '+fd(fprod)+'</div>')
+          +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:12px">'+(getArts(r.OP)[0]||'&nbsp;')+'</div>'
+          +(esHoy?'<div style="font-size:10px;color:var(--accent3);font-weight:700">Entrega hoy</div>':'<div style="font-size:10px;color:var(--warn);font-weight:600;font-family:IBM Plex Mono,monospace">'+fdShort(fp0)+' \u2192 '+fdShort(fprod)+'</div>')
           +'</div>');
       });
     }
