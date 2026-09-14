@@ -581,7 +581,7 @@ function buildGrid(WS,gridId,countId,sumId){
           var _c2Golpe=_c2Rows.reduce(function(s,r2){return s+(parseInt(r2.GOLPE)||0);},0);
           var cantStr2=fmtNum(_c2Cant)+' pzas';
           var ps2=pedShort(op2.OP),isMatch2=q&&matchSearch(op2.OP,ped(op2.OP));
-          return '<div class="day-op '+cls2+(isMatch2?' search-match':'')+'" data-area="'+op2.AREA+'" data-subarea="'+op2.SUBAREA+'" onmouseenter="showOpTip(this,'+op2.OP+')" onmouseleave="hideOpTip()" onclick="showDetail(\''+op2.OP+'\')"><div class="op-num">OP '+op2.OP+'</div>'+(ps2?'<div class="op-ped">'+ps2+'</div>':'')+'<div class="op-cant">'+cantStr2+'</div></div>';
+          return '<div class="day-op '+cls2+(isMatch2?' search-match':'')+'" data-area="'+op2.AREA+'" data-subarea="'+op2.SUBAREA+'" data-op="'+op2.OP+'" onmouseenter="showOpTip(this,'+op2.OP+')" onmouseleave="hideOpTip()" onclick="showDetail(\''+op2.OP+'\')"><div class="op-num">OP '+op2.OP+'</div>'+(ps2?'<div class="op-ped">'+ps2+'</div>':'')+'<div class="op-cant">'+cantStr2+'</div></div>';
         }).join('');
         row+='<div class="day-cell '+(isTD?'today':'')+(isNWd?' next-week-col':'')+'">'+(cells||'')+'</div>';
       });
@@ -870,6 +870,10 @@ var _opTTsub='';
 function showOpTip(el,opId){
   var rows=RAW.filter(function(r){return String(r.OP)===String(opId);});
   if(!rows.length){hideOpTip();return;}
+  var subareasHl=Array.from(new Set(rows.map(function(r){return normSub(r.SUBAREA);})));
+  if(subareasHl.length>1){
+    document.querySelectorAll('.day-op[data-op="'+opId+'"]').forEach(function(d){d.classList.add('hl');});
+  }
   function distinctVals(field){
     var seen=[];
     rows.forEach(function(r){var v=(r[field]||'').toString().trim();if(v&&seen.indexOf(v)<0)seen.push(v);});
@@ -889,7 +893,10 @@ function showOpTip(el,opId){
   _opTT.innerHTML=html;
   _opTT.style.display='block';
 }
-function hideOpTip(){if(_opTT)_opTT.style.display='none';}
+function hideOpTip(){
+  if(_opTT)_opTT.style.display='none';
+  document.querySelectorAll('.day-op.hl').forEach(function(d){d.classList.remove('hl');});
+}
 document.addEventListener('mousemove',function(e){
   if(!_opTT||_opTT.style.display==='none')return;
   var tw=_opTT.offsetWidth,th=_opTT.offsetHeight;
