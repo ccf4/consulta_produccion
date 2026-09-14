@@ -86,7 +86,7 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .ws-sub{font-size:11px;color:var(--muted);}
 .late-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;}
 .late-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,240px));gap:10px;}
-.late-card{border-radius:10px;padding:8px 11px;cursor:pointer;}
+.late-card{border-radius:10px;padding:8px 11px;cursor:pointer;min-height:118px;display:flex;flex-direction:column;}
 .late-desc{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
 .badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
 .bl{background:rgba(37,99,235,.12);color:var(--accent);}
@@ -703,7 +703,7 @@ function renderSemana(T){
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">OP '+r.OP+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> · '+ped(r.OP)+'</span>':'')+'</span>'
         +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
         +'</div>'
-        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(getArts(r.OP)[0]||'')+'</div>'
+        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;margin-top:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(getArts(r.OP)[0]||'')+'</div>'
         +'</div></div>');
     });
     }
@@ -731,7 +731,7 @@ function renderSemana(T){
           +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
           +'</div>'
           +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:12px">'+(getArts(r.OP)[0]||'&nbsp;')+'</div>'
-          +(esHoy?'<div style="font-size:10px;color:var(--accent3);font-weight:700;text-align:right">Entrega hoy</div>':'<div style="font-size:10px;color:var(--warn);font-weight:600;font-family:IBM Plex Mono,monospace;text-align:right">'+fdShort(fp0)+' \u2192 '+fdShort(fprod)+'</div>')
+          +(esHoy?'<div style="font-size:10px;color:var(--accent3);font-weight:700;text-align:right;margin-top:auto">Entrega hoy</div>':'<div style="font-size:10px;color:var(--warn);font-weight:600;font-family:IBM Plex Mono,monospace;text-align:right;margin-top:auto">'+fdShort(fp0)+' \u2192 '+fdShort(fprod)+'</div>')
           +'</div></div>');
       });
     }
