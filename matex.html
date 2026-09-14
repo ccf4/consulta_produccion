@@ -679,14 +679,20 @@ function renderSemana(T){
     document.getElementById('lo').innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Sin ordenes vencidas.</div>';
   } else {
     var tarjetasHtmlM=[];
+    function dateHeaderHtml(d){
+      return '<div style="grid-column:1/-1;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:6px 2px 3px;border-bottom:1px solid var(--border);margin-top:4px">'+fdShort(d)+'</div>';
+    }
     if(late.length){
     late.sort(function(a,b){var fa=pd(a.Fprod||a.FProm),fb=pd(b.Fprod||b.FProm);return (fa||new Date(0))-(fb||new Date(0));});
-    tarjetasHtmlM=tarjetasHtmlM.concat(late.map(function(r){
+    var _prevLateDate=null;
+    late.forEach(function(r){
       var fp=pd(r.Fprod||r.FProm),fe=pd(r.FVALE),daysLate=fp?daysDiff(fp,T):0;
+      var dKey=fp?fd(fp):'';
+      if(dKey!==_prevLateDate){tarjetasHtmlM.push(dateHeaderHtml(fp));_prevLateDate=dKey;}
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
       var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
       var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
-      return '<div class="late-card" style="background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.2);border-left:4px solid var(--danger)" onclick="showDetail(\''+r.OP+'\')">'
+      tarjetasHtmlM.push('<div class="late-card" style="background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.2);border-left:4px solid var(--danger)" onclick="showDetail(\''+r.OP+'\')">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
         +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:'+ac(r.AREA)+'">'+subIcon(r.SUBAREA,r.AREA)+(r.AREA==='Aros'&&r.SUBAREA==='NUEVO'?'Aro nuevo':normSub(r.SUBAREA))+'</span>'
         +'<span style="background:rgba(255,77,77,.15);color:var(--danger);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">'+daysLate+' día'+(daysLate!==1?'s':'')+' vencido</span>'
@@ -696,15 +702,18 @@ function renderSemana(T){
         +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
         +'</div>'
         +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(getArts(r.OP)[0]||'')+'</div>'
-        +'</div>';
-    }));
+        +'</div>');
+    });
     }
 
     if(mnetWarn.length){
       mnetWarn.sort(function(a,b){var fa=pd(a.Fprod||a.FProm),fb=pd(b.Fprod||b.FProm);return (fa||new Date(0))-(fb||new Date(0));});
+      var _prevWarnDate=null;
       mnetWarn.forEach(function(r){
         var fp0=pd(r.FProm),fprod=pd(r.Fprod||r.FProm);
         var esHoy=fprod&&fd(fprod)===fd(T);
+        var dKey=fprod?fd(fprod):'';
+        if(dKey!==_prevWarnDate){tarjetasHtmlM.push(dateHeaderHtml(fprod));_prevWarnDate=dKey;}
         var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
         var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
         var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
