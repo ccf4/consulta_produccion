@@ -160,7 +160,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
       <div class="nwl" id="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span id="plText">--</span></div>
       <button class="nb" id="btnN" onclick="changeWeek(1)" aria-label="Semana siguiente" title="Semana siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
     </div>
-    <div class="st"><span id="wgTitle">Entregas programadas</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
+    <div class="st" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span style="flex-shrink:0"><span id="wgTitle">Entregas programadas</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="wgBadges" style="display:flex;align-items:center;gap:8px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div>
     <div class="card"><div class="card-body" style="padding:12px"><div style="overflow-x:auto"><div id="wg"></div></div></div></div>
     <div class="week-dots" id="weekDots"></div>
     <div id="extraSecs">
@@ -495,9 +495,10 @@ function showMissing(op){
 
 // GRID
 
-function buildGrid(WS,gridId,countId,sumId){
+function buildGrid(WS,gridId,countId,sumId,badgesId){
   var src=activeData(), mnetSrc=activeMissing();
   var WE=wkE(WS),T=today(),days=[],dlabs=[];
+  var weekBadges=[];
   src=src.filter(function(d){var fe=pd(d.FEMIT);return !fe||Math.floor((T-fe)/86400000)<=100;});
   mnetSrc=mnetSrc.filter(function(m){var fe=pd(m.FECHA||m.FEMIT);return !fe||Math.floor((T-fe)/86400000)<=100;});
   var q=searchQ();
@@ -524,7 +525,8 @@ function buildGrid(WS,gridId,countId,sumId){
   var mnetTypes=[...new Set(mnetOps.map(function(m){return mnetTipo(m.ARTICULO);}))];
   if(!areas.length&&!mnetOps.length){
     document.getElementById(gridId).innerHTML='<div style="color:var(--muted);font-size:12px;padding:16px 0">Fin órdenes pendientes esta semana.</div>';
-    if(sumId)document.getElementById(sumId).innerHTML='';
+    if(sumId&&document.getElementById(sumId))document.getElementById(sumId).innerHTML='';
+    if(badgesId&&document.getElementById(badgesId))document.getElementById(badgesId).innerHTML='';
     return;
   }
   var html='<div class="week-days"><div>Area</div>'+days.map(function(d,i){var cls=(d.toDateString()===T.toDateString()?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'">'+dlabs[i]+'</div>';}).join('')+'</div>';
@@ -561,6 +563,7 @@ function buildGrid(WS,gridId,countId,sumId){
       var totalGolpes=_subTot2.reduce(function(s,r2){return s+(parseInt(r2.GOLPE)||0);},0);
       var isGolpeSub=subarea==='Pack';
       var golpeLabel=isGolpeSub?fmtNum(totalGolpes)+' golpes':(totalGolpes!==totalCant2?fmtNum(totalCant2)+' pzas · '+fmtNum(totalGolpes)+' golpes':fmtNum(totalCant2)+' pzas');
+      weekBadges.push({area:area,sub:subarea,total:isGolpeSub?totalGolpes:totalCant2});
       var row='<div class="week-row"><div class="row-label" style="padding:5px 8px 5px 10px;font-size:12px;font-weight:600;color:#4b5563;white-space:normal;line-height:1.3;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;"><span style="display:flex;align-items:center;">'+subIcon(subarea,area)+normSub(subarea)+'</span><span style="font-size:10px;font-weight:400;color:#9ca3af;padding-left:25px">('+golpeLabel+')</span></div>';
       days.forEach(function(dayS,dsi){
         var yr=dayS.getFullYear(),mo=dayS.getMonth()+1,dy=dayS.getDate();
@@ -609,6 +612,14 @@ function buildGrid(WS,gridId,countId,sumId){
     });
   }
   document.getElementById(gridId).innerHTML=html;
+  if(badgesId&&document.getElementById(badgesId)){
+    var wgBadgesHtml=weekBadges.map(function(g){
+      var ic=subIcon(g.sub,g.area);
+      if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,white);vertical-align:middle;margin-right:5px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
+      return '<span style="display:flex;align-items:center;gap:1px;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+    }).join('');
+    document.getElementById(badgesId).innerHTML=wgBadgesHtml;
+  }
   var _todayCol=document.getElementById(gridId).querySelector('.today-col');
   if(_todayCol){
     var _scrollWrap=document.getElementById(gridId).parentElement;
@@ -629,7 +640,7 @@ function renderSemana(T){
   document.getElementById('plText').textContent=fwk(WS);
   document.getElementById('wgTitle').textContent='Entregas programadas';
   renderWeekDots(T,mx,mn);
-  buildGrid(WS,'wg','wc');
+  buildGrid(WS,'wg','wc',null,'wgBadges');
   var src=activeData().filter(function(d){var fe=pd(d.FEMIT);return !fe||Math.floor((T-fe)/86400000)<=100;});
   var seen1={};
   var late=src.filter(function(d){
