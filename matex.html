@@ -510,6 +510,7 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
   var areaOrder=['Disco','Aros','Telar','Varios','ALMC'];
   // Build area/subarea groups directly from RAW to handle multi-subarea OPs correctly
   var weekOpSet=new Set(ops.map(function(d){return String(d.OP);}));
+  var curWeekOpSet=new Set(ops.filter(function(d){var dt=pd(d.Fprod||d.FProm);return inR(dt,WS,WE);}).map(function(d){return String(d.OP);}));
   var areaSubMap={};
   RAW.forEach(function(r){
     if(!weekOpSet.has(String(r.OP)))return;
@@ -562,7 +563,14 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
       var totalCant2=_subTot2.reduce(function(s,r2){return s+(parseInt(r2.CANT)||0);},0);
       var totalGolpes=_subTot2.reduce(function(s,r2){return s+(parseInt(r2.GOLPE)||0);},0);
       var golpeLabel=(totalGolpes!==totalCant2?fmtNum(totalCant2)+' pzas · '+fmtNum(totalGolpes)+' golpes':fmtNum(totalCant2)+' pzas');
-      weekBadges.push({area:area,sub:subarea,total:totalCant2});
+      var _subOpIdsCurWeek=_subOpIds2.filter(function(opId){return curWeekOpSet.has(opId);});
+      var _subTotCurWeek=_subOpIdsCurWeek.reduce(function(acc,opId){
+        var opRows=RAW.filter(function(r2){return String(r2.OP)===opId&&r2.STATUS!=='T'&&r2.STATUS!=='C';});
+        var isCross=opRows.some(function(r2){return r2.AREA!==area;});
+        return acc.concat(isCross?opRows:opRows.filter(function(r2){return normSub(r2.SUBAREA)===subarea;}));
+      },[]);
+      var totalCantCurWeek=_subTotCurWeek.reduce(function(s,r2){return s+(parseInt(r2.CANT)||0);},0);
+      if(totalCantCurWeek>0)weekBadges.push({area:area,sub:subarea,total:totalCantCurWeek});
       var row='<div class="week-row"><div class="row-label" style="padding:5px 8px 5px 10px;font-size:12px;font-weight:600;color:#4b5563;white-space:normal;line-height:1.3;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;"><span style="display:flex;align-items:center;">'+subIcon(subarea,area)+normSub(subarea)+'</span><span style="font-size:10px;font-weight:400;color:#9ca3af;padding-left:25px">('+golpeLabel+')</span></div>';
       days.forEach(function(dayS,dsi){
         var yr=dayS.getFullYear(),mo=dayS.getMonth()+1,dy=dayS.getDate();
