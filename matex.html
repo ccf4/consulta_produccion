@@ -531,7 +531,7 @@ function buildGrid(WS,gridId,countId,sumId){
   areas.forEach(function(area){
     var col=ac(area);
     html+='<div class="week-row" style="min-height:0"><div class="row-label" style="height:22px;min-height:22px;background:rgba(0,0,0,.06);font-size:12px;font-weight:700;color:'+col+'"><span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+area+'</div>';
-    days.forEach(function(dayH,dhi){var isTH=dayH.toDateString()===T.toDateString(),isNW=dhi===days.length-1;html+='<div class="day-cell '+(isTH?'today':'')+(isNW?' next-week-col':'')+'" style="height:22px;min-height:22px;background:'+(isTH?'rgba(249,115,22,.05)':'rgba(0,0,0,.04)')+'"></div>';});
+    days.forEach(function(dayH,dhi){var isTH=dayH.toDateString()===T.toDateString(),isNW=dhi===days.length-1;html+='<div class="day-cell '+(isTH?'today':'')+(isNW?' next-week-col':'')+'" style="height:22px;min-height:22px;background:rgba(0,0,0,.04)"></div>';});
     html+='</div>';
     var areaOps=ops.filter(function(o2){return o2.AREA===area;});
     var _subOrd2=['Disco','Pack','Manual','Oblongo/Manual','Riñon','Riñon/Manual','Oblongo','Tiras','Tapas','Armar','Tubular','Tubulares','Remallado','Empaque','Criba','Eliminador','Placa filtrante','Embolsados','Nuevo','Pack Rect / Manual'];
