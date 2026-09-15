@@ -153,7 +153,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
 </div>
 <main>
   <div class="view active" id="view-semana">
-    <div class="st" onclick="toggleLateSection()" style="cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;transition:background .1s;overflow:hidden" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--surface2)'"><span style="flex-shrink:0">Reprogramadas y vencidas</span><span id="lcBadges" style="display:flex;align-items:center;gap:6px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span><span style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:5px;color:var(--accent);font-size:11px;font-weight:600"><span id="lcLabel" class="lc-label">Ver detalle</span><svg id="lcChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;transition:transform .15s"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+    <div class="st" onclick="toggleLateSection()" style="cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;transition:background .1s;overflow:hidden" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--surface2)'"><span style="flex-shrink:0">Reprogramadas y vencidas<span id="lcCount" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="lcBadges" style="display:flex;align-items:center;gap:6px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span><span style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:5px;color:var(--accent);font-size:11px;font-weight:600"><span id="lcLabel" class="lc-label">Ver detalle</span><svg id="lcChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;transition:transform .15s"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
     <div class="card" id="loCard" style="display:none;margin-top:8px"><div class="card-body" id="lo" style="padding:9px"></div></div>
     <div class="wknav" style="margin-top:12px">
       <button class="nb" id="btnP" onclick="changeWeek(-1)" aria-label="Semana anterior" title="Semana anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
@@ -631,10 +631,14 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
   var _todayCol=document.getElementById(gridId).querySelector('.today-col');
   if(_todayCol){
     var _scrollWrap=document.getElementById(gridId).parentElement;
-    var _raf=(typeof requestAnimationFrame!=='undefined')?requestAnimationFrame:function(fn){setTimeout(fn,0);};
-    if(_scrollWrap)_raf(function(){
-      try{_scrollWrap.scrollLeft=Math.max(0,_todayCol.offsetLeft-118);}catch(e){}
-    });
+    if(_scrollWrap)setTimeout(function(){
+      try{
+        var _tc=document.getElementById(gridId).querySelector('.today-col');
+        if(!_tc)return;
+        var _target=_tc.offsetLeft+(_tc.offsetWidth/2)-(_scrollWrap.clientWidth/2);
+        _scrollWrap.scrollLeft=Math.max(0,_target);
+      }catch(e){}
+    },60);
   }
   if(sumId&&document.getElementById(sumId))document.getElementById(sumId).innerHTML='';
 }
@@ -686,6 +690,7 @@ function renderSemana(T){
     return '<span style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
   }
   var lateGroups=buildIconGroups(late);
+  document.getElementById('lcCount').textContent=(late.length+mnetWarn.length)?' - '+(late.length+mnetWarn.length)+' OP':'';
   var warnGroups=buildIconGroups(mnetWarn);
   var lcBadges='';
   if(lateGroups.length){
