@@ -160,7 +160,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
       <div class="nwl" id="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span id="plText">--</span></div>
       <button class="nb" id="btnN" onclick="changeWeek(1)" aria-label="Semana siguiente" title="Semana siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
     </div>
-    <div class="st" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span style="flex-shrink:0"><span id="wgTitle">Entregas programadas</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="wgBadges" style="display:flex;align-items:center;gap:8px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div>
+    <div class="st" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span style="flex-shrink:0"><span id="wgTitle">Entregas programadas</span></span><span id="wgBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span><span id="wc" style="margin-left:auto;flex-shrink:0;font-size:11px;color:var(--muted);font-weight:400"></span></div>
     <div class="card"><div class="card-body" style="padding:12px"><div style="overflow-x:auto"><div id="wg"></div></div></div></div>
     <div class="week-dots" id="weekDots"></div>
     <div id="extraSecs">
@@ -506,7 +506,7 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
   var NM=new Date(WE);NM.setDate(NM.getDate()+1);NM.setHours(0,0,0,0);
   var ops=src.filter(function(d){var dt=pd(d.Fprod||d.FProm);return inR(dt,WS,WE)||(dt&&dt.toDateString()===NM.toDateString());});
   var mnetOps=mnetSrc.filter(function(m){var dt=pd(m.FProm);return inR(dt,WS,WE)||(dt&&dt.toDateString()===NM.toDateString());});
-  if(countId)document.getElementById(countId).textContent=' - '+ops.length+' OP';
+  if(countId)document.getElementById(countId).textContent=ops.length+' OP';
   var areaOrder=['Disco','Aros','Telar','Varios','ALMC'];
   // Build area/subarea groups directly from RAW to handle multi-subarea OPs correctly
   var weekOpSet=new Set(ops.map(function(d){return String(d.OP);}));
@@ -561,9 +561,8 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
       },[]);
       var totalCant2=_subTot2.reduce(function(s,r2){return s+(parseInt(r2.CANT)||0);},0);
       var totalGolpes=_subTot2.reduce(function(s,r2){return s+(parseInt(r2.GOLPE)||0);},0);
-      var isGolpeSub=subarea==='Pack';
-      var golpeLabel=isGolpeSub?fmtNum(totalGolpes)+' golpes':(totalGolpes!==totalCant2?fmtNum(totalCant2)+' pzas · '+fmtNum(totalGolpes)+' golpes':fmtNum(totalCant2)+' pzas');
-      weekBadges.push({area:area,sub:subarea,total:isGolpeSub?totalGolpes:totalCant2});
+      var golpeLabel=(totalGolpes!==totalCant2?fmtNum(totalCant2)+' pzas · '+fmtNum(totalGolpes)+' golpes':fmtNum(totalCant2)+' pzas');
+      weekBadges.push({area:area,sub:subarea,total:totalCant2});
       var row='<div class="week-row"><div class="row-label" style="padding:5px 8px 5px 10px;font-size:12px;font-weight:600;color:#4b5563;white-space:normal;line-height:1.3;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;"><span style="display:flex;align-items:center;">'+subIcon(subarea,area)+normSub(subarea)+'</span><span style="font-size:10px;font-weight:400;color:#9ca3af;padding-left:25px">('+golpeLabel+')</span></div>';
       days.forEach(function(dayS,dsi){
         var yr=dayS.getFullYear(),mo=dayS.getMonth()+1,dy=dayS.getDate();
@@ -615,8 +614,9 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
   if(badgesId&&document.getElementById(badgesId)){
     var wgBadgesHtml=weekBadges.map(function(g){
       var ic=subIcon(g.sub,g.area);
-      if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,white);vertical-align:middle;margin-right:5px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
-      return '<span style="display:flex;align-items:center;gap:1px;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+      if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,white);vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
+      else ic=ic.replace('margin-right:5px','margin-right:2px');
+      return '<span style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
     }).join('');
     document.getElementById(badgesId).innerHTML=wgBadgesHtml;
   }
