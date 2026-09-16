@@ -164,7 +164,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
     <div class="card"><div class="card-body" style="padding:12px"><div style="overflow-x:auto"><div id="wg"></div></div></div></div>
     <div class="week-dots" id="weekDots"></div>
     <div id="extraSecs">
-      <div class="st" style="margin-top:20px">Cerradas recientemente<span id="cc" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
+      <div class="st" style="margin-top:20px;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span style="flex-shrink:0">Cerradas última semana<span id="cc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="clBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div>
       <div class="card"><div class="card-body" id="cl" style="padding:12px"></div></div>
     </div>
   </div>
@@ -802,7 +802,8 @@ function renderSemana(T){
   });
   document.getElementById('cc').textContent=' - '+Object.keys(seenClosed).length+' OP';
   if(!closedRecent.length){
-    document.getElementById('cl').innerHTML='<div style="color:var(--muted);font-size:13px">Sin ordenes cerradas recientemente.</div>';
+    document.getElementById('cl').innerHTML='<div style="color:var(--muted);font-size:13px">Sin ordenes cerradas la ultima semana.</div>';
+    document.getElementById('clBadges').innerHTML='';
   } else {
     var dayGroups={},dayOrder=[];
     closedRecent.forEach(function(r){
@@ -845,6 +846,24 @@ function renderSemana(T){
           +'</div>';
       }).join('')+'</div>';
     });
+    var clBadgeMap={},clBadgeOrder=[];
+    closedRecent.forEach(function(r){
+      r._parts.forEach(function(p){
+        if(p.STATUS!=='T')return;
+        var a=p.AREA,s=normSub(p.SUBAREA)||p.SUBAREA||'';
+        if(!a||!s)return;
+        var k=a+'|'+s;
+        if(!clBadgeMap[k]){clBadgeMap[k]={area:a,sub:s,total:0};clBadgeOrder.push(k);}
+        clBadgeMap[k].total+=(parseInt(p.CANT)||0);
+      });
+    });
+    document.getElementById('clBadges').innerHTML=clBadgeOrder.map(function(k){
+      var g=clBadgeMap[k];
+      var ic=subIcon(g.sub,g.area);
+      if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,white);vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
+      else ic=ic.replace('margin-right:5px','margin-right:2px');
+      return '<span style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+    }).join('');
     document.getElementById('cl').innerHTML=clHtml;
   }
   updateNavHighlight(T,WS);
