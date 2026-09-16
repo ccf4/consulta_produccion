@@ -628,6 +628,7 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
       else ic=ic.replace('margin-right:5px','margin-right:2px');
       return '<span style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
     }).join('');
+    if(wgBadgesHtml)wgBadgesHtml='<span style="display:flex;align-items:center;gap:16px;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:4px 8px;flex-shrink:0">'+wgBadgesHtml+'</span>';
     document.getElementById(badgesId).innerHTML=wgBadgesHtml;
   }
   var _todayCol=document.getElementById(gridId).querySelector('.today-col');
