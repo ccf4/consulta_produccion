@@ -385,6 +385,7 @@ function inR(d,s,e){return d&&d>=s&&d<=e;}
 function pd(s){if(!s||!s.trim)return null;s=s.trim();if(!s)return null;var p=s.split('/');if(p.length===3){var m=parseInt(p[0])-1,dy=parseInt(p[1]),y=parseInt(p[2]);var dt=new Date(y,m,dy);if(!isNaN(dt.getTime()))return dt;}var dt2=new Date(s);return isNaN(dt2.getTime())?null:dt2;}
 function fd(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'2-digit'});}
 function fdShort(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});}
+function fdTag(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{month:'short'})+' '+d.toLocaleDateString('es-MX',{day:'2-digit'});}
 function fds(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});}
 function fwk(s){return fds(s)+' - '+fds(wkE(s));}
 function sb(s){var m={'list x prod':'bl','X Rev':'br','Alm x ent':'ba','RECORTE':'bc'};return '<span class="badge '+(m[s]||'')+'">'+s+'</span>';}
@@ -716,7 +717,7 @@ function renderSemana(T){
       var dKey=fp?fd(fp):'';
       var isNewDate=dKey!==_prevLateDate;_prevLateDate=dKey;
       _lateIsFirst=false;
-      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdShort(fp)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
+      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdTag(fp)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
       var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
       var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
@@ -745,7 +746,7 @@ function renderSemana(T){
         var dKey=fprod?fd(fprod):'';
         var isNewDate=dKey!==_prevWarnDate;_prevWarnDate=dKey;
         _warnIsFirst=false;
-        var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdShort(fprod)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
+        var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdTag(fprod)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
         var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
         var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
         var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
