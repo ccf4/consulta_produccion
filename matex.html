@@ -716,7 +716,7 @@ function renderSemana(T){
       var dKey=fp?fd(fp):'';
       var isNewDate=dKey!==_prevLateDate;_prevLateDate=dKey;
       _lateIsFirst=false;
-      var dateTag=isNewDate?'<div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdShort(fp)+'</div>':'<div style="font-size:9px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
+      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdShort(fp)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
       var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
       var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
@@ -745,7 +745,7 @@ function renderSemana(T){
         var dKey=fprod?fd(fprod):'';
         var isNewDate=dKey!==_prevWarnDate;_prevWarnDate=dKey;
         _warnIsFirst=false;
-        var dateTag=isNewDate?'<div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdShort(fprod)+'</div>':'<div style="font-size:9px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
+        var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdShort(fprod)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
         var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
         var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
         var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
