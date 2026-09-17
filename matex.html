@@ -697,11 +697,13 @@ function renderSemana(T){
   document.getElementById('lcCount').textContent=(late.length+mnetWarn.length)?' - '+(late.length+mnetWarn.length)+' OP':'';
   var warnGroups=buildIconGroups(mnetWarn);
   var lcBadges='';
+  var catIconVencidas='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  var catIconReprog='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
   if(lateGroups.length){
-    lcBadges+='<span style="display:flex;align-items:center;gap:16px;background:#fdecec;border:1px solid rgba(163,45,45,.2);border-radius:8px;padding:4px 8px;flex-shrink:0">'+lateGroups.map(renderIconGroup).join('')+'</span>';
+    lcBadges+='<span style="display:flex;align-items:center;gap:6px;background:#fdecec;border:1px solid rgba(163,45,45,.2);border-radius:8px;padding:4px 8px;flex-shrink:0;color:var(--danger)" title="Vencidas">'+catIconVencidas+'<span style="display:flex;align-items:center;gap:16px;color:var(--text)">'+lateGroups.map(renderIconGroup).join('')+'</span></span>';
   }
   if(warnGroups.length){
-    lcBadges+='<span style="display:flex;align-items:center;gap:16px;background:#fdf1e8;border:1px solid rgba(133,79,11,.2);border-radius:8px;padding:4px 8px;flex-shrink:0">'+warnGroups.map(renderIconGroup).join('')+'</span>';
+    lcBadges+='<span style="display:flex;align-items:center;gap:6px;background:#fdf1e8;border:1px solid rgba(133,79,11,.2);border-radius:8px;padding:4px 8px;flex-shrink:0;color:var(--warn)" title="Reprogramadas">'+catIconReprog+'<span style="display:flex;align-items:center;gap:16px;color:var(--text)">'+warnGroups.map(renderIconGroup).join('')+'</span></span>';
   }
   if(lcBadges)lcBadges='<span style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;white-space:nowrap">'+lcBadges+'</span>';
   document.getElementById('lcBadges').innerHTML=lcBadges;
