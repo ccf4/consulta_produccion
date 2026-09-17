@@ -647,7 +647,9 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
       try{
         var _tc=document.getElementById(gridId).querySelector('.today-col');
         if(!_tc)return;
-        var _target=_tc.offsetLeft+(_tc.offsetWidth/2)-(_scrollWrap.clientWidth/2);
+        var _stickyCol=document.getElementById(gridId).querySelector('.week-days>div:first-child');
+        var _stickyW=_stickyCol?_stickyCol.offsetWidth:0;
+        var _target=_tc.offsetLeft+(_tc.offsetWidth/2)-((_scrollWrap.clientWidth+_stickyW)/2);
         _scrollWrap.scrollLeft=Math.max(0,_target);
       }catch(e){}
     },60);
