@@ -517,11 +517,11 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
   var NM=new Date(WE);NM.setDate(NM.getDate()+1);NM.setHours(0,0,0,0);
   var ops=src.filter(function(d){var dt=pd(d.Fprod||d.FProm);return inR(dt,WS,WE)||(dt&&dt.toDateString()===NM.toDateString());});
   var mnetOps=mnetSrc.filter(function(m){var dt=pd(m.FProm);return inR(dt,WS,WE)||(dt&&dt.toDateString()===NM.toDateString());});
-  if(countId)document.getElementById(countId).textContent=' - '+ops.length+' OP';
+  var curWeekOpSet=new Set(ops.filter(function(d){var dt=pd(d.Fprod||d.FProm);return inR(dt,WS,WE);}).map(function(d){return String(d.OP);}));
+  if(countId)document.getElementById(countId).textContent=' - '+curWeekOpSet.size+' OP';
   var areaOrder=['Disco','Aros','Telar','Varios','ALMC'];
   // Build area/subarea groups directly from RAW to handle multi-subarea OPs correctly
   var weekOpSet=new Set(ops.map(function(d){return String(d.OP);}));
-  var curWeekOpSet=new Set(ops.filter(function(d){var dt=pd(d.Fprod||d.FProm);return inR(dt,WS,WE);}).map(function(d){return String(d.OP);}));
   var areaSubMap={};
   RAW.forEach(function(r){
     if(!weekOpSet.has(String(r.OP)))return;
