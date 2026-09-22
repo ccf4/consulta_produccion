@@ -121,9 +121,10 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
 .day-op{position:relative;}.day-op:hover .op-tt{display:block;}#op-tooltip{position:fixed;z-index:9999;display:none;background:#ffffff;border:1px solid #c5cad3;border-radius:8px;padding:9px 12px;font-size:10px;font-family:'IBM Plex Mono',monospace;line-height:1.9;white-space:nowrap;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.12);color:#374151;}.op-tt-row{display:flex;justify-content:space-between;gap:16px;}.op-tt-lbl{color:#9ca3af;font-size:9px;text-transform:uppercase;letter-spacing:.7px;}.op-tt-val{font-weight:600;color:#111827;}
 @media (max-width:640px){
   header{flex-wrap:wrap;padding:8px 14px;gap:6px;row-gap:6px;}
-  .hdr-brand{flex:1 1 100%;order:1;}
-  .hdr-search{flex:1 1 100%;order:2;}
-  .hdr-info{display:none;}
+  .hdr-brand{flex:1 1 auto;order:1;}
+  .hdr-info{flex:0 0 auto;order:2;}
+  .hdr-info .updinfo{display:none!important;}
+  .hdr-search{flex:1 1 100%;order:3;}
   .lc-label{display:none;}
   .search-input{flex:1 1 auto;width:auto;}
   main{padding:14px;}
@@ -147,13 +148,13 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
   <div class="hdr-brand"><div class="logo">Consulta de Entregas</div><div class="title">Ordenes de Produccion</div></div>
   <div class="hdr-search" style="gap:8px">
     <input id="searchBox" class="search-input" type="text" placeholder="Buscar orden de producción" oninput="refreshAll()">
-    <button onclick="location.href=location.pathname+'?t='+Date.now()" title="Actualizar datos" style="flex-shrink:0;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">&#8635;</button>
   </div>
   <div class="hdr-info" style="gap:10px;">
-    <div style="display:grid;grid-template-columns:auto auto auto;gap:2px 6px;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
+    <div class="updinfo" style="display:grid;grid-template-columns:auto auto auto;gap:2px 6px;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
       <div style="grid-column:1/-1;font-size:9px;letter-spacing:.6px;opacity:.6;text-transform:uppercase;margin-bottom:2px;text-align:center">Última actualización</div>
       <span style="opacity:.75" class="entregas-row">Entregas:</span><span style="text-align:right" class="entregas-row">21/sep/26</span><span class="entregas-row">16:45</span>
     </div>
+    <button id="refreshBtn" onclick="location.href=location.pathname+'?t='+Date.now()" title="Actualizar datos" style="flex-shrink:0;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">&#8635;</button>
   </div>
 </header>
 <div class="tabs">
