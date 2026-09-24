@@ -372,8 +372,19 @@ function filterVend(v,btn){
 var RESUMEN_WORKER='https://matex-fecha-editor.carloscastaf.workers.dev';
 var RESUMEN_STATUS='https://raw.githubusercontent.com/ccf4/Produccion/main/resumen_ejecutivo/status.json';
 var RESUMEN_PDF='https://ccf4.github.io/Produccion/resumen_ejecutivo/latest.pdf';
-function resumenReset(btn,origTitle){
-  btn.style.opacity='';btn.style.cursor='';btn.title=origTitle;btn.dataset.busy='';
+function resumenSetState(btn,state,origTitle){
+  btn.dataset.state=state;
+  if(state==='busy'){
+    btn.style.opacity='.4';btn.style.cursor='wait';btn.style.borderColor='';btn.style.color='';
+    btn.title='Generando resumen… (puede tardar 1-2 min)';
+  }else if(state==='ready'){
+    btn.style.opacity='';btn.style.cursor='pointer';
+    btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';
+    btn.title='PDF listo — clic para abrir';
+  }else{
+    btn.style.opacity='';btn.style.cursor='';btn.style.borderColor='';btn.style.color='';
+    btn.title=origTitle;
+  }
 }
 function pollResumen(btn,origTitle,clickTime,attempt){
   setTimeout(function(){
@@ -381,33 +392,35 @@ function pollResumen(btn,origTitle,clickTime,attempt){
       return r.ok?r.json():null;
     }).then(function(st){
       if(st&&st.generated_at&&new Date(st.generated_at).getTime()>clickTime){
-        window.open(RESUMEN_PDF+'?t='+Date.now(),'_blank');
-        resumenReset(btn,origTitle);
+        resumenSetState(btn,'ready',origTitle);
       }else if(attempt<40){
         pollResumen(btn,origTitle,clickTime,attempt+1);
       }else{
         alert('Se está tardando más de lo normal. Intenta abrir el PDF en un par de minutos:\n'+RESUMEN_PDF);
-        resumenReset(btn,origTitle);
+        resumenSetState(btn,'idle',origTitle);
       }
     }).catch(function(){
       if(attempt<40){pollResumen(btn,origTitle,clickTime,attempt+1);}
-      else{resumenReset(btn,origTitle);}
+      else{resumenSetState(btn,'idle',origTitle);}
     });
   }, attempt===0?6000:4500);
 }
 function generarResumen(btn){
-  if(btn.dataset.busy==='1')return;
-  btn.dataset.busy='1';
-  var origTitle=btn.title;
-  btn.style.opacity='.4';
-  btn.style.cursor='wait';
-  btn.title='Generando resumen… (puede tardar 1-2 min)';
+  var origTitle=btn.dataset.origTitle||btn.title;
+  btn.dataset.origTitle=origTitle;
+  if(btn.dataset.state==='ready'){
+    window.open(RESUMEN_PDF+'?t='+Date.now(),'_blank');
+    resumenSetState(btn,'idle',origTitle);
+    return;
+  }
+  if(btn.dataset.state==='busy')return;
+  resumenSetState(btn,'busy',origTitle);
   var clickTime=Date.now();
   fetch(RESUMEN_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({generarResumen:true})})
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);pollResumen(btn,origTitle,clickTime,0);})
     .catch(function(e){
       alert('No se pudo iniciar la generación del resumen: '+e.message);
-      resumenReset(btn,origTitle);
+      resumenSetState(btn,'idle',origTitle);
     });
 }
 
