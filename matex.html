@@ -394,14 +394,14 @@ function pollResumen(btn,origTitle,clickTime,attempt){
     }).then(function(st){
       if(st&&st.generated_at&&new Date(st.generated_at).getTime()>clickTime){
         resumenSetState(btn,'ready',origTitle);
-      }else if(attempt<40){
+      }else if(attempt<60){
         pollResumen(btn,origTitle,clickTime,attempt+1);
       }else{
         alert('Se está tardando más de lo normal. Intenta abrir el PDF en un par de minutos:\n'+RESUMEN_PDF);
         resumenSetState(btn,'idle',origTitle);
       }
     }).catch(function(){
-      if(attempt<40){pollResumen(btn,origTitle,clickTime,attempt+1);}
+      if(attempt<60){pollResumen(btn,origTitle,clickTime,attempt+1);}
       else{resumenSetState(btn,'idle',origTitle);}
     });
   }, attempt===0?6000:4500);
