@@ -370,14 +370,15 @@ function filterVend(v,btn){
 }
 
 // RESUMEN EJECUTIVO (PDF) — dispara el Action de GitHub que corre el generador y espera a que publique el PDF
+// El chequeo de estado se hace vía el Worker (checkResumen:true → API de GitHub autenticada), no contra
+// raw.githubusercontent.com directo: ese CDN puede tardar varios minutos en reflejar un push reciente.
 var RESUMEN_WORKER='https://matex-fecha-editor.carloscastaf.workers.dev';
-var RESUMEN_STATUS='https://raw.githubusercontent.com/ccf4/Produccion/main/resumen_ejecutivo/status.json';
 var RESUMEN_PDF='https://ccf4.github.io/Produccion/resumen_ejecutivo/latest.pdf';
 function resumenSetState(btn,state,origTitle){
   btn.dataset.state=state;
   if(state==='busy'){
     btn.style.opacity='.4';btn.style.cursor='wait';btn.style.borderColor='';btn.style.color='';
-    btn.title='Generando resumen… (puede tardar 1-2 min)';
+    btn.title='Generando resumen… (puede tardar unos minutos)';
   }else if(state==='ready'){
     btn.style.opacity='';btn.style.cursor='pointer';
     btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';
@@ -389,19 +390,19 @@ function resumenSetState(btn,state,origTitle){
 }
 function pollResumen(btn,origTitle,clickTime,attempt){
   setTimeout(function(){
-    fetch(RESUMEN_STATUS+'?t='+Date.now(),{cache:'no-store'}).then(function(r){
+    fetch(RESUMEN_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({checkResumen:true})}).then(function(r){
       return r.ok?r.json():null;
     }).then(function(st){
       if(st&&st.generated_at&&new Date(st.generated_at).getTime()>clickTime){
         resumenSetState(btn,'ready',origTitle);
-      }else if(attempt<60){
+      }else if(attempt<100){
         pollResumen(btn,origTitle,clickTime,attempt+1);
       }else{
         alert('Se está tardando más de lo normal. Intenta abrir el PDF en un par de minutos:\n'+RESUMEN_PDF);
         resumenSetState(btn,'idle',origTitle);
       }
     }).catch(function(){
-      if(attempt<60){pollResumen(btn,origTitle,clickTime,attempt+1);}
+      if(attempt<100){pollResumen(btn,origTitle,clickTime,attempt+1);}
       else{resumenSetState(btn,'idle',origTitle);}
     });
   }, attempt===0?6000:4500);
