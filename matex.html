@@ -377,7 +377,7 @@ function resumenSetState(btn,state,origTitle){
   btn.dataset.state=state;
   if(state==='busy'){
     btn.style.opacity='.4';btn.style.cursor='wait';btn.style.borderColor='';btn.style.color='';
-    btn.title='Generando resumen… (puede tardar 1-2 min)';
+    btn.title='Generando resumen… (puede tardar varios minutos)';
   }else if(state==='ready'){
     btn.style.opacity='';btn.style.cursor='pointer';
     btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';
@@ -394,17 +394,17 @@ function pollResumen(btn,origTitle,clickTime,attempt){
     }).then(function(st){
       if(st&&st.generated_at&&new Date(st.generated_at).getTime()>clickTime){
         resumenSetState(btn,'ready',origTitle);
-      }else if(attempt<60){
+      }else if(attempt<80){
         pollResumen(btn,origTitle,clickTime,attempt+1);
       }else{
-        alert('Se está tardando más de lo normal. Intenta abrir el PDF en un par de minutos:\n'+RESUMEN_PDF);
+        alert('Se está tardando más de lo normal. Intenta abrir el PDF en unos minutos:\n'+RESUMEN_PDF);
         resumenSetState(btn,'idle',origTitle);
       }
     }).catch(function(){
-      if(attempt<60){pollResumen(btn,origTitle,clickTime,attempt+1);}
+      if(attempt<80){pollResumen(btn,origTitle,clickTime,attempt+1);}
       else{resumenSetState(btn,'idle',origTitle);}
     });
-  }, attempt===0?6000:4500);
+  }, attempt===0?10000:5000);
 }
 function generarResumen(btn){
   var origTitle=btn.dataset.origTitle||btn.title;
