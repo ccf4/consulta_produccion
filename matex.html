@@ -63,7 +63,7 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .week-days{display:grid;grid-template-columns:110px repeat(6,minmax(84px,1fr));gap:1px;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:.8px;margin-bottom:1px;min-width:604px;}
 .week-days>div:first-child{position:sticky;left:0;z-index:2;background:var(--surface);padding-left:8px;}
 .week-days div{padding:5px 6px;background:var(--surface2);text-align:center;}
-.week-days .today-col{color:var(--text);background:#ffffff;font-weight:800;box-shadow:inset 0 0 0 2px #c7cdd6;border-radius:4px;}
+.week-days .today-col{color:var(--text);background:#ffffff;font-weight:800;box-shadow:inset 0 0 0 2px rgba(217,119,6,.45);border-radius:4px;}
 .week-row{display:grid;grid-template-columns:110px repeat(6,minmax(84px,1fr));gap:1px;margin-bottom:1px;min-width:604px;}
 .week-row .row-label{background:var(--surface2);padding:5px 8px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;position:sticky;left:0;z-index:2;}
 .week-row .day-cell{background:var(--surface2);min-height:60px;padding:3px;display:flex;flex-direction:column;gap:3px;}
@@ -370,15 +370,14 @@ function filterVend(v,btn){
 }
 
 // RESUMEN EJECUTIVO (PDF) — dispara el Action de GitHub que corre el generador y espera a que publique el PDF
-// El chequeo de estado se hace vía el Worker (checkResumen:true → API de GitHub autenticada), no contra
-// raw.githubusercontent.com directo: ese CDN puede tardar varios minutos en reflejar un push reciente.
 var RESUMEN_WORKER='https://matex-fecha-editor.carloscastaf.workers.dev';
+var RESUMEN_STATUS='https://raw.githubusercontent.com/ccf4/Produccion/main/resumen_ejecutivo/status.json';
 var RESUMEN_PDF='https://ccf4.github.io/Produccion/resumen_ejecutivo/latest.pdf';
 function resumenSetState(btn,state,origTitle){
   btn.dataset.state=state;
   if(state==='busy'){
     btn.style.opacity='.4';btn.style.cursor='wait';btn.style.borderColor='';btn.style.color='';
-    btn.title='Generando resumen… (puede tardar unos minutos)';
+    btn.title='Generando resumen… (puede tardar 1-2 min)';
   }else if(state==='ready'){
     btn.style.opacity='';btn.style.cursor='pointer';
     btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';
@@ -390,19 +389,19 @@ function resumenSetState(btn,state,origTitle){
 }
 function pollResumen(btn,origTitle,clickTime,attempt){
   setTimeout(function(){
-    fetch(RESUMEN_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({checkResumen:true})}).then(function(r){
+    fetch(RESUMEN_STATUS+'?t='+Date.now(),{cache:'no-store'}).then(function(r){
       return r.ok?r.json():null;
     }).then(function(st){
       if(st&&st.generated_at&&new Date(st.generated_at).getTime()>clickTime){
         resumenSetState(btn,'ready',origTitle);
-      }else if(attempt<100){
+      }else if(attempt<60){
         pollResumen(btn,origTitle,clickTime,attempt+1);
       }else{
         alert('Se está tardando más de lo normal. Intenta abrir el PDF en un par de minutos:\n'+RESUMEN_PDF);
         resumenSetState(btn,'idle',origTitle);
       }
     }).catch(function(){
-      if(attempt<100){pollResumen(btn,origTitle,clickTime,attempt+1);}
+      if(attempt<60){pollResumen(btn,origTitle,clickTime,attempt+1);}
       else{resumenSetState(btn,'idle',origTitle);}
     });
   }, attempt===0?6000:4500);
@@ -636,7 +635,7 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
     if(badgesId&&document.getElementById(badgesId))document.getElementById(badgesId).innerHTML='';
     return;
   }
-  var html='<div class="week-days"><div>Area</div>'+days.map(function(d,i){var cls=(d.toDateString()===T.toDateString()?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'">'+dlabs[i]+'</div>';}).join('')+'</div>';
+  var html='<div class="week-days"><div>Area</div>'+days.map(function(d,i){var isToday=d.toDateString()===T.toDateString(),cls=(isToday?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'">'+dlabs[i]+'</div>';}).join('')+'</div>';
   areas.forEach(function(area){
     var col=ac(area);
     html+='<div class="week-row" style="min-height:0"><div class="row-label" style="height:22px;min-height:22px;background:rgba(0,0,0,.06);font-size:12px;font-weight:700;color:'+col+'"><span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+area+'</div>';
@@ -818,7 +817,7 @@ function renderSemana(T){
   if(rpBadges)rpBadges='<span style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;white-space:nowrap">'+rpBadges+'</span>';
   document.getElementById('rpBadges').innerHTML=rpBadges;
   if(!late.length){
-    document.getElementById('lo').innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Sin ordenes vencidas.</div>';
+    document.getElementById('lo').innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0">Sin órdenes de producción vencidas</div>';
   } else {
     var tarjetasHtmlM=[];
     late.sort(function(a,b){var fa=pd(a.Fprod||a.FProm),fb=pd(b.Fprod||b.FProm);return (fa||new Date(0))-(fb||new Date(0));});
