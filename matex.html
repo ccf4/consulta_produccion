@@ -635,7 +635,7 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
     if(badgesId&&document.getElementById(badgesId))document.getElementById(badgesId).innerHTML='';
     return;
   }
-  var html='<div class="week-days"><div>Area<div style="background:none;padding:0;margin-top:2px;font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:#6b7280">(TOTALES DE LA SEMANA)</div></div>'+days.map(function(d,i){var isToday=d.toDateString()===T.toDateString(),cls=(isToday?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'" style="text-align:center">'+dlabs[i]+'</div>';}).join('')+'</div>';
+  var html='<div class="week-days"><div>Area<div style="background:none;padding:0;margin-top:2px;font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:#9ca3af">(TOTALES DE LA SEMANA)</div></div>'+days.map(function(d,i){var isToday=d.toDateString()===T.toDateString(),cls=(isToday?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'" style="text-align:center">'+dlabs[i]+'</div>';}).join('')+'</div>';
   areas.forEach(function(area){
     var col=ac(area);
     html+='<div class="week-row" style="min-height:0"><div class="row-label" style="height:22px;min-height:22px;background:rgba(0,0,0,.06);font-size:12px;font-weight:700;color:'+col+'"><span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+area+'</div>';
