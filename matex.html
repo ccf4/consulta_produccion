@@ -163,8 +163,6 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
   <div class="tab active" onclick="switchTab('semana')">Semanal</div>
   <div class="tab" onclick="switchTab('todas')">Todas OP Abiertas</div>
   <div id="vendBar" style="display:flex;gap:6px;align-items:center;margin-left:auto;min-width:0;flex-shrink:1;overflow-x:auto;padding:6px 0 6px 10px;-webkit-overflow-scrolling:touch">
-    <div class="fb vfb" onclick="filterVend('JB',this)">JB</div>
-    <div class="fb vfb" onclick="filterVend('JF',this)">JF</div>
     <div class="fb vfb" onclick="filterVend('LF',this)">LF</div>
     <div class="fb vfb" onclick="filterVend('YF',this)">YF</div>
     <div class="fb vfb" onclick="filterVend('NM',this)">NM</div>
@@ -355,7 +353,7 @@ function loadCierres(){
 
 // STATE
 var sflt='all', vflt='all', proxOff=0, sortCol=-1, sortDir=1;
-var VEND_MAIN=['JB','JF','LF','YF','NM','EM','OP'];
+var VEND_MAIN=['LF','YF','NM','EM','OP'];
 function vendMatch(v){
   if(vflt==='all')return true;
   v=(v||'').trim();
