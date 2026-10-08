@@ -150,7 +150,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
 <header>
   <div class="hdr-brand"><div class="logo">Consulta de Entregas</div><div class="title">Ordenes de Produccion</div></div>
   <div class="hdr-search" style="gap:8px">
-    <input id="searchBox" class="search-input" type="text" placeholder="Buscar orden de producción" oninput="refreshAll()">
+    <input id="searchBox" class="search-input" type="text" placeholder="Buscar orden o pedido" oninput="refreshAll()">
   </div>
   <div class="hdr-info" style="gap:10px;">
     <div class="updinfo" style="display:grid;grid-template-columns:auto auto auto;gap:2px 6px;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
@@ -162,7 +162,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
 </header>
 <div class="tabs" style="align-items:center">
   <div class="tab active" onclick="switchTab('semana')">Semanal</div>
-  <div class="tab" onclick="switchTab('todas')">Todas las órdenes abiertas</div>
+  <div class="tab" onclick="switchTab('todas')">Lista abiertas</div>
   <div id="vendBar" style="display:flex;gap:6px;align-items:center;margin-left:auto;min-width:0;flex-shrink:1;overflow-x:auto;padding:6px 0 6px 10px;-webkit-overflow-scrolling:touch">
     <div class="fb vfb" onclick="filterVend('LF',this)">LF</div>
     <div class="fb vfb" onclick="filterVend('YF',this)">YF</div>
@@ -734,12 +734,16 @@ function renderSemana(T){
   function buildIconGroups(arr){
     var groups={};
     arr.forEach(function(r){
-      var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
-      var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
-      var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
-      var key=r.AREA+'|'+normSub(r.SUBAREA);
-      if(!groups[key])groups[key]={area:r.AREA,sub:r.SUBAREA,total:0};
-      groups[key].total+=totalCant;
+      var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP)&&x.STATUS==='V';});
+      var seenK={};
+      parts.forEach(function(x){
+        var key=x.AREA+'|'+normSub(x.SUBAREA);
+        if(seenK[key])return;
+        seenK[key]=true;
+        var tot=parts.filter(function(y){return y.AREA===x.AREA&&normSub(y.SUBAREA)===normSub(x.SUBAREA);}).reduce(function(sm,y){return sm+(parseInt(y.CANT)||0);},0);
+        if(!groups[key])groups[key]={area:x.AREA,sub:x.SUBAREA,total:0};
+        groups[key].total+=tot;
+      });
     });
     return Object.values(groups).sort(function(a,b){return b.total-a.total;});
   }
