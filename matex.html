@@ -291,40 +291,72 @@ function loadOverrides(){
 }
 
 // ===== Cierres de OP en vivo (cierres.json) =====
-// Solo lectura aqui tambien: matex nunca cierra OPs, solo refleja lo que se
-// cerro desde el panel interno.
-var CIERRES = {};
-function applyCierres(){
-  Object.keys(CIERRES).forEach(function(op){
-    var info=CIERRES[op];
-    RAW.forEach(function(r){
-      if(String(r.OP)===String(op)&&r.STATUS==='V'){
-        r.STATUS='T';
-        r.FTERM=info.fecha;
-        // mover de "abiertas" a "cerradas" para que el calendario y
-        // Cerradas recientemente reflejen el cierre correctamente
-        if(umap[r.OP]===r){
-          delete umap[r.OP];
-          var idx=DATA.indexOf(r);
-          if(idx>=0)DATA.splice(idx,1);
-        }
-        if(!tmap[r.OP]){
-          tmap[r.OP]=r;
-          TERM.push(r);
-        } else if((pd(r.FTERM)||new Date(0))>(pd(tmap[r.OP].FTERM)||new Date(0))){
-          var _oldIdx=TERM.indexOf(tmap[r.OP]);
-          if(_oldIdx>=0)TERM.splice(_oldIdx,1,r);
-          tmap[r.OP]=r;
-        }
-      }
-    });
+// Solo lectura aqui: matex nunca cierra OPs, solo refleja lo que se cerro desde el panel interno
+// (OP completa, partida completa o entrega parcial).
+// cierres.json trae entradas {op, part, cant, fecha, timestamp}:
+//   sin part          -> se cierra la OP completa (todas sus partidas V pasan a T)
+//   part, sin cant    -> se cierra esa partida completa
+//   part y cant       -> entrega parcial: la partida se parte en una T (lo entregado) y la V (lo pendiente)
+// Es permanente: STATUS=T siempre le gana a un V que venga del PROD.xlsx en el refresh semanal.
+// CIERRES_META.hasta = ultima entrada que el refresh ya horneo en RAW; lo anterior se ignora para no aplicarlo dos veces.
+const CIERRES_META={"hasta":""};
+var CIERRES = {};          // OP completa: CIERRES[op]={fecha,timestamp}
+var CIERRES_LISTA = [];    // todas las entradas de cierres.json (y las hechas en esta sesion)
+var _cierresHechos = {};
+function _letraPart(op,part){
+  var m=String(part).match(/^(\d+)([a-z]*)\/(.+)$/i);
+  if(!m)return part+'a';
+  var usadas={};
+  RAW.forEach(function(r){if(String(r.OP)===String(op))usadas[r.PART]=1;});
+  for(var i=0;i<26;i++){var p=m[1]+String.fromCharCode(97+i)+'/'+m[3];if(!usadas[p])return p;}
+  return part+'x';
+}
+function _rebuildMaps(){
+  Object.keys(umap).forEach(function(k){delete umap[k];});
+  Object.keys(tmap).forEach(function(k){delete tmap[k];});
+  RAW.forEach(function(r){
+    if(!r.OP)return;
+    var rs=(r.STATUS||'').trim().toUpperCase();
+    if(rs==='T'||rs==='C'){if(!tmap[r.OP]||(pd(r.FTERM)||new Date(0))>(pd(tmap[r.OP].FTERM)||new Date(0)))tmap[r.OP]=r;}
+    else{if(!umap[r.OP])umap[r.OP]=r;}
   });
+  DATA.length=0;TERM.length=0;
+  Object.keys(umap).forEach(function(k){DATA.push(umap[k]);});
+  Object.keys(tmap).forEach(function(k){TERM.push(tmap[k]);});
+}
+function _entregarPartida(e){
+  var r=null;
+  RAW.forEach(function(x){if(!r&&String(x.OP)===String(e.op)&&x.PART===e.part&&(x.STATUS||'').trim().toUpperCase()==='V')r=x;});
+  if(!r)return;
+  var c=parseFloat(r.CANT)||0,q=(e.cant==null||e.cant==='')?c:parseFloat(e.cant);
+  if(!(q>0))return;
+  if(q>=c){r.STATUS='T';r.FTERM=e.fecha;return;}
+  var g=parseFloat(r.GOLPE)||c;
+  var t={};Object.keys(r).forEach(function(k){t[k]=r[k];});
+  t.STATUS='T';t.FTERM=e.fecha;t.CANT=String(q);t.GOLPE=String(Math.round(g*q/c));t.PART=_letraPart(e.op,e.part);
+  r.CANT=String(c-q);r.GOLPE=String(Math.round(g*(c-q)/c));
+  RAW.splice(RAW.indexOf(r),0,t);
+}
+function applyCierres(){
+  var hasta=CIERRES_META.hasta||'';
+  CIERRES_LISTA.slice().sort(function(a,b){return String(a.timestamp||'')<String(b.timestamp||'')?-1:1;}).forEach(function(e){
+    var k=[e.op,e.part||'',e.cant==null?'':e.cant,e.timestamp||''].join('|');
+    if(_cierresHechos[k])return;
+    _cierresHechos[k]=1;
+    if(hasta&&e.timestamp&&e.timestamp<=hasta)return;
+    if(!e.part){
+      RAW.forEach(function(r){
+        if(String(r.OP)===String(e.op)&&(r.STATUS||'').trim().toUpperCase()==='V'){r.STATUS='T';r.FTERM=e.fecha;}
+      });
+    }else _entregarPartida(e);
+  });
+  _rebuildMaps();
   updateEntregasHeader();
 }
 function updateEntregasHeader(){
   var latest=null;
-  Object.keys(CIERRES).forEach(function(op){
-    var ts=CIERRES[op].timestamp;
+  CIERRES_LISTA.forEach(function(e){
+    var ts=e.timestamp;
     if(ts&&(!latest||ts>latest))latest=ts;
   });
   if(!latest)return;
@@ -342,7 +374,10 @@ function loadCierres(){
   fetch('https://raw.githubusercontent.com/ccf4/Produccion/main/cierres.json?t='+Date.now(),{cache:'no-store'})
     .then(function(r){return r.ok?r.json():[];})
     .then(function(arr){
-      (arr||[]).forEach(function(o){CIERRES[String(o.op)]={fecha:o.fecha,timestamp:o.timestamp};});
+      (arr||[]).forEach(function(o){
+        CIERRES_LISTA.push({op:String(o.op),part:o.part||null,cant:(o.cant==null?null:o.cant),fecha:o.fecha,timestamp:o.timestamp});
+        if(!o.part)CIERRES[String(o.op)]={fecha:o.fecha,timestamp:o.timestamp};
+      });
       applyCierres();
       renderSemana(today());
     })
