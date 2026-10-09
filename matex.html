@@ -64,7 +64,7 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .week-days{display:grid;grid-template-columns:110px repeat(6,minmax(84px,1fr));gap:1px;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:.8px;margin-bottom:1px;min-width:604px;}
 .week-days>div:first-child{position:sticky;left:0;z-index:2;background:var(--surface);padding-left:8px;}
 .week-days div{padding:5px 6px;background:var(--surface2);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.week-days .today-col{color:var(--text);background:#ffffff;font-weight:800;box-shadow:inset 0 0 0 2px rgba(217,119,6,.45);border-radius:4px;}
+.week-days .today-col{color:var(--text);background:#ffffff;font-weight:800;box-shadow:inset 0 0 0 1px var(--accent4);border-radius:4px;}
 .week-row{display:grid;grid-template-columns:110px repeat(6,minmax(84px,1fr));gap:1px;margin-bottom:1px;min-width:604px;}
 .week-row .row-label{background:var(--surface2);padding:5px 8px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;position:sticky;left:0;z-index:2;}
 .week-row .day-cell{background:var(--surface2);min-height:60px;padding:3px;display:flex;flex-direction:column;gap:3px;}
@@ -732,7 +732,7 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
     if(badgesId&&document.getElementById(badgesId))document.getElementById(badgesId).innerHTML='';
     return;
   }
-  var html='<div class="week-days"><div>Area<div style="background:none;padding:0;margin-top:2px;font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:#9ca3af">(TOTALES DE LA SEMANA)</div></div>'+days.map(function(d,i){var isToday=d.toDateString()===T.toDateString(),cls=(isToday?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'" style="text-align:center">'+dlabs[i]+'</div>';}).join('')+'</div>';
+  var html='<div class="week-days"><div>Area<div style="background:none;padding:0;margin-top:2px;font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:#9ca3af">(totales de la semana)</div></div>'+days.map(function(d,i){var isToday=d.toDateString()===T.toDateString(),cls=(isToday?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'" style="text-align:center">'+dlabs[i]+'</div>';}).join('')+'</div>';
   areas.forEach(function(area){
     var col=ac(area);
     html+='<div class="week-row" style="min-height:0"><div class="row-label" style="height:22px;min-height:22px;background:rgba(0,0,0,.06);font-size:12px;font-weight:700;color:'+col+'"><span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+area+'</div>';
@@ -829,7 +829,7 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
       var ic=subIcon(g.sub,g.area);
       if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,white);vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
       else ic=ic.replace('margin-right:5px','margin-right:2px');
-      return '<span style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+      return '<span data-tip="'+subTip(g.area,g.sub)+'" style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
     }).join('');
     if(wgBadgesHtml)wgBadgesHtml='<span style="display:flex;align-items:center;gap:16px;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:4px 8px;flex-shrink:0">'+wgBadgesHtml+'</span>';
     document.getElementById(badgesId).innerHTML=wgBadgesHtml;
@@ -878,11 +878,36 @@ function weekBadgeList(WS){
   });
   return out;
 }
+function subTip(area,sub){
+  var ns=normSub(sub)||sub||'';
+  var name=(area==='Aros'&&(sub==='NUEVO'||ns==='Nuevo'))?'Aro nuevo':ns.split(' / ').map(function(w){return w.charAt(0).toUpperCase()+w.slice(1);}).join(' / ');
+  return (name===area)?name:name+' \u00b7 '+area;
+}
+// Globo rápido con el nombre de la subárea al pasar el mouse (o tocar) un icono de los resúmenes
+(function(){
+  var tip=document.createElement('div');
+  tip.id='sub-tip';
+  tip.style.cssText='position:fixed;z-index:9999;display:none;background:#1f2937;color:#fff;font:600 11px/1.2 "IBM Plex Sans",sans-serif;padding:5px 9px;border-radius:6px;pointer-events:none;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25)';
+  document.body.appendChild(tip);
+  var tm;
+  function hide(){tip.style.display='none';}
+  function show(el){
+    tip.textContent=el.getAttribute('data-tip');tip.style.display='block';
+    var r=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
+    var left=Math.max(6,Math.min(window.innerWidth-w-6,r.left+r.width/2-w/2));
+    var top=r.top-h-7;if(top<4)top=r.bottom+7;
+    tip.style.left=left+'px';tip.style.top=top+'px';
+  }
+  function target(e){return e.target&&e.target.closest?e.target.closest('[data-tip]'):null;}
+  document.addEventListener('mouseover',function(e){var el=target(e);if(el)show(el);else hide();});
+  document.addEventListener('touchstart',function(e){var el=target(e);clearTimeout(tm);if(el){show(el);tm=setTimeout(hide,1800);}else hide();},{passive:true});
+  window.addEventListener('scroll',hide,true);
+})();
 function badgeIconHtml(g){
   var ic=subIcon(g.sub,g.area);
   if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,white);vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
   else ic=ic.replace('margin-right:5px','margin-right:2px');
-  return '<span style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+  return '<span data-tip="'+subTip(g.area,g.sub)+'" style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
 }
 function nextWeekBadgesHtml(WS){
   var list=weekBadgeList(WS);
@@ -941,7 +966,7 @@ function renderSemana(T){
     var ic=subIcon(g.sub,g.area);
     if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,white);vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
     else ic=ic.replace('margin-right:5px','margin-right:2px');
-    return '<span style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+    return '<span data-tip="'+subTip(g.area,g.sub)+'" style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
   }
   var lateGroups=buildIconGroups(late);
   document.getElementById('lcCount').textContent=late.length?' - '+nOrd(late.length):' - No hay \u00f3rdenes vencidas';
@@ -1124,7 +1149,7 @@ function renderSemana(T){
       var ic=subIcon(g.sub,g.area);
       if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,white);vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
       else ic=ic.replace('margin-right:5px','margin-right:2px');
-      return '<span style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+      return '<span data-tip="'+subTip(g.area,g.sub)+'" style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
     }).join('');
     document.getElementById('cl').innerHTML=clHtml;
   }
