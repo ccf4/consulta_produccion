@@ -91,21 +91,25 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .ws-area{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
 .ws-cant{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;}
 .ws-sub{font-size:11px;color:var(--muted);}
-.rt2-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.rt2{border-collapse:separate;border-spacing:0;width:100%;font-size:12px}
-.rt2 th{font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);padding:6px 10px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
-.rt2 th span{display:block;font-weight:400;text-transform:none;letter-spacing:0}
-.rt2 th.l,.rt2 td.l{text-align:left;position:sticky;left:0;background:var(--surface);z-index:1}
-.rt2 th.ven{color:var(--danger)}
-.rt2 td{padding:4px 10px;text-align:right;border-bottom:1px solid rgba(0,0,0,.05);font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.25}
-.rt2 td.z{color:#c0c4cc}
-.rt2 td.vv b{color:var(--danger)}
-.rt2 td.tt{border-left:1px solid var(--border);font-weight:700}
-.rt2 td b{font-weight:700}
-.rt2 td small{display:block;font-size:9px;color:var(--muted);font-weight:400}
-.rt2 tr.ar td{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:left;background:#f4f5f8;padding:3px 10px}
-.rt2 tr.tr td{border-top:1.5px solid rgba(0,0,0,.2);font-weight:700}
-.rt2 .sn{display:inline-flex;align-items:center;gap:6px}
+.hm{width:100%;border-collapse:separate;border-spacing:2px;font-size:12px}
+.hm th{font-size:9px;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);padding:2px 4px;text-align:right;font-weight:600;vertical-align:bottom}
+.hm th small{display:block;font-size:8px;font-weight:400;text-transform:none;letter-spacing:0}
+.hm th.key{text-align:left;padding-left:0;vertical-align:bottom;color:var(--text);font-size:10px;line-height:1.15}
+.hm th.key small{display:block;font-size:9px;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0}
+.hm th.ven{color:var(--danger)}
+.hm th .sh{display:none}
+.hm td{padding:5px 7px;text-align:right;border-radius:4px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hm td.l{text-align:left;padding-left:0;width:1%}
+.hm td small{display:block;font-size:9px;font-weight:400;color:var(--muted);line-height:1.2}
+.hm td small .sh{display:none}
+.hm td.z{color:#d1d5db;background:#f7f8fa}
+.hm td.t{font-weight:700;background:none}
+.hm tr.ah td{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:left;padding:8px 0 2px;background:none}
+.hm tr.tr td{font-weight:700;border-top:1.5px solid rgba(0,0,0,.18);border-radius:0;padding-top:6px}
+.hm tr.tr td.l{padding-left:0}
+.hm .sn{display:inline-flex;align-items:center;gap:6px}
+@media(min-width:641px){.hm{table-layout:fixed}.hm th:first-child,.hm td.l{width:170px}.hm th:last-child{width:90px}}
+@media(max-width:640px){.hm th:not(.key) small{display:none}.hm td small .lg{display:none}.hm td small .sh{display:inline}.hm td{padding:4px 4px;font-size:11.5px}.hm th .lg{display:none}.hm th .sh{display:inline}}
 .late-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;}
 .late-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,240px));gap:10px;}
 .late-card{border-radius:10px;padding:8px 11px;cursor:pointer;min-height:118px;display:flex;flex-direction:column;}
@@ -237,7 +241,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
   </div>
   <div class="view" id="view-todas">
     <div class="st" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span class="sum-lab">Pendiente por área y subárea</span><span id="tdCount" style="font-size:11px;color:var(--muted);font-weight:400"></span></span></div>
-    <div class="card" id="tdCard" style="margin-top:8px;margin-bottom:12px"><div class="card-body" id="tdBody" style="padding:6px 10px"></div></div>
+    <div class="card" id="tdCard" style="margin-top:8px;margin-bottom:12px"><div class="card-body" id="tdBody" style="padding:6px 12px 10px"></div></div>
     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
       <span class="fl">Estado:</span>
       <div class="fb active" onclick="filterAll('all',this)">Todas</div>
@@ -1240,19 +1244,26 @@ function renderResumenAbiertas(d,aF){
   var heads=['Vencidas','Esta semana<span>'+rng(WS0)+'</span>','Sig. semana<span>'+rng(w1)+'</span>','Despu\u00e9s<span>desde '+fm(w2)+'</span>'];
   var tot=[0,0,0,0],totO=[new Set(),new Set(),new Set(),new Set()];
   list.forEach(function(r){r.c.forEach(function(x,i){tot[i]+=x;r.o[i].forEach(function(op){totO[i].add(op);});});});
+  var maxT=Math.max.apply(null,list.map(function(r){return r.c.reduce(function(x,y){return x+y;},0);}));
   function cell(x,n,i){
     if(!x)return '<td class="z">\u2013</td>';
-    return '<td'+(i===0?' class="vv"':'')+'><b>'+fmtNum(x)+'</b><small>'+nOrd(n)+'</small></td>';
+    var a=Math.min(1,Math.sqrt(x/maxT*3));
+    var bg=i===0?'rgba(239,68,68,'+(0.1+a*0.3)+')':'rgba(59,130,246,'+(0.08+a*0.32)+')';
+    return '<td style="background:'+bg+';'+(i===0?'color:#b91c1c;font-weight:600':'')+'">'+fmtNum(x)+'<small><span class="lg">'+nOrd(n)+'</span><span class="sh">'+n+' ord.</span></small></td>';
   }
-  var h='<div class="rt2-wrap"><table class="rt2"><thead><tr><th class="l">Sub\u00e1rea</th>'+heads.map(function(x,i){return '<th'+(i===0?' class="ven"':'')+'>'+x+'</th>';}).join('')+'<th>Total</th></tr></thead><tbody>';
+  var hd=['<th class="ven"><span class="lg">Vencidas</span><span class="sh">Venc.</span></th>',
+    '<th><span class="lg">Esta semana</span><span class="sh">Esta sem.</span><small>'+rng(WS0)+'</small></th>',
+    '<th><span class="lg">Sig. semana</span><span class="sh">Sig.</span><small>'+rng(w1)+'</small></th>',
+    '<th><span class="lg">Después</span><span class="sh">Desp.</span><small>desde '+fm(w2)+'</small></th>'];
+  var h='<table class="hm"><thead><tr><th class="key"><b>piezas</b><small>\u00f3rdenes</small></th>'+hd.join('')+'<th>Total</th></tr></thead><tbody>';
   var last='';
   list.forEach(function(r){
-    if(r.a!==last){last=r.a;h+='<tr class="ar"><td class="l" style="color:'+ac(r.a)+'">'+r.a+'</td><td colspan="5"></td></tr>';}
+    if(r.a!==last){last=r.a;h+='<tr class="ah"><td colspan="6" style="color:'+ac(r.a)+'">'+r.a+'</td></tr>';}
     var sum=r.c.reduce(function(x,y){return x+y;},0),all=new Set();r.o.forEach(function(s){s.forEach(function(op){all.add(op);});});
-    h+='<tr><td class="l"><span class="sn">'+subIcon(r.s,r.a)+'<span>'+r.s+'</span></span></td>'+r.c.map(function(x,i){return cell(x,r.o[i].size,i);}).join('')+'<td class="tt"><b>'+fmtNum(sum)+'</b><small>'+nOrd(all.size)+'</small></td></tr>';
+    h+='<tr><td class="l"><span class="sn">'+subIcon(r.s,r.a)+r.s+'</span></td>'+r.c.map(function(x,i){return cell(x,r.o[i].size,i);}).join('')+'<td class="t">'+fmtNum(sum)+'<small><span class="lg">'+nOrd(all.size)+'</span><span class="sh">'+all.size+' ord.</span></small></td></tr>';
   });
   var allT=new Set();totO.forEach(function(s){s.forEach(function(op){allT.add(op);});});
-  h+='<tr class="tr"><td class="l">Total</td>'+tot.map(function(x,i){return cell(x,totO[i].size,i);}).join('')+'<td class="tt"><b>'+fmtNum(tot.reduce(function(a,b){return a+b;},0))+'</b><small>'+nOrd(allT.size)+'</small></td></tr></tbody></table></div>';
+  h+='<tr class="tr"><td class="l">Total</td>'+tot.map(function(x,i){return '<td data-tip="'+nOrd(totO[i].size)+'"'+(i===0?' style="color:#b91c1c"':'')+'>'+(x?fmtNum(x):'–')+'</td>';}).join('')+'<td class="t">'+fmtNum(tot.reduce(function(a,b){return a+b;},0))+'<small><span class="lg">'+nOrd(allT.size)+'</span><span class="sh">'+allT.size+' ord.</span></small></td></tr></tbody></table>';
   body.innerHTML=h;
 }
 function sortBy(col){
