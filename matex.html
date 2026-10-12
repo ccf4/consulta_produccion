@@ -353,6 +353,18 @@ const CIERRES_META={"hasta":""};
 var CIERRES = {};          // OP completa: CIERRES[op]={fecha,timestamp}
 var CIERRES_LISTA = [];    // todas las entradas de cierres.json (y las hechas en esta sesion)
 var _cierresHechos = {};
+function cierreTs(op){
+  var m='';
+  CIERRES_LISTA.forEach(function(e){if(String(e.op)===String(op)&&e.timestamp&&e.timestamp>m)m=e.timestamp;});
+  return m;
+}
+// Orden de cerradas: dia de cierre (FTERM) mas reciente primero; dentro del mismo dia, la hora real del cierre (cierres.json), la ultima arriba.
+function cmpCerradas(refA,refB){
+  var d=(pd(refB.FTERM)||new Date(0))-(pd(refA.FTERM)||new Date(0));
+  if(d)return d;
+  var ta=cierreTs(refA.OP),tb=cierreTs(refB.OP);
+  return ta===tb?0:(ta<tb?1:-1);
+}
 function _letraPart(op,part){
   var m=String(part).match(/^(\d+)([a-z]*)\/(.+)$/i);
   if(!m)return part+'a';
@@ -1115,8 +1127,8 @@ function renderSemana(T){
   });
   var _aOrd=['Disco','Aros','Telar','Varios','ALMC'];
   closedRecent.sort(function(a,b){
-    var da=pd(b._ref.FTERM)||new Date(0),db=pd(a._ref.FTERM)||new Date(0);
-    if(da.getTime()!==db.getTime())return da-db;
+    var c=cmpCerradas(a._ref,b._ref);
+    if(c)return c;
     return (_aOrd.indexOf(a._area)||99)-(_aOrd.indexOf(b._area)||99);
   });
   document.getElementById('cc').textContent=' - '+nOrdP(Object.keys(seenClosed).length);
