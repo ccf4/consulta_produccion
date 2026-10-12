@@ -148,7 +148,11 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
   .search-input{flex:1 1 auto;width:auto;}
   main{padding:14px;}
   .tabs{padding:0 10px;}
-  .late-cards{grid-template-columns:1fr!important;gap:6px;}
+  .late-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px;}
+  .late-cards .late-card{min-width:0;min-height:0;}
+  .late-cards .late-card>div:first-child{flex-wrap:wrap;justify-content:flex-start!important;gap:3px 4px;}
+  .late-cards .late-card>div:first-child>span:last-child{margin-left:0!important;}
+  .late-cards .late-card>div:not(:first-child) span{white-space:normal!important;overflow-wrap:anywhere;}
   .late-card{padding:7px 10px;}
   .lwrap{display:grid!important;grid-template-columns:1fr 1fr;gap:6px!important;}
   .lwrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;}
@@ -232,7 +236,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
     </div>
   </div>
   <div class="view" id="view-todas">
-    <div class="st" onclick="toggleTd()" style="cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span class="sum-lab">Pendiente por área y subárea</span><span id="tdCount" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span class="wk-toggle" style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:5px;color:var(--accent);font-size:12px;font-weight:600"><span id="tdLabel" class="lc-label">Ocultar</span><svg id="tdChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;transition:transform .15s;transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+    <div class="st" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span class="sum-lab">Pendiente por área y subárea</span><span id="tdCount" style="font-size:11px;color:var(--muted);font-weight:400"></span></span></div>
     <div class="card" id="tdCard" style="margin-top:8px;margin-bottom:12px"><div class="card-body" id="tdBody" style="padding:6px 10px"></div></div>
     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
       <span class="fl">Estado:</span>
@@ -1208,16 +1212,7 @@ function renderWeekDots(T,maxOff,minOff){
 // TABLE
 
 // Resumen por área y subárea de todo lo pendiente (respeta vendedor, búsqueda y filtros de la lista)
-var _tdInit=false;
-function toggleTd(){
-  var card=document.getElementById('tdCard'),chev=document.getElementById('tdChevron'),label=document.getElementById('tdLabel');
-  var open=card.style.display!=='none';
-  card.style.display=open?'none':'block';
-  chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
-  if(label)label.textContent=open?'Ver detalle':'Ocultar';
-}
 function renderResumenAbiertas(d,aF){
-  if(!_tdInit){_tdInit=true;if(window.innerWidth<=640)toggleTd();}
   var ids=new Set(d.map(function(r){return String(r.OP);}));
   var T=today(),WS0=wkS(T,0),DAY=864e5,AO=['Disco','Aros','Telar','Varios','ALMC'];
   var rows={};
