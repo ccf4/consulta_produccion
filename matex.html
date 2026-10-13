@@ -191,6 +191,8 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
   .wk-toggle{order:2}
   #lcBadgesWrap,#wgBadgesWrap,#rpBadgesWrap,#clBadgesWrap,#tdBadgesWrap{order:3;flex-basis:100%!important;margin-top:0}
 }
+@media(min-width:641px){.pm-row{white-space:nowrap}}
+@media(min-width:641px){.lwrap .late-card,.late-cards .late-card{height:118px;min-height:0;overflow:hidden}}
 </style>
 </head>
 <body>
@@ -231,11 +233,11 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
     <div class="st" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span id="wgTitle" class="sum-lab">Entregas pendientes de la semana</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="wgBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div>
         <div class="st sec-title" style="margin:14px 0 8px 13px">Entregas diarias programadas</div>
     <div class="card"><div class="card-body" style="padding:12px"><div style="overflow-x:auto"><div id="wg"></div></div></div></div>
-    <div class="st" onclick="toggleReprogSection()" style="cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-top:12px;transition:background .1s;overflow:hidden" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--surface2)'"><span class="wk-summary-title" style="flex-shrink:0">Reprogramadas<span id="rpCount" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="rpBadges" style="display:flex;align-items:center;gap:6px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span><span class="wk-toggle" style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:5px;color:var(--accent);font-size:12px;font-weight:600"><span id="rpLabel" class="lc-label">Ver detalle</span><svg id="rpChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;transition:transform .15s"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+    <div class="st" onclick="toggleReprogSection()" style="cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-top:12px;transition:background .1s;overflow:hidden" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--surface2)'"><span class="wk-summary-title" style="flex-shrink:0"><span class="sum-lab">Reprogramadas</span><span id="rpCount" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="rpBadges" style="display:flex;align-items:center;gap:6px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span><span class="wk-toggle" style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:5px;color:var(--accent);font-size:12px;font-weight:600"><span id="rpLabel" class="lc-label">Ver detalle</span><svg id="rpChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;transition:transform .15s"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
     <div class="card" id="rpCard" style="display:none;margin-top:8px"><div class="card-body" id="rp" style="padding:9px"></div></div>
     <div class="week-dots" id="weekDots"></div>
     <div id="extraSecs">
-      <div class="st" style="margin-top:20px;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0">Cerradas última semana<span id="cc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="clBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div>
+      <div class="st" style="margin-top:20px;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span class="sum-lab">Cerradas última semana</span><span id="cc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span id="clBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div>
       <div class="card"><div class="card-body" id="cl" style="padding:12px"></div></div>
     </div>
   </div>
@@ -353,6 +355,13 @@ const CIERRES_META={"hasta":"2026-10-12T22:52:41.564Z"};
 var CIERRES = {};          // OP completa: CIERRES[op]={fecha,timestamp}
 var CIERRES_LISTA = [];    // todas las entradas de cierres.json (y las hechas en esta sesion)
 var _cierresHechos = {};
+function entregadoTag(op){
+  var rows=RAW.filter(function(x){return String(x.OP)===String(op);});
+  var t=rows.filter(function(x){return x.STATUS==='T';}),v=rows.filter(function(x){return x.STATUS==='V';});
+  if(!t.length||!v.length)return '';
+  var pz=t.reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
+  return '<div style="font-size:10px;font-weight:700;color:var(--accent3);margin-bottom:3px;line-height:1.3">\u2713 Entregado: '+fmtNum(pz)+' pzas</div>';
+}
 function cierreTs(op){
   var m='';
   CIERRES_LISTA.forEach(function(e){if(String(e.op)===String(op)&&e.timestamp&&e.timestamp>m)m=e.timestamp;});
@@ -600,12 +609,25 @@ function opSubInner(rows){
   if(list.length===1)return icons+'<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+names+'">'+names+'</span>';
   return '<span style="display:flex;flex-wrap:wrap;align-items:center;gap:2px 4px;min-width:0"><span style="display:flex;align-items:center;gap:2px">'+icons+'</span><span style="flex-basis:100%;font-size:11px;line-height:1.25" title="'+names+'">'+names+'</span></span>';
 }
+function opSubInline(rows){
+  var list=opSubList(rows);
+  if(!list.length)return '';
+  var names=list.map(function(g){return g.name;}).join(' \u00b7 ');
+  var icons=list.map(function(g){return subIcon(g.sub,g.area);}).join('');
+  return '<span style="display:flex;align-items:center;gap:2px;flex-shrink:0">'+icons+'</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+names+'">'+names+'</span>';
+}
 function opRowsAbiertas(op){
   var rows=RAW.filter(function(x){return String(x.OP)===String(op);});
   var v=rows.filter(function(x){return x.STATUS!=='T'&&x.STATUS!=='C';});
   return v.length?v:rows;
 }
 function today(){var d=new Date();d.setHours(0,0,0,0);return d;}
+function diasAbTxt(r){
+  var fe=pd(r.FEMIT);if(!fe)return '';
+  var d=daysDiff(fe,today());
+  return '<span title="'+d+' d\u00edas abierta" style="font-size:10px;font-weight:600;white-space:nowrap;flex-shrink:0;margin-left:auto;color:'+(d>180?'var(--danger)':d>60?'var(--accent4)':'var(--muted)')+'">'+d+' d\u00edas abierta</span>';
+}
+function multiSub(op){return opSubList(opRowsAbiertas(op)).length>1;}
 function wkS(base,off){var d=new Date(base),day=d.getDay(),diff=day===0?-6:1-day;d.setDate(d.getDate()+diff+(off||0)*7);d.setHours(0,0,0,0);return d;}
 function wkE(s){var d=new Date(s);d.setDate(d.getDate()+6);d.setHours(23,59,59,999);return d;}
 function inR(d,s,e){return d&&d>=s&&d<=e;}
@@ -709,7 +731,7 @@ function showDetail(op){
     (arts.length?'<div class="dr" style="align-items:flex-start"><span class="dk">Art\u00edculo'+(arts.length>1?'s':'')+'</span><span style="font-size:10px;text-align:right;max-width:280px;line-height:1.6">'+arts.map(function(a,i){return arts.length>1?'<span style="display:block;padding-bottom:3px;'+(i<arts.length-1?'border-bottom:1px solid var(--border);margin-bottom:3px':'')+'">' +a+'</span>':a;}).join('')+'</span></div>':'')+
     '<div class="dr"><span class="dk">Area / Subarea</span><span style="font-weight:700;color:'+ac(r.AREA)+'">'+r.AREA+' / '+r.SUBAREA+'</span></div>'+
     '<div class="dr"><span class="dk">Material</span><span style="font-weight:600">'+(r.MAT||'--')+'</span></div>'+
-    (parts.length?'<div class="dr" style="align-items:flex-start"><span class="dk">Partes y malla</span><span style="text-align:right;font-size:10px;font-family:IBM Plex Mono,monospace;line-height:1.7">'+parts.map(function(p){return '<span style="display:block">'+(p.PART||'')+' &nbsp; '+fmtNum(parseInt(p.CANT)||0)+' pzas &nbsp;\u00b7&nbsp; '+(p.SUBAREA||'--')+' &nbsp;\u00b7&nbsp; '+(p.MESH||'--')+'</span>';}).join('')+'</span></div>':'')+
+    (parts.length?'<div class="dr" style="align-items:flex-start"><span class="dk">Partes y malla</span><span style="text-align:right;font-size:10px;font-family:IBM Plex Mono,monospace;line-height:1.7">'+parts.map(function(p){var _mix=parts.some(function(q){return q.STATUS==='V';})&&parts.some(function(q){return q.STATUS==='T';});var _t=_mix&&p.STATUS==='T',_v=_mix&&p.STATUS==='V';return '<span class="pm-row" style="display:block'+(_t?';opacity:.8':'')+'"'+(_t&&pd(p.FTERM)?' title="Entregada '+fd(pd(p.FTERM))+'"':'')+'>'+(p.PART||'')+' &nbsp; '+fmtNum(parseInt(p.CANT)||0)+' pzas &nbsp;\u00b7&nbsp; '+(p.SUBAREA||'--')+' &nbsp;\u00b7&nbsp; '+(p.MESH||'--')+(_t?' &nbsp;<b style="color:var(--accent3);font-family:inherit">\u2713 ENTREGADA</b>':'')+(_v?' &nbsp;<b style="color:var(--muted);font-weight:600">pendiente</b>':'')+'</span>';}).join('')+'</span></div>':'')+
     '<div class="dr"><span class="dk">Total piezas</span><span style="font-family:IBM Plex Mono,monospace;font-weight:700;font-size:14px">'+fmtNum(totalCant)+'</span></div>'+
     '<div style="height:1px;background:var(--border);margin:6px 0"></div>'+
     '<div class="dr"><span class="dk">Fecha emisión</span><span>'+fd(fe)+'</span></div>'+
@@ -1048,14 +1070,15 @@ function renderSemana(T){
         +dateTag
         +'<div class="late-card" style="background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.2);border-left:4px solid var(--danger);width:220px" onclick="showDetail(\''+r.OP+'\')">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
-        +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;min-width:0;color:'+ac(r.AREA)+'">'+opSubInner(opRowsAbiertas(r.OP))+'</span>'
+        +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;min-width:0;color:'+ac(r.AREA)+'">'+opSubInline(opRowsAbiertas(r.OP))+'</span>'
         +'<span style="background:rgba(255,77,77,.15);color:var(--danger);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap;margin-left:6px">'+daysLate+' día'+(daysLate!==1?'s':'')+' vencido</span>'
         +'</div>'
         +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">'+fOP(r.OP)+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> · '+fPed(ped(r.OP))+'</span>':'')+'</span>'
-        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
+        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
         +'</div>'
-        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;margin-top:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(getArts(r.OP)[0]||'')+'</div>'
+        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(getArts(r.OP)[0]||'')+'</div>'
+        +'<div style="display:flex;justify-content:flex-end;margin-top:auto">'+diasAbTxt(r)+'</div>'
         +'</div></div>');
     });
     document.getElementById('lo').innerHTML='<div class="lwrap" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start">'+tarjetasHtmlM.join('')+'</div>';
@@ -1078,13 +1101,14 @@ function renderSemana(T){
       tarjetasHtmlR.push('<div style="display:flex;flex-direction:column">'
         +dateTag
         +'<div class="late-card" style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2);border-left:4px solid var(--warn);width:220px" onclick="showDetail(\''+r.OP+'\')">'
-        +'<div style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;min-width:0;color:'+ac(r.AREA)+';margin-bottom:6px">'+opSubInner(opRowsAbiertas(r.OP))+'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px"><span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;min-width:0;color:'+ac(r.AREA)+'">'+opSubInline(opRowsAbiertas(r.OP))+'</span>'
+        +(esHoy?'<span style="background:rgba(5,150,105,.18);color:var(--accent3);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap">Entrega hoy</span>':'<span style="background:rgba(249,115,22,.15);color:var(--warn);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap">'+fdShort(fp0)+' \u2192 '+fdShort(fprod)+'</span>')+'</div>'
         +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">'+fOP(r.OP)+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> \u00b7 '+fPed(ped(r.OP))+'</span>':'')+'</span>'
-        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
+        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
         +'</div>'
-        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:12px">'+(getArts(r.OP)[0]||'&nbsp;')+'</div>'
-        +(esHoy?'<div style="font-size:10px;color:var(--accent3);font-weight:700;font-family:IBM Plex Mono,monospace;text-align:right;margin-top:auto">'+fdShort(fp0)+' \u2192 Entrega hoy</div>':'<div style="font-size:10px;color:var(--warn);font-weight:600;font-family:IBM Plex Mono,monospace;text-align:right;margin-top:auto">'+fdShort(fp0)+' \u2192 '+fdShort(fprod)+'</div>')
+        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:12px">'+(getArts(r.OP)[0]||'&nbsp;')+'</div>'
+        +'<div style="display:flex;justify-content:flex-end;margin-top:auto">'+diasAbTxt(r)+'</div>'
         +'</div></div>');
     });
     document.getElementById('rp').innerHTML='<div class="lwrap" style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start">'+tarjetasHtmlR.join('')+'</div>';
@@ -1170,10 +1194,9 @@ function renderSemana(T){
           +'</div>'
           +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
           +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">'+fOP(opId)+(ped(opId)?'<span class="ped-ref" style="font-weight:400"> · '+fPed(ped(opId))+'</span>':'')+'</span>'
-          +'<span style="font-size:10px;color:var(--muted);white-space:nowrap">'+pzasText+' · '+((rparts[0]&&rparts[0].MAT)||ref.MAT||'--')+(((rparts[0]&&rparts[0].MESH)||ref.MESH)?' · M'+((rparts[0]&&rparts[0].MESH)||ref.MESH):'')+'</span>'
+          +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis">'+pzasText+' · '+((rparts[0]&&rparts[0].MAT)||ref.MAT||'--')+(((rparts[0]&&rparts[0].MESH)||ref.MESH)?' · M'+((rparts[0]&&rparts[0].MESH)||ref.MESH):'')+'</span>'
           +'</div>'
           +(arts.length?'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;line-height:1.4">'+(arts[0]||'').slice(0,70)+'</div>':'')
-          +'<div style="font-size:10px;color:var(--muted)">Entregado: '+fd(pd(ref.FTERM))+'</div>'
           +'</div>';
       }).join('')+'</div>';
     });
