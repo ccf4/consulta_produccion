@@ -91,6 +91,29 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .ws-area{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
 .ws-cant{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;}
 .ws-sub{font-size:11px;color:var(--muted);}
+.cs-tg{display:flex;gap:0;float:right;border:1px solid var(--border);border-radius:99px;overflow:hidden;font-size:11px;margin:0 0 6px 8px}
+.cs-tg span{padding:3px 11px;cursor:pointer;color:var(--muted)}.cs-tg span.on{background:var(--text);color:#fff}
+.cs-lg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin:2px 0 4px;align-items:center}
+.cs-lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}.cs-lg b{color:var(--text)}.cs-hint{margin-left:auto;font-style:italic}
+.cs0{background:#ef4444}.cs1{background:#2563eb}.cs2{background:#8fb0f7}.cs3{background:#cbd5e1}
+.cs-ah{clear:both;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;display:flex;align-items:baseline;gap:8px}
+.cs-ah small{font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
+.cs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.cs-tile{border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:var(--surface);display:flex;flex-direction:column;gap:7px;min-width:0}
+.cs-tile.hasv{border-color:#f3b4b4;background:#fffafa}
+.cs-hd{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;min-width:0}
+.cs-ic{display:inline-flex;flex-shrink:0}.cs-nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cs-n{font-size:15px;font-weight:800}
+.cs-sq{display:flex;flex-wrap:wrap;gap:3px;flex:1;align-content:flex-start}
+.cs-sq span{width:16px;height:16px;border-radius:4px;cursor:pointer}
+.cs-sq span:hover{outline:2px solid var(--text);outline-offset:1px}
+.cs-ft{font-size:10.5px;color:var(--muted);border-top:1px solid var(--border);padding-top:5px}.cs-ft b{color:#b91c1c}
+#sub-tip.tt-html{background:#fff!important;color:#111827!important;border:1px solid #d9dee7!important;width:230px;white-space:normal!important;padding:10px 12px!important;font:500 11.5px/1.35 "IBM Plex Sans",sans-serif!important;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.tt-html .tt-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.tt-html .tt-top b{font-size:13px;font-weight:700}.tt-html .tt-top span{color:#6b7280;font-size:10.5px;text-align:right}
+.tt-html .tt-big{font-size:28px;font-weight:800;line-height:1;margin:9px 0 2px}.tt-html .tt-big small{font-size:12px;font-weight:500;color:#6b7280;margin-left:4px}
+.tt-html .tt-seg{display:flex;gap:3px;margin:7px 0 9px}.tt-html .tt-seg i{flex:1;height:8px;border-radius:2px}
+.tt-html .tt-ln{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-top:1px solid #e5e7eb}.tt-html .tt-ln span{color:#6b7280}.tt-html .tt-ln b{font-weight:600}
+.tpill{display:inline-block;border-radius:99px;padding:1px 8px;font-size:10.5px;font-weight:700;color:#fff!important;margin-left:4px}.tpill.r{background:#ef4444}.tpill.g{background:#16a34a}
 .hm{width:100%;border-collapse:separate;border-spacing:2px;font-size:12px}
 .hm th{font-size:9px;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);padding:2px 4px;text-align:right;font-weight:600;vertical-align:bottom}
 .hm th small{display:block;font-size:8px;font-weight:400;text-transform:none;letter-spacing:0}
@@ -953,18 +976,18 @@ function subTip(area,sub){
 (function(){
   var tip=document.createElement('div');
   tip.id='sub-tip';
-  tip.style.cssText='position:fixed;z-index:9999;display:none;background:#1f2937;color:#fff;font:600 11px/1.2 "IBM Plex Sans",sans-serif;padding:5px 9px;border-radius:6px;pointer-events:none;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25)';
+  tip.style.cssText='position:fixed;z-index:9999;display:none;background:#1f2937;color:#fff;font:600 11px/1.4 "IBM Plex Sans",sans-serif;padding:5px 9px;border-radius:6px;pointer-events:none;white-space:pre;box-shadow:0 3px 10px rgba(0,0,0,.25)';
   document.body.appendChild(tip);
   var tm;
   function hide(){tip.style.display='none';}
   function show(el){
-    tip.textContent=el.getAttribute('data-tip');tip.style.display='block';
+    var hh=el.getAttribute('data-tiph');if(hh){tip.innerHTML=hh;tip.className='tt-html';}else{tip.textContent=el.getAttribute('data-tip');tip.className='';}tip.style.display='block';
     var r=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
     var left=Math.max(6,Math.min(window.innerWidth-w-6,r.left+r.width/2-w/2));
     var top=r.top-h-7;if(top<4)top=r.bottom+7;
     tip.style.left=left+'px';tip.style.top=top+'px';
   }
-  function target(e){return e.target&&e.target.closest?e.target.closest('[data-tip]'):null;}
+  function target(e){return e.target&&e.target.closest?e.target.closest('[data-tip],[data-tiph]'):null;}
   document.addEventListener('mouseover',function(e){var el=target(e);if(el)show(el);else hide();});
   document.addEventListener('touchstart',function(e){var el=target(e);clearTimeout(tm);if(el){show(el);tm=setTimeout(hide,1800);}else hide();},{passive:true});
   window.addEventListener('scroll',hide,true);
@@ -1260,9 +1283,9 @@ function renderResumenAbiertas(d,aF){
     if(aF!=='all'&&r.AREA!==aF)return;
     var fp=pd(r.Fprod||r.FProm);if(!fp)return;
     var ns=normSub(r.SUBAREA)||r.SUBAREA,k=r.AREA+'|'+ns;
-    var o=rows[k]=rows[k]||{a:r.AREA,s:ns,c:[0,0,0,0],o:[new Set(),new Set(),new Set(),new Set()]};
+    var o=rows[k]=rows[k]||{a:r.AREA,s:ns,c:[0,0,0,0],o:[new Set(),new Set(),new Set(),new Set()],p:[{},{},{},{}],m:[{},{},{},{}]};
     var i;if(fp<T)i=0;else{var w=Math.floor((fp-WS0)/(7*DAY));i=w<=0?1:(w===1?2:3);}
-    o.c[i]+=(parseInt(r.CANT)||0);o.o[i].add(String(r.OP));
+    o.c[i]+=(parseInt(r.CANT)||0);o.o[i].add(String(r.OP));o.p[i][String(r.OP)]=(o.p[i][String(r.OP)]||0)+(parseInt(r.CANT)||0);var mm=o.m[i][String(r.OP)]=o.m[i][String(r.OP)]||{fe:null,fprom:null,fprod:null,v:r.VENDEDOR||''};var _fe=pd(r.FEMIT),_fm=pd(r.FProm),_fp=pd(r.Fprod);if(_fe&&(!mm.fe||_fe<mm.fe))mm.fe=_fe;if(_fm&&(!mm.fprom||_fm>mm.fprom))mm.fprom=_fm;if(_fp&&(!mm.fprod||_fp>mm.fprod))mm.fprod=_fp;
   });
   var list=Object.keys(rows).map(function(k){return rows[k];}).filter(function(r){return r.c.some(function(x){return x>0;});});
   list.sort(function(a,b){
@@ -1299,7 +1322,46 @@ function renderResumenAbiertas(d,aF){
   });
   var allT=new Set();totO.forEach(function(s){s.forEach(function(op){allT.add(op);});});
   h+='<tr class="tr"><td class="l">Total</td>'+tot.map(function(x,i){return '<td data-tip="'+nOrd(totO[i].size)+'"'+(i===0?' style="color:#b91c1c"':'')+'>'+(x?fmtNum(x):'–')+'</td>';}).join('')+'<td class="t">'+fmtNum(tot.reduce(function(a,b){return a+b;},0))+'<small><span class="lg">'+nOrd(allT.size)+'</span><span class="sh">'+allT.size+' ord.</span></small></td></tr></tbody></table>';
-  body.innerHTML=h;
+  var PN=['Vencida','Esta semana','Sig. semana','Despu\u00e9s'];
+  var cas='<div class="cs-lg"><span><i class="cs0"></i>Vencidas <b>'+totO[0].size+'</b></span><span><i class="cs1"></i>Esta semana <b>'+totO[1].size+'</b></span><span><i class="cs2"></i>Sig. semana <b>'+totO[2].size+'</b></span><span><i class="cs3"></i>Despu\u00e9s <b>'+totO[3].size+'</b></span><span class="cs-hint">1 casilla = 1 orden por subárea</span></div>';
+  var lastA='';
+  list.forEach(function(r,ix){
+    if(r.a!==lastA){
+      if(lastA)cas+='</div>';
+      lastA=r.a;
+      var aO=new Set(),aV=new Set();list.forEach(function(q){if(q.a===r.a){q.o.forEach(function(st,i){st.forEach(function(op){aO.add(op);if(i===0)aV.add(op);});});}});
+      cas+='<div class="cs-ah" style="color:'+ac(r.a)+'">'+r.a+'<small>'+nOrd(aO.size)+(aV.size?' \u00b7 <b style="color:#b91c1c">'+aV.size+' vencida'+(aV.size>1?'s':'')+'</b>':'')+'</small></div><div class="cs-grid">';
+    }
+    var tot=0,sq='';
+    r.o.forEach(function(st,i){
+      var ops=Array.from(st).sort(function(x,y){return x-y;});
+      ops.forEach(function(op){tot++;
+        var m=r.m[i][op]||{};
+        var da=m.fe?daysDiff(m.fe,T):null,lit=da===null?0:Math.min(6,Math.max(1,Math.ceil(da/10)));
+        var SC=['#22c55e','#22c55e','#f59e0b','#f59e0b','#f97316','#f97316'],seg='';
+        for(var q=0;q<6;q++)seg+='<i style="background:'+(q<lit?SC[q]:'#e5e7eb')+'"></i>';
+        var pst='';
+        if(m.fprod){var dp=daysDiff(T,m.fprod);pst=i===0||dp<0?'<span class="tpill r">vencida '+(-dp)+' d</span>':(dp===0?'<span class="tpill g">hoy</span>':'<span class="tpill g">en '+dp+' d</span>');}
+        var H='<div class="tt-top"><b>OP '+op+'</b><span>'+r.s+(m.v?' \u00b7 '+m.v:'')+'</span></div>'+
+          (da!==null?'<div class="tt-big">'+da+'<small>d\u00eda'+(da===1?'':'s')+' abierta</small></div><div class="tt-seg">'+seg+'</div>':'')+
+          (m.fprod?'<div class="tt-ln"><span>Producci\u00f3n</span><b>'+fdShort(m.fprod)+' '+pst+'</b></div>':'')+
+          (m.fprom?'<div class="tt-ln"><span>Promesa</span><b>'+fdShort(m.fprom)+'</b></div>':'')+
+          '<div class="tt-ln"><span>Piezas</span><b>'+fmtNum(r.p[i][op]||0)+'</b></div>';
+        var tp=H.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+        sq+='<span class="cs'+i+'" data-tiph="'+tp+'" onclick="showDetail(\''+op+'\')"></span>';});
+    });
+    var pz=r.c.reduce(function(x,y){return x+y;},0),vN=r.o[0].size;
+    cas+='<div class="cs-tile'+(vN?' hasv':'')+'"><div class="cs-hd"><span class="cs-ic">'+subIcon(r.s,r.a)+'</span><span class="cs-nm">'+r.s+'</span><span class="cs-n">'+tot+'</span></div><div class="cs-sq">'+sq+'</div><div class="cs-ft">'+fmtNum(pz)+' pzas'+(vN?' \u00b7 <b>'+vN+' venc.</b>':'')+'</div></div>';
+  });
+  cas+='</div>';
+  window._resTabla=h;window._resCas=cas;
+  if(!window._resMode)window._resMode='cas';
+  paintResumen();
+}
+function paintResumen(){
+  var body=document.getElementById('tdBody');if(!body||!window._resCas)return;
+  var m=window._resMode;
+  body.innerHTML='<div class="cs-tg"><span class="'+(m==='cas'?'on':'')+'" onclick="window._resMode=\'cas\';paintResumen()">Casillas</span><span class="'+(m==='tab'?'on':'')+'" onclick="window._resMode=\'tab\';paintResumen()">Tabla</span></div>'+(m==='cas'?window._resCas:window._resTabla);
 }
 function sortBy(col){
   if(sortCol===col){sortDir*=-1;}else{sortCol=col;sortDir=1;}
