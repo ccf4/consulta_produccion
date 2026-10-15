@@ -91,8 +91,6 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .ws-area{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
 .ws-cant{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;}
 .ws-sub{font-size:11px;color:var(--muted);}
-.cs-tg{display:flex;gap:0;float:right;border:1px solid var(--border);border-radius:99px;overflow:hidden;font-size:11px;margin:0 0 6px 8px}
-.cs-tg span{padding:3px 11px;cursor:pointer;color:var(--muted)}.cs-tg span.on{background:var(--text);color:#fff}
 .cs-lg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin:2px 0 4px;align-items:center}
 .cs-lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}.cs-lg b{color:var(--text)}.cs-hint{margin-left:auto;font-style:italic}
 .cs0{background:#ef4444}.cs1{background:#2563eb}.cs2{background:#8fb0f7}.cs3{background:#cbd5e1}
@@ -1355,13 +1353,11 @@ function renderResumenAbiertas(d,aF){
   });
   cas+='</div>';
   window._resTabla=h;window._resCas=cas;
-  if(!window._resMode)window._resMode='cas';
   paintResumen();
 }
 function paintResumen(){
   var body=document.getElementById('tdBody');if(!body||!window._resCas)return;
-  var m=window._resMode;
-  body.innerHTML='<div class="cs-tg"><span class="'+(m==='cas'?'on':'')+'" onclick="window._resMode=\'cas\';paintResumen()">Casillas</span><span class="'+(m==='tab'?'on':'')+'" onclick="window._resMode=\'tab\';paintResumen()">Tabla</span></div>'+(m==='cas'?window._resCas:window._resTabla);
+  body.innerHTML=window._resCas;
 }
 function sortBy(col){
   if(sortCol===col){sortDir*=-1;}else{sortCol=col;sortDir=1;}
