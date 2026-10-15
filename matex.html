@@ -77,6 +77,11 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .day-op:not(.late-op):not(.mnet-op):not(.nw-sum):not(.today-op) .op-num{color:#1e3a8a;}
 .day-op:not(.late-op):not(.mnet-op):not(.nw-sum):not(.today-op){color:#374151;}.day-op:not(.late-op):not(.mnet-op):not(.nw-sum):not(.today-op) .op-ped,.day-op:not(.late-op):not(.mnet-op):not(.nw-sum):not(.today-op) .op-cant{opacity:1;}
 .day-op:hover{filter:brightness(.95);}
+.day-op:not(.late-op):not(.mnet-op):not(.nw-sum):not(.today-op):hover{background:rgba(37,99,235,.15);border-color:rgba(37,99,235,.45);filter:none;}
+.day-op.late-op:hover{background:#ffeaea;border-color:#eebcbc;filter:none;}
+.day-op.mnet-op:not(.nw-sum):hover{background:#e5e7eb;filter:none;}
+.day-op.nw-sum:hover{background:rgba(156,163,175,.28);filter:none;}
+.day-op.today-op:hover{background:#fff;box-shadow:0 1px 4px rgba(17,24,39,.15);filter:none;}
 .day-op.late-op{border-color:#f3d2d2;background:#fff5f5;}.day-op.late-op .op-num{color:#b91c1c;}
 .day-op.today-op{border-color:transparent;background:rgba(255,255,255,.85);outline:1px solid #94a3b8;position:relative;z-index:1;}
 .day-op.mnet-op{border-color:transparent;background:#f3f4f6;color:#374151;}
