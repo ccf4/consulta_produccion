@@ -100,6 +100,10 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .ws-sub{font-size:11px;color:var(--muted);}
 .cs-lg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin:2px 0 4px;align-items:center}
 .cs-lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}.cs-lg b{color:var(--text)}.cs-hint{margin-left:auto;font-style:italic}
+.cx0{background:#bbf7d0}.cx1{background:#fde68a}.cx2{background:#fdba74}.cx3{background:#78350f}.cxn{background:#e5e7eb}
+.cs-sq span.cxv{box-shadow:0 0 0 2px #dc2626}
+.cs-lt{font-weight:600;color:#374151}.cs-lg i.cx0,.cs-lg i.cx1,.cs-lg i.cx2,.cs-lg i.cx3{border:1px solid rgba(0,0,0,.08)}
+.cs-lg i.cxv-k{background:#fff;box-shadow:0 0 0 2px #dc2626;width:8px;height:8px;margin:0 7px 0 2px}
 .cs0{background:#ef4444}.cs1{background:#2563eb}.cs2{background:#8fb0f7}.cs3{background:#cbd5e1}
 .cs-ah{clear:both;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;display:flex;align-items:baseline;gap:8px}
 .cs-ah small{font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
@@ -109,7 +113,7 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .cs-hd{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;min-width:0}
 .cs-ic{display:inline-flex;flex-shrink:0}.cs-nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cs-n{font-size:15px;font-weight:800}
-.cs-sq{display:flex;flex-wrap:wrap;gap:3px;flex:1;align-content:flex-start}
+.cs-sq{display:grid;grid-template-columns:repeat(auto-fill,16px);gap:6px 5px;flex:1;align-content:start;padding:2px}
 .cs-sq span{width:16px;height:16px;border-radius:4px;cursor:pointer}
 .cs-sq span:hover{outline:2px solid var(--text);outline-offset:1px}
 .cs-ft{font-size:10.5px;color:var(--muted);border-top:1px solid var(--border);padding-top:5px}.cs-ft b{color:#b91c1c}
@@ -834,7 +838,7 @@ function buildGrid(WS,gridId,countId,sumId,badgesId){
     if(badgesId&&document.getElementById(badgesId))document.getElementById(badgesId).innerHTML='';
     return;
   }
-  var html='<div class="week-days"><div>Area<div style="background:none;padding:0;margin-top:2px;font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:#9ca3af">(totales de la semana)</div></div>'+days.map(function(d,i){var isToday=d.toDateString()===T.toDateString(),cls=(isToday?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'" style="text-align:center">'+dlabs[i]+'</div>';}).join('')+'</div>';
+  var html='<div class="week-days"><div>Area<div style="background:none;padding:0;margin-top:2px;font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:#9ca3af">(total semana)</div></div>'+days.map(function(d,i){var isToday=d.toDateString()===T.toDateString(),cls=(isToday?'today-col ':'')+(i===days.length-1?'next-week-col':'');return '<div class="'+cls+'" style="text-align:center">'+dlabs[i]+'</div>';}).join('')+'</div>';
   areas.forEach(function(area){
     var col=ac(area);
     html+='<div class="week-row" style="min-height:0"><div class="row-label" style="height:22px;min-height:22px;background:rgba(0,0,0,.06);font-size:12px;font-weight:700;color:'+col+'"><span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+area+'</div>';
@@ -1336,7 +1340,7 @@ function renderResumenAbiertas(d,aF){
   var allT=new Set();totO.forEach(function(s){s.forEach(function(op){allT.add(op);});});
   h+='<tr class="tr"><td class="l">Total</td>'+tot.map(function(x,i){return '<td data-tip="'+nOrd(totO[i].size)+'"'+(i===0?' style="color:#b91c1c"':'')+'>'+(x?fmtNum(x):'–')+'</td>';}).join('')+'<td class="t">'+fmtNum(tot.reduce(function(a,b){return a+b;},0))+'<small><span class="lg">'+nOrd(allT.size)+'</span><span class="sh">'+allT.size+' ord.</span></small></td></tr></tbody></table>';
   var PN=['Vencida','Esta semana','Sig. semana','Despu\u00e9s'];
-  var cas='<div class="cs-lg"><span><i class="cs0"></i>Vencidas <b>'+totO[0].size+'</b></span><span><i class="cs1"></i>Esta semana <b>'+totO[1].size+'</b></span><span><i class="cs2"></i>Sig. semana <b>'+totO[2].size+'</b></span><span><i class="cs3"></i>Despu\u00e9s <b>'+totO[3].size+'</b></span><span class="cs-hint">1 casilla = 1 orden por subárea</span></div>';
+  var cas='<div class="cs-lg"><span class="cs-lt">Antig\u00fcedad de la orden</span><span><i class="cx0"></i>\u2264 15 d</span><span><i class="cx1"></i>16\u201330 d</span><span><i class="cx2"></i>31\u201360 d</span><span><i class="cx3"></i>> 60 d</span><span><i class="cxv-k"></i>Vencida <b>'+totO[0].size+'</b></span><span class="cs-hint">1 casilla = 1 orden por sub\u00e1rea</span></div>';
   var lastA='';
   list.forEach(function(r,ix){
     if(r.a!==lastA){
@@ -1361,7 +1365,8 @@ function renderResumenAbiertas(d,aF){
           (m.fprom?'<div class="tt-ln"><span>Promesa</span><b>'+fdShort(m.fprom)+'</b></div>':'')+
           '<div class="tt-ln"><span>Piezas</span><b>'+fmtNum(r.p[i][op]||0)+'</b></div>';
         var tp=H.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-        sq+='<span class="cs'+i+'" data-tiph="'+tp+'" onclick="showDetail(\''+op+'\')"></span>';});
+        var ak=da===null?-1:(da<=15?0:(da<=30?1:(da<=60?2:3)));
+        sq+='<span class="cx'+(ak<0?'n':ak)+(i===0?' cxv':'')+'" data-tiph="'+tp+'" onclick="showDetail(\''+op+'\')"></span>';});
     });
     var pz=r.c.reduce(function(x,y){return x+y;},0),vN=r.o[0].size;
     cas+='<div class="cs-tile'+(vN?' hasv':'')+'"><div class="cs-hd"><span class="cs-ic">'+subIcon(r.s,r.a)+'</span><span class="cs-nm">'+r.s+'</span><span class="cs-n">'+tot+'</span></div><div class="cs-sq">'+sq+'</div><div class="cs-ft">'+fmtNum(pz)+' pzas'+(vN?' \u00b7 <b>'+vN+' venc.</b>':'')+'</div></div>';
