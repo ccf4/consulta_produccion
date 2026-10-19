@@ -104,6 +104,13 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .cs-sq span.cxv{box-shadow:0 0 0 2px #dc2626}
 .cs-lt{font-weight:600;color:#374151}.cs-lg i.cx0,.cs-lg i.cx1,.cs-lg i.cx2,.cs-lg i.cx3{border:1px solid rgba(0,0,0,.08)}
 .cs-lg i.cxv-k{background:#fff;box-shadow:0 0 0 2px #dc2626;width:8px;height:8px;margin:0 7px 0 2px}
+.cs-lg .cs-chip{cursor:pointer;padding:2px 9px;border-radius:999px;border:1px solid transparent;user-select:none;transition:background .1s}
+.cs-lg .cs-chip:hover{background:#f3f4f6}
+.cs-lg .cs-chip.on{background:#eef2ff;border-color:#c7d2fe;color:#111827}
+.cs-lg .cs-chip.on b{color:#1d4ed8}
+.cs-clr{display:none;cursor:pointer;color:var(--accent);font-weight:600}
+.cs-lg.filt .cs-clr{display:inline}
+.cs-sq span.cs-off,.cs-gone{display:none!important}
 .cs0{background:#ef4444}.cs1{background:#2563eb}.cs2{background:#8fb0f7}.cs3{background:#cbd5e1}
 .cs-ah{clear:both;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;display:flex;align-items:baseline;gap:8px}
 .cs-ah small{font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
@@ -1340,7 +1347,8 @@ function renderResumenAbiertas(d,aF){
   var allT=new Set();totO.forEach(function(s){s.forEach(function(op){allT.add(op);});});
   h+='<tr class="tr"><td class="l">Total</td>'+tot.map(function(x,i){return '<td data-tip="'+nOrd(totO[i].size)+'"'+(i===0?' style="color:#b91c1c"':'')+'>'+(x?fmtNum(x):'–')+'</td>';}).join('')+'<td class="t">'+fmtNum(tot.reduce(function(a,b){return a+b;},0))+'<small><span class="lg">'+nOrd(allT.size)+'</span><span class="sh">'+allT.size+' ord.</span></small></td></tr></tbody></table>';
   var PN=['Vencida','Esta semana','Sig. semana','Despu\u00e9s'];
-  var cas='<div class="cs-lg"><span class="cs-lt">Antig\u00fcedad de la orden</span><span><i class="cx0"></i>\u2264 15 d</span><span><i class="cx1"></i>16\u201330 d</span><span><i class="cx2"></i>31\u201360 d</span><span><i class="cx3"></i>> 60 d</span><span><i class="cxv-k"></i>Vencida <b>'+totO[0].size+'</b></span><span class="cs-hint">1 casilla = 1 orden por sub\u00e1rea</span></div>';
+  var cas='@@LEG@@',AC=[0,0,0,0];
+
   var lastA='';
   list.forEach(function(r,ix){
     if(r.a!==lastA){
@@ -1366,18 +1374,57 @@ function renderResumenAbiertas(d,aF){
           '<div class="tt-ln"><span>Piezas</span><b>'+fmtNum(r.p[i][op]||0)+'</b></div>';
         var tp=H.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
         var ak=da===null?-1:(da<=15?0:(da<=30?1:(da<=60?2:3)));
-        sq+='<span class="cx'+(ak<0?'n':ak)+(i===0?' cxv':'')+'" data-tiph="'+tp+'" onclick="showDetail(\''+op+'\')"></span>';});
+        if(ak>=0)AC[ak]++;
+        sq+='<span class="cx'+(ak<0?'n':ak)+(i===0?' cxv':'')+'" data-ak="'+ak+'" data-op="'+op+'" data-pz="'+(r.p[i][op]||0)+'" data-tiph="'+tp+'" onclick="showDetail(\''+op+'\')"></span>';});
     });
     var pz=r.c.reduce(function(x,y){return x+y;},0),vN=r.o[0].size;
     cas+='<div class="cs-tile'+(vN?' hasv':'')+'"><div class="cs-hd"><span class="cs-ic">'+subIcon(r.s,r.a)+'</span><span class="cs-nm">'+r.s+'</span><span class="cs-n">'+tot+'</span></div><div class="cs-sq">'+sq+'</div><div class="cs-ft">'+fmtNum(pz)+' pzas'+(vN?' \u00b7 <b>'+vN+' venc.</b>':'')+'</div></div>';
   });
   cas+='</div>';
+  var LB=[['0','\u2264 15 d'],['1','16\u201330 d'],['2','31\u201360 d'],['3','> 60 d']];
+  var leg='<div class="cs-lg"><span class="cs-lt">Antig\u00fcedad de la orden</span>'+LB.map(function(b){return '<span class="cs-chip" data-f="'+b[0]+'" onclick="resFilToggle(\''+b[0]+'\')"><i class="cx'+b[0]+'"></i>'+b[1]+'</span>';}).join('')+'<span class="cs-chip" data-f="v" onclick="resFilToggle(\'v\')"><i class="cxv-k"></i>Vencida</span><span class="cs-clr" onclick="resFilClear()">Quitar filtro</span><span class="cs-hint" id="csHint">1 casilla = 1 orden por sub\u00e1rea</span></div>';
+  cas=cas.replace('@@LEG@@',leg);
   window._resTabla=h;window._resCas=cas;
   paintResumen();
+}
+var _resFil={a:{},v:false};
+function resFilToggle(k){if(k==='v')_resFil.v=!_resFil.v;else _resFil.a[k]=!_resFil.a[k];applyResFil();}
+function resFilClear(){_resFil={a:{},v:false};applyResFil();}
+function applyResFil(){
+  var body=document.getElementById('tdBody');if(!body)return;
+  var ages=Object.keys(_resFil.a).filter(function(k){return _resFil.a[k];}),act=ages.length>0||_resFil.v,n=0,seen={};
+  body.querySelectorAll('.cs-sq span').forEach(function(sp){
+    var ak=sp.getAttribute('data-ak'),ven=sp.classList.contains('cxv');
+    var ok=!act||((!ages.length||ages.indexOf(ak)>=0)&&(!_resFil.v||ven));
+    sp.classList.toggle('cs-off',!ok);if(act&&ok){n++;seen[sp.getAttribute('data-op')]=1;}
+  });
+  body.querySelectorAll('.cs-tile').forEach(function(t){
+    var c=t.querySelector('.cs-n'),f=t.querySelector('.cs-ft');
+    if(c.getAttribute('data-o')===null){c.setAttribute('data-o',c.textContent);f.setAttribute('data-o',f.innerHTML);t.setAttribute('data-hv',t.classList.contains('hasv')?'1':'');}
+    var vis=[].slice.call(t.querySelectorAll('.cs-sq span:not(.cs-off)'));
+    t.classList.toggle('cs-gone',act&&!vis.length);
+    if(act){
+      var pz=0,v=0;vis.forEach(function(x){pz+=parseInt(x.getAttribute('data-pz'))||0;if(x.classList.contains('cxv'))v++;});
+      c.textContent=vis.length;f.innerHTML=fmtNum(pz)+' pzas'+(v?' \u00b7 <b>'+v+' venc.</b>':'');t.classList.toggle('hasv',v>0);
+    }else{c.textContent=c.getAttribute('data-o');f.innerHTML=f.getAttribute('data-o');t.classList.toggle('hasv',!!t.getAttribute('data-hv'));}
+  });
+  body.querySelectorAll('.cs-ah').forEach(function(h){
+    var g=h.nextElementSibling,sm=h.querySelector('small');if(!g||!sm)return;
+    if(sm.getAttribute('data-o')===null)sm.setAttribute('data-o',sm.innerHTML);
+    var all={},ven={};
+    g.querySelectorAll('.cs-sq span:not(.cs-off)').forEach(function(x){var o=x.getAttribute('data-op');all[o]=1;if(x.classList.contains('cxv'))ven[o]=1;});
+    var na=Object.keys(all).length,nv=Object.keys(ven).length;
+    h.classList.toggle('cs-gone',act&&!na);g.classList.toggle('cs-gone',act&&!na);
+    sm.innerHTML=act?(nOrd(na)+(nv?' \u00b7 <b style="color:#b91c1c">'+nv+' vencida'+(nv>1?'s':'')+'</b>':'')):sm.getAttribute('data-o');
+  });
+  body.querySelectorAll('.cs-chip').forEach(function(c){var f=c.getAttribute('data-f');c.classList.toggle('on',f==='v'?_resFil.v:!!_resFil.a[f]);});
+  var lg=body.querySelector('.cs-lg');if(lg)lg.classList.toggle('filt',act);
+  var h=document.getElementById('csHint');if(h)h.textContent=act?(Object.keys(seen).length+(Object.keys(seen).length===1?' orden':' \u00f3rdenes')):'1 casilla = 1 orden por sub\u00e1rea';
 }
 function paintResumen(){
   var body=document.getElementById('tdBody');if(!body||!window._resCas)return;
   body.innerHTML=window._resCas;
+  applyResFil();
 }
 function sortBy(col){
   if(sortCol===col){sortDir*=-1;}else{sortCol=col;sortDir=1;}
