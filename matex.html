@@ -1362,9 +1362,9 @@ function renderResumenAbiertas(d,aF){
       var ops=Array.from(st).sort(function(x,y){return x-y;});
       ops.forEach(function(op){tot++;
         var m=r.m[i][op]||{};
-        var da=m.fe?daysDiff(m.fe,T):null,lit=da===null?0:Math.min(6,Math.max(1,Math.ceil(da/10)));
-        var SC=['#22c55e','#22c55e','#f59e0b','#f59e0b','#f97316','#f97316'],seg='';
-        for(var q=0;q<6;q++)seg+='<i style="background:'+(q<lit?SC[q]:'#e5e7eb')+'"></i>';
+        var da=m.fe?daysDiff(m.fe,T):null,lit=da===null?0:(da<=15?1:(da<=30?2:(da<=60?3:4)));
+        var SC=['#bbf7d0','#fde68a','#fdba74','#ea580c'],seg='';
+        for(var q=0;q<4;q++)seg+='<i style="background:'+(q<lit?SC[lit-1]:'#e5e7eb')+(q<lit?';box-shadow:inset 0 0 0 1px rgba(0,0,0,.10)':'')+'"></i>';
         var pst='';
         if(m.fprod){var dp=daysDiff(T,m.fprod);pst=i===0||dp<0?'<span class="tpill r">vencida '+(-dp)+' d</span>':(dp===0?'<span class="tpill g">hoy</span>':'<span class="tpill g">en '+dp+' d</span>');}
         var H='<div class="tt-top"><b>OP '+op+'</b><span>'+r.s+(m.v?' \u00b7 '+m.v:'')+'</span></div>'+
