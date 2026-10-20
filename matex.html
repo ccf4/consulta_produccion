@@ -224,6 +224,12 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
 .sh-btn.l{left:2px;}.sh-btn.r{right:2px;}
 .sh-wrap.has-l>.sh-btn.l,.sh-wrap.has-r>.sh-btn.r{display:flex;}
 @media (hover:none){.sh-btn{display:none!important;}}
+/* Filtro de vendedores: mismo degradado de borde que las barras de resumen cuando no caben todos los botones */
+#vendBar{scrollbar-width:none;-ms-overflow-style:none;}
+#vendBar::-webkit-scrollbar{display:none;}
+#vendBar.has-r{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 38px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 38px),transparent);}
+#vendBar.has-l{-webkit-mask-image:linear-gradient(to right,transparent,#000 38px);mask-image:linear-gradient(to right,transparent,#000 38px);}
+#vendBar.has-l.has-r{-webkit-mask-image:linear-gradient(to right,transparent,#000 38px,#000 calc(100% - 38px),transparent);mask-image:linear-gradient(to right,transparent,#000 38px,#000 calc(100% - 38px),transparent);}
 .sum-lab{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 .wk-summary-title{display:flex;align-items:center;line-height:1}
 .wk-summary-title .sum-lab{position:relative;top:1px;line-height:1}
@@ -246,7 +252,7 @@ select{background:var(--surface2);border:1px solid var(--border);color:var(--tex
 <header>
   <div class="hdr-brand"><div class="logo">Consulta de Entregas</div><div class="title">Ordenes de Produccion</div></div>
   <div class="hdr-search" style="gap:8px">
-    <input id="searchBox" class="search-input" type="text" placeholder="Buscar orden o pedido" oninput="refreshAll()">
+    <input id="searchBox" class="search-input" type="text" inputmode="numeric" pattern="[0-9]*" enterkeyhint="search" autocomplete="off" placeholder="Buscar orden o pedido" oninput="refreshAll()">
   </div>
   <div class="hdr-info" style="gap:10px;">
     <div class="updinfo" style="display:grid;grid-template-columns:auto auto auto;gap:2px 6px;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
@@ -529,6 +535,13 @@ function filterVend(v,btn){
   refreshAll();
 }
 syncVendBtns();
+(function(){
+  var el=document.getElementById('vendBar');if(!el)return;
+  function upd(){var max=el.scrollWidth-el.clientWidth,sl=el.scrollLeft;el.classList.toggle('has-l',sl>2);el.classList.toggle('has-r',max>2&&sl<max-2);}
+  el.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);
+  if(window.ResizeObserver)new ResizeObserver(upd).observe(el);
+  upd();
+})();
 
 // Barras de resumen con desplazamiento horizontal: degradado en el borde, flechas, rueda y arrastre con el mouse
 (function(){
