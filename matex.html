@@ -245,7 +245,7 @@ html.mo-lock,html.mo-lock body{overflow:hidden!important;overscroll-behavior:non
   .wk-toggle{order:2}
   #lcBadgesWrap,#wgBadgesWrap,#rpBadgesWrap,#skBadgesWrap,#clBadgesWrap,#tdBadgesWrap{order:3;flex-basis:100%!important;margin-top:0}
 }
-@media(min-width:641px){.pm-row{white-space:nowrap}}
+
 @media(min-width:641px){.lwrap .late-card,.late-cards .late-card{height:118px;min-height:0;overflow:hidden}}
 .sec-empty{display:none!important}
 #sec-tt{position:fixed;z-index:9999;display:none;background:#fff;border:1px solid #c5cad3;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.4;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.18);color:#1f2937;max-width:300px;font-weight:400;text-transform:none;letter-spacing:0}
@@ -821,9 +821,9 @@ function showDetail(op){
     (arts.length?'<div class="dr" style="align-items:flex-start"><span class="dk">Art\u00edculo'+(arts.length>1?'s':'')+'</span><span style="font-size:10px;text-align:right;max-width:280px;line-height:1.6">'+arts.map(function(a,i){return arts.length>1?'<span style="display:block;padding-bottom:3px;'+(i<arts.length-1?'border-bottom:1px solid var(--border);margin-bottom:3px':'')+'">' +a+'</span>':a;}).join('')+'</span></div>':'')+
     '<div class="dr"><span class="dk">Area / Subarea</span><span style="font-weight:700;color:'+ac(r.AREA)+'">'+r.AREA+' / '+r.SUBAREA+'</span></div>'+
     '<div class="dr"><span class="dk">Material</span><span style="font-weight:600">'+(r.MAT||'--')+'</span></div>'+
-    (parts.length?'<div class="dr" style="align-items:flex-start"><span class="dk">Partes y malla</span><span style="text-align:right;font-size:10px;font-family:IBM Plex Mono,monospace;line-height:1.7">'+(function(){var meshes={};parts.forEach(function(p){meshes[p.MESH||'--']=1;});var uni=parts.length>1&&Object.keys(meshes).length===1;var tqs={};parts.forEach(function(p){tqs[p.TROQUEL1||'']=1;});var uniT=parts.length>1&&Object.keys(tqs).length===1&&!!parts[0].TROQUEL1;
+    (parts.length?'<div class="dr" style="flex-direction:column;align-items:stretch;gap:3px"><span class="dk">Partes y malla</span><span style="display:block;font-size:10px;font-family:IBM Plex Mono,monospace;line-height:1.7">'+(function(){var meshes={};parts.forEach(function(p){meshes[p.MESH||'--']=1;});var uni=parts.length>1&&Object.keys(meshes).length===1;var tqs={};parts.forEach(function(p){tqs[p.TROQUEL1||'']=1;});var uniT=parts.length>1&&Object.keys(tqs).length===1&&!!parts[0].TROQUEL1;
       var hl=[];if(uni)hl.push('Malla '+(parts[0].MESH||'--'));if(uniT)hl.push('Troquel '+parts[0].TROQUEL1);
-      var head=hl.length?'<span style="display:block;color:var(--muted);padding-bottom:3px;margin-bottom:3px;border-bottom:1px solid var(--border)">'+hl.join(' \u00b7 ')+' (todas)</span>':'';return head+parts.map(function(p){var _mix=parts.some(function(q){return q.STATUS==='V';})&&parts.some(function(q){return q.STATUS==='T';});var _t=_mix&&p.STATUS==='T',_v=_mix&&p.STATUS==='V';return '<span class="pm-row" style="display:block'+(_t?';opacity:.8':'')+'"'+(_t&&pd(p.FTERM)?' title="Entregada '+fd(pd(p.FTERM))+'"':'')+'>'+(p.PART||'')+' &nbsp; '+fmtNum(parseInt(p.CANT)||0)+' pzas &nbsp;\u00b7&nbsp; '+(p.SUBAREA||'--')+(uni?'':' &nbsp;\u00b7&nbsp; '+(p.MESH||'--'))+(p.TROQUEL1&&!uniT?' &nbsp;\u00b7&nbsp; '+p.TROQUEL1:'')+(_t?' &nbsp;<b style="color:var(--accent3);font-family:inherit">\u2713 ENTREGADA</b>':'')+(_v?' &nbsp;<b style="color:var(--muted);font-weight:600">pendiente</b>':'')+'</span>';}).join('');})()+'</span></div>':'')+
+      var head=hl.length?'<span style="display:block;color:var(--muted);padding-bottom:3px;margin-bottom:3px;border-bottom:1px solid var(--border)">'+hl.join(' \u00b7 ')+' (todas)</span>':'';return head+parts.map(function(p){var _mix=parts.some(function(q){return q.STATUS==='V';})&&parts.some(function(q){return q.STATUS==='T';});var _t=_mix&&p.STATUS==='T',_v=_mix&&p.STATUS==='V';return '<span class="pm-row" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px'+(_t?';opacity:.8':'')+'"'+(_t&&pd(p.FTERM)?' title="Entregada '+fd(pd(p.FTERM))+'"':'')+'><span style="min-width:24px">'+(p.PART||'')+'</span><span style="min-width:62px;text-align:right">'+fmtNum(parseInt(p.CANT)||0)+' pzas</span><span style="color:var(--muted)">\u00b7</span><span style="flex:1 1 0;min-width:90px">'+(p.SUBAREA||'--')+(uni?'':' \u00b7 '+(p.MESH||'--'))+(p.TROQUEL1&&!uniT?' \u00b7 '+p.TROQUEL1:'')+'</span>'+(_t?'<b style="margin-left:auto;flex:none;color:var(--accent3);font-family:inherit">\u2713 ENTREGADA</b>':'')+(_v?'<b style="margin-left:auto;flex:none;color:var(--muted);font-weight:600">pendiente</b>':'')+'</span>';}).join('');})()+'</span></div>':'')+
     '<div class="dr"><span class="dk">Total piezas</span><span style="font-family:IBM Plex Mono,monospace;font-weight:700;font-size:14px">'+fmtNum(totalCant)+'</span></div>'+
     '<div style="height:1px;background:var(--border);margin:6px 0"></div>'+
     '<div class="dr"><span class="dk">Fecha emisión</span><span>'+fd(fe)+'</span></div>'+
@@ -1320,11 +1320,11 @@ function renderSemana(T){
         var badgeColor=isCancelled?'#9ca3af':(isPartial?'#fb923c':'var(--accent3)');
         var badgeText=isCancelled?'CANCELADA':(isPartial?'PARCIAL':'ENTREGADA');
         var pzasText=(isPartial&&doneCant<totalCant)?(fmtNum(doneCant)+' de '+fmtNum(totalCant)+' pzas'):(fmtNum(totalCant)+' pzas');
-        var cardBgColor=isCancelled?'rgba(107,114,128,.05)':(isPartial?'rgba(251,146,60,.04)':'rgba(0,212,170,.04)');
-        var cardBorderColor=isCancelled?'rgba(107,114,128,.2)':(isPartial?'rgba(251,146,60,.25)':'rgba(0,212,170,.2)');
+        var cardBgColor=isCancelled?'rgba(107,114,128,.05)':('rgba(0,212,170,.04)');
+        var cardBorderColor=isCancelled?'rgba(107,114,128,.2)':('rgba(0,212,170,.2)');
         var subDisp=normSub(r._sub)||r._sub;
         var subLabel=r._scope==='area'?r._area:((r._area==='Aros'&&(r._sub==='NUEVO'||subDisp==='Nuevo'))?'Aro nuevo':subDisp);
-        return '<div class="late-card" style="background:'+cardBgColor+';border:1px solid '+cardBorderColor+';border-left:4px solid '+cardAccent+'" onclick="showDetail(\''+opId+'\')">'
+        return '<div class="late-card" style="background:'+cardBgColor+';border:1px solid '+cardBorderColor+'" onclick="showDetail(\''+opId+'\')">'
           +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
           +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:'+ac(r._area)+'">'+(r._scope==='area'&&r._subs&&r._subs.length>1?r._subs.map(function(sk){return subIcon(sk,r._area);}).join('')+subLabel:(r._scope==='op'?opSubInner(rparts):subIcon(r._sub||r._area,r._area)+subLabel))+'</span>'
           +'<span style="background:'+badgeBg+';color:'+badgeColor+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">'+badgeText+'</span>'
