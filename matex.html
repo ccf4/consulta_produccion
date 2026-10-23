@@ -938,7 +938,7 @@ function bgRender(){
     Object.keys(g).forEach(function(k){
       var grp=g[k],f=+k?new Date(+k):null;
       var cant=grp.reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
-      var subs={};grp.forEach(function(x){var n=normSub(x.SUBAREA)||x.SUBAREA||'';subs[n]=(subs[n]||{area:x.AREA,sub:x.SUBAREA,n:n,c:0});subs[n].c+=parseInt(x.CANT)||0;});
+      var subs={};grp.forEach(function(x){var n=normSub(x.SUBAREA)||x.SUBAREA||'';if(/^(tubulares?|ftubo)$/i.test(n))n='Tubular';else if(x.AREA==='Aros'&&/^nuevo$/i.test(n))n='Aro nuevo';subs[n]=(subs[n]||{area:x.AREA,sub:x.SUBAREA,n:n,c:0});subs[n].c+=parseInt(x.CANT)||0;});
       var sl=Object.values(subs).sort(function(a,b){return b.c-a.c;});
       var fp=pd(grp[0].FProm);
       var late=f&&f<T,nf=false;
