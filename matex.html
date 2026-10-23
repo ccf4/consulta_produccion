@@ -356,6 +356,7 @@ body.bigOn{overflow:hidden}
 .bg-d.late{background:rgba(220,38,38,.08);border-color:rgba(220,38,38,.28)}
 .bg-d.late i{color:var(--muted)}.bg-d.late b,.bg-d.late b small{color:var(--text)}
 .bg-d.hoy i,.bg-d.hoy b,.bg-d.hoy b small{color:#fff}
+.bg-m2 b{font-weight:700;color:#4b5563}
 </style>
 </head>
 <body>
@@ -955,6 +956,9 @@ function bgRender(){
   var dayIt={},later=[];
   items.forEach(function(x){if(x.late||!x.f)return;var kk=x.f.getDay()===0?key(new Date(x.f.getTime()+DAY)):key(x.f);if(x.f>lastD)later.push(x);else(dayIt[kk]=dayIt[kk]||[]).push(x);});
   var nfIt=items.filter(function(x){return x.nf;});
+  var AO_=['Disco','Aros','Telar','Varios','ALMC'],SO_=['Disco','Pack','Manual'];
+  function aoKey(x){var m=x.sl[0],a=AO_.indexOf(m.area);if(a<0)a=9;var b=SO_.indexOf(m.n);if(b<0)b=3;return [a,b,m.n||''];}
+  function aoSort(x,y){var p=aoKey(x),q=aoKey(y);if(p[0]!==q[0])return p[0]-q[0];if(p[1]!==q[1])return p[1]-q[1];if(p[2]!==q[2])return p[2]<q[2]?-1:1;return (+x.op)-(+y.op);}
   var DN=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   function ops(arr){var s={};arr.forEach(function(x){s[x.op]=1;});return Object.keys(s).length;}
   function pz(arr){return arr.reduce(function(s,x){return s+x.cant;},0);}
@@ -977,7 +981,7 @@ function bgRender(){
     if(x.stock)tags+='<span class="bg-tg s">stock</span>';
     var pedT=(!prod&&ped(x.op))?'<span class="bg-pd">'+fPed(ped(x.op))+'</span>':'';
     var q=x.par?'<b>'+fmtNum(x.cant)+'</b><i>faltan</i>':'<b>'+fmtNum(x.cant)+'</b><i>pzas</i>';
-    return '<div class="bg-r'+(mode==='late'?' late':(x.nf?' nf':''))+'" onclick="showDetail(\''+x.op+'\')"><div class="bg-ic">'+ic+'</div><div class="bg-m"><div class="bg-m1"><span class="bg-op">'+fOP(x.op)+'</span>'+pedT+tags+'</div><div class="bg-m2">'+subTxt+'</div></div><div class="bg-q">'+q+'</div>'+'</div>';
+    return '<div class="bg-r'+(mode==='late'?' late':(x.nf?' nf':''))+'" data-a="'+(main.area||'')+'" data-s="'+(main.n||'')+'" onclick="showDetail(\''+x.op+'\')"><div class="bg-ic">'+ic+'</div><div class="bg-m"><div class="bg-m1"><span class="bg-op">'+fOP(x.op)+'</span>'+pedT+tags+'</div><div class="bg-m2"><b>'+(main.area||'')+'</b>'+(main.area?' · ':'')+subTxt+'</div></div><div class="bg-q">'+q+'</div>'+'</div>';
   }
   function sec(k,title,arr,mode,dn,hoy){
     var col=_bgCol[k]===true;
@@ -993,12 +997,12 @@ function bgRender(){
   if(nfIt.length){nfIt.sort(function(a,b){return (+a.op)-(+b.op);});h+=sec('nf','Con nueva fecha',nfIt,'nf');}
   var any=lateIt.length>0;
   days.forEach(function(d,ix){
-    var a=(dayIt[key(d)]||[]).sort(function(x,y){return (+x.op)-(+y.op);});
+    var a=(dayIt[key(d)]||[]).sort(aoSort);
     if(!a.length)return;any=true;
     var t=(ix===0?'Hoy · ':ix===1?'Mañana · ':'')+['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'][d.getDay()]+' '+d.getDate()+' '+d.toLocaleDateString('es-MX',{month:'short'}).replace('.','');
     h+=sec('d'+ix,t,a,'day',0,ix===0);
   });
-  if(later.length){any=true;later.sort(function(a,b){return a.f-b.f;});h+=sec('later','Después',later,'day');}
+  if(later.length){any=true;later.sort(function(a,b){return (a.f-b.f)||aoSort(a,b);});h+=sec('later','Después',later,'day');}
   if(!any)h+='<div class="bg-empty">No hay órdenes abiertas con este filtro.</div>';
   body.innerHTML=h;
   body.scrollTop=sv;
