@@ -178,6 +178,30 @@ html.mo-lock,html.mo-lock body{overflow:hidden!important;overscroll-behavior:non
 .md{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:480px;width:90%;position:relative;box-shadow:0 8px 30px rgba(0,0,0,.12);max-height:90vh;max-height:88dvh;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
 .md h2{font-size:16px;margin-bottom:14px;}
 .mc{position:absolute;top:12px;right:16px;font-size:17px;cursor:pointer;background:none;border:none;color:var(--muted);}
+@media(max-width:640px){
+.mo:has(.md.mob){align-items:stretch;justify-content:stretch;background:var(--bg,#f3f4f8)}
+.md.mob{width:100%;max-width:none;max-height:none;height:100%;border:none;border-radius:0;padding:0 0 24px;background:var(--bg,#f3f4f8);box-shadow:none}
+.md.mob>.mc,.md.mob>h2{display:none}
+.md.mob .mdTop{display:flex;align-items:center;gap:8px;padding:14px 16px 6px}
+.md.mob .mdBack{font-size:16px;font-weight:600;font-family:inherit;padding:10px 15px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text)}
+.md.mob .mdSt{margin-left:auto}.md.mob .mdSt .badge{font-size:12px;padding:5px 11px}
+.md.mob .mdLate{font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px;background:rgba(239,68,68,.15);color:var(--danger)}
+.md.mob .mdHead{padding:6px 20px 12px}
+.md.mob .mdOp{font:700 34px 'IBM Plex Mono',monospace;color:var(--accent);line-height:1.1}
+.md.mob .mdSub{font-size:19px;font-weight:700;margin-top:3px}
+.md.mob .mdMeta{font-size:15px;color:var(--muted);margin-top:4px}.md.mob .mdMeta b{font-weight:700}
+.md.mob .mdHero{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 16px 10px;padding:14px 16px;border-radius:16px;background:#eaf6ef;border:1px solid #bfe3cf}
+.md.mob .mdHero.late{background:#fdeceb;border-color:#f5c2be}
+.md.mob .mdL{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.md.mob .mdBig{font-size:22px;font-weight:700}.md.mob .mdBig.mono{font-family:'IBM Plex Mono',monospace}
+.md.mob .mdLt{font-size:13px;font-weight:600;color:var(--danger);margin-top:2px}
+.md.mob .mdNote{margin:0 20px 10px;font-size:14px;color:var(--muted)}
+.md.mob .mdCard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin:0 16px 10px}
+.md.mob .mdArt{font-size:15px;line-height:1.4;margin-top:6px}.md.mob .mdArt+.mdArt{padding-top:8px;border-top:1px solid var(--border)}
+.md.mob .mdPt{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-top:1px solid var(--border);font-size:15px}.md.mob .mdL+.mdPt{border-top:none}
+.md.mob .mdPt.t{opacity:.8}.md.mob .mdPn{font-family:'IBM Plex Mono',monospace;color:var(--muted);min-width:34px}.md.mob .mdPd{flex:1;min-width:0}.md.mob .mdPd i{color:var(--muted)}.md.mob .mdPq{font-size:17px}
+.md.mob .mdTwo{display:grid;grid-template-columns:1fr 1fr;gap:14px}.md.mob .mdV{font-size:17px;font-weight:600}
+}
 .dr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;gap:10px;}
 .dr:last-child{border:none;}
 .dk{color:var(--muted);font-size:11px;white-space:nowrap;flex-shrink:0;}
@@ -1044,7 +1068,31 @@ function showDetail(op){
     ((fp&&fd(fp)!==fd(fp2))?'<div class="dr"><span class="dk">Fecha programada original</span><span style="font-weight:600">'+fd(fp)+'</span></div>':'')+
     ((mf&&fd(mf)!==fd(pd(r.FProm)))?'<div class="dr"><span class="dk">Fecha promesa entrega en la orden</span><span style="font-weight:600;color:var(--accent4)">'+fd(mf)+'</span></div>':'')+
     '<div class="dr"><span class="dk">Estado</span><span>'+sb(r.XSTATUS)+'</span></div>';
+  var _md=document.querySelector('#modal .md');_md.classList.remove('mob');
+  try{if(window.matchMedia&&matchMedia('(max-width:640px)').matches){document.getElementById('mb').innerHTML=mobDetail({op:op,r:r,parts:parts,arts:arts,totalCant:totalCant,fp:fp,fp2:fp2,fe:fe,isL:isL,daysLate:daysLate,daysOpen:daysOpen,mf:mf});document.getElementById('mt').innerHTML='';_md.classList.add('mob');_md.scrollTop=0;}}catch(e){}
   document.getElementById('modal').classList.add('open');
+}
+
+function mobDetail(o){
+  var r=o.r,parts=o.parts,col=ac(r.AREA);
+  var h='<div class="mdTop"><button class="mdBack" onclick="document.getElementById(\'modal\').classList.remove(\'open\')">\u2190 Regresar</button>'+(o.isL?'<span class="mdLate">VENCIDA</span>':'')+'<span class="mdSt">'+sb(r.XSTATUS)+'</span></div>';
+  h+='<div class="mdHead"><div class="mdOp">'+fOP(o.op)+'</div><div class="mdSub" style="color:'+col+'">'+r.AREA+' \u00b7 '+normSub(r.SUBAREA)+'</div>';
+  var meta=[];if(ped(o.op))meta.push('<span class="ped-ref">Pedido <b style="color:var(--accent4)">'+fPed(ped(o.op))+'</b></span>');if(r.VENDEDOR)meta.push('<span class="mdVend">Vendedor <b>'+r.VENDEDOR+'</b></span>');
+  if(meta.length)h+='<div class="mdMeta">'+meta.join(' \u00b7 ')+'</div>';
+  h+='</div>';
+  h+='<div class="mdHero'+(o.isL?' late':'')+'"><div><div class="mdL">Fecha de entrega</div><div class="mdBig" style="color:'+(o.isL?'var(--danger)':'var(--accent3)')+'">'+fd(o.fp2)+'</div>'+(o.isL?'<div class="mdLt">'+o.daysLate+' d\u00eda'+(o.daysLate!==1?'s':'')+' vencido</div>':'')+'</div><div><div class="mdL">Total piezas</div><div class="mdBig mono">'+fmtNum(o.totalCant)+'</div></div></div>';
+  if(o.fp&&fd(o.fp)!==fd(o.fp2))h+='<div class="mdNote">Fecha programada original: <b>'+fd(o.fp)+'</b></div>';
+  if(o.mf&&fd(o.mf)!==fd(pd(r.FProm)))h+='<div class="mdNote">Fecha promesa en la orden: <b style="color:var(--accent4)">'+fd(o.mf)+'</b></div>';
+  if(o.arts.length)h+='<div class="mdCard"><div class="mdL">Art\u00edculo'+(o.arts.length>1?'s':'')+'</div>'+o.arts.map(function(a){return '<div class="mdArt">'+a+'</div>';}).join('')+'</div>';
+  var meshes={};parts.forEach(function(p){meshes[p.MESH||'--']=1;});var uni=Object.keys(meshes).length===1;
+  var tqs={};parts.forEach(function(p){tqs[p.TROQUEL1||'']=1;});var uniT=parts.length>1&&Object.keys(tqs).length===1&&!!parts[0].TROQUEL1;
+  var hd=[];if(uni)hd.push('Malla '+(parts[0].MESH||'--'));if(r.MAT)hd.push('Material '+r.MAT);if(uniT)hd.push('Troquel '+parts[0].TROQUEL1);
+  var mix=parts.some(function(q){return q.STATUS==='V';})&&parts.some(function(q){return q.STATUS==='T';});
+  h+='<div class="mdCard"><div class="mdL">Partidas'+(hd.length?' \u00b7 '+hd.join(' \u00b7 '):'')+'</div>'+parts.map(function(p){var t=mix&&p.STATUS==='T',v=mix&&p.STATUS==='V';
+    var det=(p.SUBAREA?normSub(p.SUBAREA):'--')+(uni?'':' \u00b7 '+(p.MESH||'--'))+(p.TROQUEL1&&!uniT?' \u00b7 '+p.TROQUEL1:'');
+    return '<div class="mdPt'+(t?' t':'')+'"><span class="mdPn">'+(p.PART||'')+'</span><span class="mdPd">'+det+(t?' <b style="color:var(--accent3)">\u2713 entregada</b>':'')+(v?' <i>pendiente</i>':'')+'</span><b class="mdPq">'+fmtNum(parseInt(p.CANT)||0)+'</b></div>';}).join('')+'</div>';
+  h+='<div class="mdCard mdTwo"><div><div class="mdL">Emisi\u00f3n</div><div class="mdV">'+fd(o.fe)+'</div></div><div><div class="mdL">D\u00edas abierta</div><div class="mdV" style="color:'+(o.daysOpen>180?'var(--danger)':o.daysOpen>60?'var(--accent4)':'var(--text)')+'">'+o.daysOpen+' d\u00edas</div></div></div>';
+  return h;
 }
 
 function showMissing(op){
@@ -1059,6 +1107,7 @@ function showMissing(op){
     '<div style="height:1px;background:var(--border);margin:6px 0"></div>'+
     '<div class="dr"><span class="dk">Fecha emisión</span><span>'+fd(fe)+'</span></div>'+
     '<div class="dr"><span class="dk">Folio MNET</span><span style="font-family:IBM Plex Mono,monospace;font-size:10px">'+m.FOLIO+'</span></div>';
+  document.querySelector('#modal .md').classList.remove('mob');
   document.getElementById('modal').classList.add('open');
 }
 
