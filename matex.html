@@ -514,7 +514,7 @@ function loadOverrides(){
     .then(function(arr){
       (arr||[]).forEach(function(o){OVERRIDES[String(o.op)]=o.fecha;});
       applyOverrides();
-      renderSemana(today());
+      renderSemana(today());if(_bgOpen)bgRender();
     })
     .catch(function(){});
 }
@@ -627,7 +627,7 @@ function loadCierres(){
         if(!o.part)CIERRES[String(o.op)]={fecha:o.fecha,timestamp:o.timestamp};
       });
       applyCierres();
-      renderSemana(today());
+      renderSemana(today());if(_bgOpen)bgRender();
     })
     .catch(function(){});
 }
@@ -828,7 +828,7 @@ function daysDiff(d1,d2){return Math.round((d2-d1)/(1000*60*60*24));}
 function ped(op){return PEDIDOS[String(op)]||'';}
 var MQ_MOB=window.matchMedia?window.matchMedia('(max-width:640px)'):null;
 function isMob(){return !!(MQ_MOB&&MQ_MOB.matches);}
-if(MQ_MOB){var _mqCb=function(){refreshAll();};if(MQ_MOB.addEventListener)MQ_MOB.addEventListener('change',_mqCb);else if(MQ_MOB.addListener)MQ_MOB.addListener(_mqCb);}
+if(MQ_MOB){var _mqCb=function(){if(!isMob()&&_bgOpen)bgClose();refreshAll();};if(MQ_MOB.addEventListener)MQ_MOB.addEventListener('change',_mqCb);else if(MQ_MOB.addListener)MQ_MOB.addListener(_mqCb);}
 function fPed(p){if(!p)return '';var m=/^P-?0*(\d+)$/i.exec(String(p).trim());return m?'P-'+(isMob()?m[1]:('00000000'+m[1]).slice(-8)):String(p);}
 function fOP(op){var s=String(op).trim();return /^\d+$/.test(s)?'O-'+(isMob()?s.replace(/^0+/,''):('00000000'+s).slice(-8)):s;}
 function nOrd(n){return n===1?'1 orden':n+' \u00f3rdenes';}
@@ -1949,6 +1949,7 @@ function init(){
   renderTable();
   loadOverrides();
   loadCierres();
+  if(isMob())bgOpen();   // en movil la vista ampliada es la vista por defecto
 }
 init();
 </script><div id="sec-tt"></div><div id="op-tooltip"></div><div id="day-tt"></div>
