@@ -136,7 +136,7 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .day-op.mnet-op{border-color:transparent;background:#f3f4f6;color:#374151;}
 .day-op.nw-sum,.day-op.nw-sum.mnet-op{cursor:default;background:rgba(156,163,175,.14);border-color:transparent;color:#1f2937;}.day-cell.next-week-col .day-op.nw-sum{opacity:.8;}.day-cell.next-week-col .day-op.nw-sum:hover{opacity:1;}.day-op.nw-sum .op-cant,.day-op.nw-sum .op-ped{color:#374151;opacity:1;}.day-op.nw-sum .op-ped{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .no-work{background:repeating-linear-gradient(45deg,rgba(100,100,100,.12),rgba(100,100,100,.12) 5px,rgba(0,0,0,.05) 5px,rgba(0,0,0,.05) 10px)!important;border-top:2px solid rgba(150,150,150,.3)!important;}.no-work-label{font-size:8px;color:var(--muted);text-align:center;padding:3px 0;letter-spacing:.5px;font-style:italic;width:100%;display:block;}
-.day-op.search-match{outline:2px solid var(--accent);}.day-op.hl{outline:2px solid #6366f1;filter:brightness(.93);z-index:2;position:relative;}.day-op.dim{opacity:.65;}
+.day-op.search-match{outline:2px solid var(--accent);}.day-op.hl{outline:2px solid #6366f1;filter:brightness(.93);z-index:2;position:relative;}.wgg-b.hl{outline:2px solid #6366f1;filter:brightness(.93);z-index:2}.day-op.dim{opacity:.65;}
 .op-num{font-weight:700;font-size:12px;}
 .op-ped{font-size:11px;opacity:.7;}
 .op-cant{font-size:11px;opacity:.65;}
@@ -2062,7 +2062,7 @@ function showOpTip(el,opId){
   if(!rows.length){hideOpTip();return;}
   var subareasHl=Array.from(new Set(rows.map(function(r){return normSub(r.SUBAREA);})));
   if(subareasHl.length>1){
-    document.querySelectorAll('.day-op[data-op="'+opId+'"]').forEach(function(d){d.classList.add('hl');});
+    document.querySelectorAll('.day-op[data-op="'+opId+'"],.wgg-b[data-op="'+opId+'"]').forEach(function(d){d.classList.add('hl');});
   }
   function distinctVals(field){
     var seen=[];
@@ -2138,7 +2138,7 @@ function tapDayTip(el){if(!NOHOVER)return;if(_dayEl===el)hideDayTip();else showD
 document.addEventListener('touchstart',function(e){if(_dayEl&&!(e.target.closest&&e.target.closest('.day-hd')))hideDayTip();},{passive:true});
 function hideOpTip(){
   if(_opTT)_opTT.style.display='none';
-  document.querySelectorAll('.day-op.hl').forEach(function(d){d.classList.remove('hl');});
+  document.querySelectorAll('.day-op.hl,.wgg-b.hl').forEach(function(d){d.classList.remove('hl');});
 }
 document.addEventListener('mousemove',function(e){
   if(!_opTT||_opTT.style.display==='none')return;
