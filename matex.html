@@ -77,6 +77,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:8
 .wgg-t{position:relative;border-left:1px solid var(--border);background-image:repeating-linear-gradient(to right,transparent 0,transparent calc(100%/6 - 1px),var(--border) calc(100%/6 - 1px),var(--border) calc(100%/6))}
 .wgg-b{position:absolute;top:5px;bottom:5px;border-radius:4px;color:#fff;font:600 11px 'IBM Plex Mono',monospace;display:flex;align-items:center;padding:0 7px;white-space:nowrap;overflow:hidden}
 .wgg-bd{position:relative}
+.wgg-bt{display:inline-block;will-change:transform}
 .wgg-hoy{position:absolute;top:0;bottom:0;left:calc(var(--lw,260px) + (100% - var(--lw,260px)) * var(--ti) / 6);width:calc((100% - var(--lw,260px)) / 6);border-left:2px solid #8fcfae;border-right:2px solid #8fcfae;background:rgba(16,185,129,.07);pointer-events:none;z-index:2}
 .wgg-h .tdy{background:#334155;color:#fff;box-shadow:none}
 .wgg-td{position:absolute;top:0;bottom:0;width:2px;background:rgba(37,99,235,.5);pointer-events:none}
@@ -772,11 +773,31 @@ function renderWeekGantt(WS,T){
         var ei=Math.max(0,Math.min(5,Math.floor((e.end-WS)/DAY))),si=Math.floor((e.st-WS)/DAY),before=si<0;si=Math.max(0,Math.min(ei,si));
         var late=e.end<T,w=(ei-si+1)/6*100-100/12;
         h+='<div class="wgg-r" onclick="showDetail(\''+e.op+'\')" title="'+(e.dias!==null?e.dias+' días abierta':'')+'"><div class="wgg-l"><b>'+fOP(e.op)+'</b>'+((!hideSinAsig&&e.ped)?'<span class="pd">'+fPed(e.ped)+'</span>':'')+(e.stock?'<span style="font-size:9px;font-weight:700;color:var(--accent4)">STOCK</span>':'')+(e.dias!==null?'<span class="dy">'+e.dias+' d</span>':'')+'</div>'+
-          '<div class="wgg-t">'+tl+'<div class="wgg-b" data-op="'+e.op+'" data-area="'+(e.area||'')+'" data-subarea="'+(e.sub||'')+'" onmouseenter="showOpTip(this,\''+e.op+'\')" onmouseleave="hideOpTip()" style="left:calc('+(si/6*100)+'% + 2px);width:calc('+w+'% - 4px);background:color-mix(in srgb,'+col+' 78%,#fff);'+(late?'box-shadow:inset -5px 0 0 #d64545;':'')+'">'+(before?'\u25c2 ':'')+fmtNum(e.q)+(e.pack?' golpes':' pzas')+'</div></div></div>';
+          '<div class="wgg-t">'+tl+'<div class="wgg-b" data-op="'+e.op+'" data-area="'+(e.area||'')+'" data-subarea="'+(e.sub||'')+'" onmouseenter="showOpTip(this,\''+e.op+'\')" onmouseleave="hideOpTip()" style="left:calc('+(si/6*100)+'% + 2px);width:calc('+w+'% - 4px);background:color-mix(in srgb,'+col+' 78%,#fff);'+(late?'box-shadow:inset -5px 0 0 #d64545;':'')+'"><span class="wgg-bt">'+(before?'\u25c2 ':'')+fmtNum(e.q)+(e.pack?' golpes':' pzas')+'</span></div></div></div>';
       });
     });
   });
   el.innerHTML=h+'</div></div>';
+  if(window.innerWidth<=640){
+    el.scrollLeft=(ti>=0&&ti<6)?Math.max(0,112+(ti+.5)*(el.scrollWidth-112)/6-112-(el.clientWidth-112)/2):0;
+    if(!el._fl){el._fl=1;var _raf=0;el.addEventListener('scroll',function(){if(_raf)return;_raf=requestAnimationFrame(function(){_raf=0;wggFloat(el);});},{passive:true});window.addEventListener('resize',function(){wggFloat(el);});}
+  }
+  wggFloat(el);
+}
+// texto de cada barra: en movil se mueve al centro de la parte visible de la barra
+function wggFloat(el){
+  var bars=el.querySelectorAll('.wgg-b');
+  if(window.innerWidth>640){bars.forEach(function(b){if(b.firstChild)b.firstChild.style.transform='';});return;}
+  var er=el.getBoundingClientRect(),V0=er.left+112,V1=er.right,pad=7;
+  bars.forEach(function(b){
+    var t=b.firstChild;if(!t)return;
+    var r=b.getBoundingClientRect(),a=Math.max(r.left,V0),z=Math.min(r.right,V1),w=t.offsetWidth;
+    var dx;
+    if(z-a<=w+2*pad){dx=a-r.left;}   // parte visible muy chica: el texto empieza donde empieza lo visible
+    else dx=(a+z)/2-w/2-(r.left+pad);
+    if(dx<0)dx=0;
+    t.style.transform='translateX('+dx+'px)';
+  });
 }
 function filterVend(v,btn){
   var i=vflt.indexOf(v);
