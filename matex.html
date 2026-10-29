@@ -1176,11 +1176,11 @@ function bgRender(){
     if(x.stock)tags+='<span class="bg-tg s">stock</span>';
     var pedT=(!prod&&ped(x.op))?'<span class="bg-pd">'+fPed(ped(x.op))+'</span>':'';
     var q=x.cl?(x.cpar&&x.total>x.cant?'<b>'+fmtNum(x.cant)+'</b><i>de '+fmtNum(x.total)+'</i>':'<b>'+fmtNum(x.cant)+'</b><i>pzas</i>'):(x.par?'<b>'+fmtNum(x.cant)+'</b><i>faltan</i>':'<b>'+fmtNum(x.cant)+'</b><i>pzas</i>');
-    return '<div class="bg-r'+(mode==='late'?' late':(mode==='cl'?' cl':(x.nf?' nf':'')))+'" data-a="'+(main.area||'')+'" data-s="'+(main.n||'')+'" onclick="showDetail(\''+x.op+'\')"><div class="bg-ic">'+ic+'</div><div class="bg-m"><div class="bg-m1"><span class="bg-op">'+fOP(x.op)+'</span>'+pedT+tags+'</div><div class="bg-m2"><b>'+(main.area||'')+'</b>'+(main.area?' · ':'')+subTxt+'</div></div><div class="bg-q">'+q+'</div>'+'</div>';
+    return '<div class="bg-r'+(mode==='late'?' late':(mode==='cl'?' cl':(x.nf?' nf':'')))+'" data-a="'+(main.area||'')+'" data-s="'+(main.n||'')+'" onclick="showDetail(\''+x.op+'\')"><div class="bg-ic">'+ic+'</div><div class="bg-m"><div class="bg-m1"><span class="bg-op">'+fOP(x.op)+'</span>'+pedT+tags+'</div><div class="bg-m2"><b>'+subTxt+'</b></div></div><div class="bg-q">'+q+'</div>'+'</div>';
   }
   function sec(k,title,arr,mode,dn,hoy){
     var col=_bgCol[k]===true;
-    var _n=ops(arr),tot='<span>'+_n+(_n===1?' orden':' \u00f3rdenes')+(vflt.length?' de '+filt:'')+'</span><span class="dt"> \u00b7 </span><span>'+fmtNum(pz(arr))+' pzas</span>';
+    var _n=ops(arr),tot='<span>'+_n+(_n===1?' orden':' \u00f3rdenes')+'</span><span class="dt"> \u00b7 </span><span>'+fmtNum(pz(arr))+' pzas</span>';
     return '<div class="bg-sec'+(col?' col':'')+(hoy?' hoy':'')+(mode==='cl'?' s-cl':mode==='late'?' s-late':mode==='nf'?' s-nf':'')+'" id="bgsec_'+k+'"><div class="bg-dh" onclick="bgToggleSec(\''+k+'\')">'+(dn?'<span class="dn">'+dn+'</span>':'')+'<span>'+title+'</span><span class="tt">'+tot+'</span><span class="ch"></span></div><div class="bg-rows">'+arr.map(function(x){return row(x,mode);}).join('')+'</div></div>';
   }
   if(lateIt.length||nfIt.length){
