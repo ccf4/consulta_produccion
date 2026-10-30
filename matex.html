@@ -736,8 +736,15 @@ var vflt=(function(){
   (urlParams.get('v')||'').toUpperCase().split(/[\s,;|]+/).forEach(function(x){
     if((VEND_MAIN.indexOf(x)>=0||x==='OTROS')&&out.indexOf(x)<0)out.push(x);
   });
+  // Sin ?v= en la URL (y fuera del modo taller), se recupera el filtro que quedo guardado la ultima vez
+  if(!out.length&&!urlParams.get('v')&&!urlParams.get('prod')){
+    try{(localStorage.getItem('matex_vend')||'').split(',').forEach(function(x){
+      if((VEND_MAIN.indexOf(x)>=0||x==='OTROS')&&out.indexOf(x)<0)out.push(x);
+    });}catch(e){}
+  }
   return out;
 })();
+function guardarVend(){if(urlParams.get('prod'))return;try{localStorage.setItem('matex_vend',vflt.join(','));}catch(e){}}
 function vendMatch(v){
   if(!vflt.length)return true;
   v=(v||'').trim();
@@ -823,6 +830,7 @@ function wggFloat(el){
 function filterVend(v,btn){
   var i=vflt.indexOf(v);
   if(i>=0)vflt.splice(i,1);else vflt.push(v);
+  guardarVend();_secDefault=false;
   syncVendBtns();
   refreshAll();
 }
@@ -1057,6 +1065,21 @@ function toggleLateSection(){
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
 }
+var _secDefault=false;
+function cerrarSeccion(cardId,chevId,labelId){
+  var card=document.getElementById(cardId),chev=document.getElementById(chevId),label=document.getElementById(labelId);
+  if(!card)return;
+  card.style.display='none';
+  if(chev)chev.style.transform='rotate(0deg)';
+  if(label)label.textContent='Ver detalle';
+}
+function abrirSeccion(cardId,chevId,labelId){
+  var card=document.getElementById(cardId),chev=document.getElementById(chevId),label=document.getElementById(labelId);
+  if(!card)return;
+  card.style.display='block';
+  if(chev)chev.style.transform='rotate(180deg)';
+  if(label)label.textContent='Ocultar';
+}
 function mostrarSeccion(badgesId,cardId,hay){
   var b=document.getElementById(badgesId),h=b&&b.closest('.st');
   if(h)h.classList.toggle('sec-empty',!hay);
@@ -1081,7 +1104,7 @@ var _bgOpen=false,_bgCol={cl:true};
 function bgOpen(){_bgOpen=true;document.body.classList.add('bigOn');var s=document.getElementById('bgS');s.value=document.getElementById('searchBox').value;bgRender();}
 function bgClose(){_bgOpen=false;document.body.classList.remove('bigOn');}
 function bgSearch(v){document.getElementById('searchBox').value=v;refreshAll();}
-function bgClear(){vflt.length=0;syncVendBtns();refreshAll();}
+function bgClear(){vflt.length=0;guardarVend();_secDefault=false;syncVendBtns();refreshAll();}
 function bgToggleSec(k){var e=document.getElementById('bgsec_'+k);if(e){e.classList.toggle('col');_bgCol[k]=e.classList.contains('col');}}
 function bgGo(id){var e=document.getElementById(id);if(!e)return;if(e.classList.contains('col')){e.classList.remove('col');_bgCol[id.replace('bgsec_','')]=false;}var b=document.getElementById('bgBody');var y=e.getBoundingClientRect().top-b.getBoundingClientRect().top+b.scrollTop;b.scrollTo({top:Math.max(0,y),behavior:'smooth'});}
 function bgRender(){
@@ -1683,6 +1706,8 @@ function renderSemana(T){
   }
 
   mostrarSeccion('lcBadges','loCard',late.length>0);mostrarSeccion('rpBadges','rpCard',mnetWarn.length>0);mostrarSeccion('skBadges','skCard',skList.length>0);
+  // Al abrir el panel: si hay vencidas se muestran ampliadas; si no, y hay reprogramadas, estas. Despues manda el usuario.
+  if(!_secDefault){_secDefault=true;cerrarSeccion('loCard','lcChevron','lcLabel');cerrarSeccion('rpCard','rpChevron','rpLabel');if(late.length>0)abrirSeccion('loCard','lcChevron','lcLabel');else if(mnetWarn.length>0)abrirSeccion('rpCard','rpChevron','rpLabel');}
   var bizD=0,bizCur=new Date(T);
   while(bizD<5){bizCur.setDate(bizCur.getDate()-1);var dow=bizCur.getDay();if(dow!==0&&dow!==6)bizD++;}
   var cutoff=bizCur;
