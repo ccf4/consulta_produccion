@@ -95,6 +95,10 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}
 .view{display:none;} .view.active{display:block;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
 .card-body{padding:16px;}
+/* secciones de resumen expandidas: encabezado y detalle forman un solo contenedor */
+.st:has(+ #loCard:not([style*="none"])),.st:has(+ #rpCard:not([style*="none"])),.st:has(+ #skCard:not([style*="none"])),.st:has(+ #clCard:not([style*="none"])){margin-bottom:0!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;background:var(--surface)!important;border-bottom:0!important}
+#loCard:not([style*="none"]),#rpCard:not([style*="none"]),#skCard:not([style*="none"]),#clCard:not([style*="none"]){margin-top:0!important;border-top:none;border-top-left-radius:0;border-top-right-radius:0}
+#loCard>.card-body,#rpCard>.card-body,#skCard>.card-body,#clCard>.card-body{padding:6px 15px 15px!important}
 .st{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0;}
 .wknav{display:flex;align-items:center;gap:10px;margin-bottom:12px;justify-content:center;}
