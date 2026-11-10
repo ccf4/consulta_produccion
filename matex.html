@@ -344,7 +344,7 @@ html.mo-lock,html.mo-lock body{overflow:hidden!important;overscroll-behavior:non
 @media(max-width:640px){#secRow>.st.empty-m,#hoyCard.empty-m{display:none!important}}
 #secRow>.card.pair-l{border-top-right-radius:0!important;border-bottom-right-radius:0!important;border-right:1px dashed var(--border)!important}#secRow>.card.pair-r{border-top-left-radius:0!important;border-bottom-left-radius:0!important;border-left:0!important}
 .tface{padding:9px 12px 8px;position:relative}.tface .tchev{position:absolute;top:9px;right:10px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.06);color:#475569;transition:transform .15s}.tface .tchev svg{width:12px;height:12px}.tface .tchev.on{transform:rotate(180deg);background:rgba(15,23,42,.12)}
-.tface .tn{display:flex;align-items:baseline;gap:8px}
+.tface .tn{display:flex;align-items:center;gap:8px}
 .tface .tn b{font-size:30px;font-weight:800;line-height:1;color:#1e293b}
 .tface .tn i{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.6px;color:#64748b;padding-right:26px}
 .tface .tn em{margin-left:auto;font-style:normal;color:#94a3b8;font-size:12px}
@@ -359,8 +359,8 @@ html.mo-lock,html.mo-lock body{overflow:hidden!important;overscroll-behavior:non
 #mb .dr-2col>.dr-parts{flex:0 1 auto;max-width:100%}
 #mb .dr-2col>.dr-art{flex:1 1 150px;min-width:0;flex-direction:column;align-items:stretch!important;gap:3px}
 #mb .dr-2col>.dr-art>span:last-child{text-align:left!important;max-width:none!important;font-size:10.5px!important}
-#td .td-row{display:grid;grid-template-columns:28px 120px 100px 150px minmax(0,1fr) 90px;column-gap:6px;align-items:center;padding:7px 4px;border-top:1px solid var(--border);font-size:14px;cursor:pointer}
-#td .td-row:first-child{border-top:0}#td .td-desc{font-size:12px;color:#64748b;display:flex;gap:6px;min-width:0;padding:0 10px}#td .td-dt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}#td .td-more{white-space:nowrap;flex:none;font-weight:700;color:#475569}#td .td-empty{padding:14px 6px;color:#64748b;font-size:14px}
+#td .td-row{display:grid;grid-template-columns:30px 118px minmax(80px,.5fr) minmax(172px,.9fr) minmax(0,4fr) 80px;column-gap:8px;align-items:center;padding:7px 4px;border-top:1px solid var(--border);font-size:14px;cursor:pointer}
+#td .td-row:first-child{border-top:0}#td .td-desc{font-size:12.5px;color:#64748b;display:flex;gap:6px;min-width:0;padding:0 10px}#td .td-dt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}#td .td-more{white-space:nowrap;flex:none;font-weight:700;color:#475569}#td .td-empty{padding:14px 6px;color:#64748b;font-size:14px}
 #td .td-op{font-weight:800;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px}#td .td-ped{color:var(--muted);font-size:12px;font-family:ui-monospace,monospace}
 #td .td-q{text-align:right;font-weight:800;font-size:15px}#td .td-q small{font-weight:600;color:var(--muted);font-size:11px}
 #td .td-sub{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}#td .td-row.d{color:#047857}#td .td-tag{font-size:10px;font-weight:800;background:#d1fae5;color:#047857;border-radius:99px;padding:2px 8px;margin-left:auto;flex:none}
@@ -1136,7 +1136,7 @@ function renderTiles(){
       var tt={'HOY':'\u00d3rdenes programadas para entrega hoy \u00b7 '+new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric'}),'VENCIDAS':'Vencidas','REPROGRAMADAS':'Reprogramadas','STOCK':'Stock'}[c[2]];
       hh.innerHTML='<div>'+tt+'</div>';}
     var f=h.querySelector('.tface');if(!f){f=document.createElement('div');f.className='tface';h.appendChild(f);}
-    f.innerHTML='<span class="tchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span><div class="tn"><b>'+n+'</b><i>'+({'HOY':'ENTREGAS HOY','VENCIDAS':'\u00d3RDENES VENCIDAS','STOCK':'\u00d3RDENES DE STOCK'}[c[2]]||c[2])+'</i></div><div class="tc">'+chips+'</div>';
+    f.innerHTML='<span class="tchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span><div class="tn"><b>'+n+'</b><i>'+({'HOY':'POR ENTREGAR HOY','VENCIDAS':'\u00d3RDENES VENCIDAS','STOCK':'\u00d3RDENES DE STOCK'}[c[2]]||c[2])+'</i></div><div class="tc">'+chips+'</div>';
   });
 }
 
