@@ -325,7 +325,7 @@ html.mo-lock,html.mo-lock body{overflow:hidden!important;overscroll-behavior:non
   #lcBadgesWrap,#wgBadgesWrap,#rpBadgesWrap,#skBadgesWrap,#clBadgesWrap,#tdBadgesWrap{order:3;flex-basis:100%!important;margin-top:0}
 }
 
-@media(min-width:641px){.lwrap .late-card,.late-cards .late-card{height:118px;min-height:0;overflow:hidden}}
+@media(min-width:641px){.lwrap .late-card{height:100px;min-height:0;overflow:hidden}.late-cards .late-card{height:80px;min-height:0;overflow:hidden}}
 .sec-empty{display:none!important}
 
 /* fila compacta de resumen: Hoy / Vencidas / Reprogramadas / Stock */
@@ -344,10 +344,10 @@ html.mo-lock,html.mo-lock body{overflow:hidden!important;overscroll-behavior:non
 .tface .tn b{font-size:30px;font-weight:800;line-height:1;color:#1e293b}
 .tface .tn i{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.6px;color:#64748b}
 .tface .tn em{margin-left:auto;font-style:normal;color:#94a3b8;font-size:12px}
-.tface .ts{font-size:11.5px;color:#64748b;margin:2px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tface .tq{font-weight:400}.tface .ts{font-size:11.5px;color:#64748b;margin:2px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tface .tc{display:flex;gap:4px 6px;flex-wrap:wrap;min-height:24px;align-items:center}
 .tface .tc>span{font-size:11px!important}
-.tface .tc .pm{font-size:11px;color:#64748b;font-weight:700}
+.tface .tc .fh{display:none!important}.tface .tc .pm{font-size:11px;color:#64748b;font-weight:700}
 #secRow>.st.t-hoy{background:#ecfdf5!important;border-color:#6ee7b7!important}.t-hoy .tn b{color:#047857}
 #secRow>.st.t-venc{background:#fff5f5!important;border-color:#fecaca!important}.t-venc .tn b{color:#dc2626}
 #td .td-row{display:grid;grid-template-columns:28px 120px 100px 1fr 110px;align-items:center;padding:7px 4px;border-top:1px solid var(--border);font-size:14px;cursor:pointer}
@@ -355,7 +355,7 @@ html.mo-lock,html.mo-lock body{overflow:hidden!important;overscroll-behavior:non
 #td .td-op{font-weight:800;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px}#td .td-ped{color:var(--muted);font-size:12px;font-family:ui-monospace,monospace}
 #td .td-q{text-align:right;font-weight:800;font-size:15px}#td .td-q small{font-weight:600;color:var(--muted);font-size:11px}
 #td .td-row.d{color:#047857}#td .td-tag{font-size:10px;font-weight:800;background:#d1fae5;color:#047857;border-radius:99px;padding:2px 8px;margin-left:8px}
-@media(max-width:900px){#secRow{grid-template-columns:repeat(2,minmax(0,1fr))}.tface .tn b{font-size:26px}#td .td-row{grid-template-columns:26px 78px 1fr 70px;font-size:13px}#td .td-sub{display:none}}
+@media(max-width:900px){#secRow{grid-template-columns:repeat(2,minmax(0,1fr))}.tface .tn b{font-size:26px}.tface .ts{white-space:normal}#td .td-row{grid-template-columns:26px 78px 1fr 70px;font-size:13px}#td .td-sub{display:none}}
 #sec-tt{position:fixed;z-index:9999;display:none;background:#fff;border:1px solid #c5cad3;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.4;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.18);color:#1f2937;max-width:300px;font-weight:400;text-transform:none;letter-spacing:0}
 /* ===== Vista ampliada (agenda compacta) ===== */
 .bigbtn{display:none;flex-shrink:0;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;align-items:center;justify-content:center;padding:0}
@@ -1107,7 +1107,7 @@ function renderTiles(){
     var n=(cnt.match(/(\d+)/)||[0,'0'])[1];
     var sp=[].slice.call(bd.querySelectorAll('span')).filter(function(x){return x.querySelector('svg')&&/\d/.test(x.textContent)&&x.textContent.trim().length<8;});
     var u=[];sp.forEach(function(x){if(!u.some(function(y){return y.contains(x)||x.contains(y);}))u.push(x);});
-    var chips=u.slice(0,5).map(function(x){return x.outerHTML;}).join('')+(u.length>5?'<span class="pm">+'+(u.length-5)+'</span>':'');
+    var chips=u.map(function(x){return x.outerHTML;}).join('');
     var sub='';
     if(c[2]==='HOY'){var m=cnt.match(/(\d+) entregada/);sub=(m?m[1]+' ya entregada'+(m[1]==='1'?'':'s'):'ninguna entregada aún');}
     else if(c[2]==='VENCIDAS'){var mx=0,mn=1e9;((document.getElementById('lo')||{}).textContent||'').replace(/(\d+)\s+días?\s+vencid/g,function(_,d){d=+d;mx=Math.max(mx,d);mn=Math.min(mn,d);});sub=mx?(mn===mx?mx+(mx===1?' día':' días')+' de retraso':'de '+mn+' a '+mx+' días de retraso'):'pasaron su fecha';}
@@ -1115,11 +1115,32 @@ function renderTiles(){
     var cd=document.getElementById({'tdBadges':'tdCard','lcBadges':'loCard','rpBadges':'rpCard','skBadges':'skCard'}[c[0]]);
     if(cd){var hh=cd.querySelector(':scope>.sec-h');if(!hh){hh=document.createElement('div');hh.className='sec-h';cd.insertBefore(hh,cd.firstChild);}
       var tt={'HOY':'Hoy \u00b7 '+new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric'}),'VENCIDAS':'Vencidas','REPROGRAMADAS':'Reprogramadas','STOCK':'Stock'}[c[2]];
-      hh.innerHTML='<div>'+tt+'</div><span>'+n+(n==='1'?' orden':' \u00f3rdenes')+' \u00b7 '+sub+'</span>';}
+      hh.innerHTML='<div>'+tt+'</div><span>'+sub+' \u00b7 '+n+(n==='1'?' orden':' \u00f3rdenes')+'</span>';}
     var f=h.querySelector('.tface');if(!f){f=document.createElement('div');f.className='tface';h.appendChild(f);}
-    f.innerHTML='<div class="tn"><b>'+n+'</b><i>'+c[2]+'</i></div><div class="ts">'+sub+'</div><div class="tc">'+chips+'</div>';
+    f.innerHTML='<div class="tn"><b>'+n+'</b><i>'+c[2]+'</i></div><div class="ts">'+sub+'<span class="tq"> \u00b7 '+n+(n==='1'?' orden':' \u00f3rdenes')+'</span></div><div class="tc">'+chips+'</div>';
   });
 }
+
+function fitTiles(){
+  document.querySelectorAll('#secRow .tface .tc').forEach(function(tc){
+    tc.querySelectorAll('.pm').forEach(function(x){x.remove();});
+    var ch=[].slice.call(tc.children);ch.forEach(function(x){x.classList.remove('fh');});
+    if(!ch.length||!tc.offsetWidth)return;
+    var tops=[];ch.forEach(function(x){var t=x.offsetTop;if(!tops.some(function(y){return Math.abs(y-t)<6;}))tops.push(t);});tops.sort(function(a,b){return a-b;});var maxTop=(tops[1]===undefined?tops[0]:tops[1])+5;
+    var over=ch.filter(function(x){return x.offsetTop>maxTop;});
+    if(!over.length)return;
+    var vis=ch.filter(function(x){return x.offsetTop<=maxTop;}),hid=ch.length-vis.length;
+    over.forEach(function(x){x.classList.add('fh');});
+    var pm=document.createElement('span');pm.className='pm';tc.appendChild(pm);
+    while(true){
+      pm.textContent='+'+hid;
+      if(pm.offsetTop<=maxTop||!vis.length)break;
+      var last=vis.pop();last.classList.add('fh');hid++;
+    }
+    over.forEach(function(x){x.classList.add('fh');});
+  });
+}
+window.addEventListener('resize',function(){try{renderTiles();fitTiles();}catch(e){}});
 function toggleHoySection(){
   var card=document.getElementById('tdCard'),chev=document.getElementById('tdChevron'),label=document.getElementById('tdLabel');
   var open=card.style.display!=='none';
@@ -1731,11 +1752,10 @@ function renderSemana(T){
         +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;min-width:0;color:'+ac(r.AREA)+'">'+opSubInline(opRowsAbiertas(r.OP))+'</span>'
         +'<span style="background:rgba(255,77,77,.15);color:var(--danger);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap;margin-left:6px">'+daysLate+' día'+(daysLate!==1?'s':'')+' vencido</span>'
         +'</div>'
-        +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
+        +'<div style="display:block;margin-bottom:3px">'
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">'+fOP(r.OP)+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> · '+fPed(ped(r.OP))+'</span>':'')+'</span>'
-        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
+        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block;margin-top:2px">'+fmtNum(totalCant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
         +'</div>'
-        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(getArts(r.OP)[0]||'')+'</div>'
         +'<div style="display:flex;justify-content:flex-end;margin-top:auto">'+diasAbTxt(r)+'</div>'
         +'</div></div>');
     });
@@ -1760,12 +1780,11 @@ function renderSemana(T){
         +dateTag
         +'<div class="late-card" style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2);width:220px" onclick="showDetail(\''+r.OP+'\')">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px"><span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;min-width:0;color:'+ac(r.AREA)+'">'+opSubInline(opRowsAbiertas(r.OP))+'</span>'
-        +(esHoy?'<span style="background:rgba(5,150,105,.18);color:var(--accent3);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap">'+fdShort(fp0)+' \u2192 hoy</span>':'<span style="background:rgba(249,115,22,.15);color:var(--warn);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap">'+fdShort(fp0)+' \u2192 '+fdShort(fprod)+'</span>')+'</div>'
-        +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
+        +(function(){var dd=(fp0&&fprod)?Math.round((fprod-fp0)/86400000):null;var tx=dd===null?'':(dd>0?'+'+dd:(dd<0?'\u2212'+Math.abs(dd):'0'))+(Math.abs(dd)===1?' d\u00eda':' d\u00edas');var c=dd>30?'background:rgba(234,88,12,.22);color:#c2410c':(esHoy?'background:rgba(5,150,105,.18);color:var(--accent3)':'background:rgba(249,115,22,.15);color:var(--warn)');return tx?'<span style="'+c+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap">'+tx+'</span>':'';})()+'</div>'
+        +'<div style="display:block;margin-bottom:3px">'
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">'+fOP(r.OP)+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> \u00b7 '+fPed(ped(r.OP))+'</span>':'')+'</span>'
-        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:inline-block;vertical-align:bottom">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
+        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block;margin-top:2px">'+fmtNum(totalCant)+' pzas \u00b7 '+(r.MAT||'--')+(r.MESH?' \u00b7 M'+r.MESH:'')+'</span>'
         +'</div>'
-        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:12px">'+(getArts(r.OP)[0]||'&nbsp;')+'</div>'
         +'<div style="display:flex;justify-content:flex-end;margin-top:auto">'+diasAbTxt(r)+'</div>'
         +'</div></div>');
     });
@@ -1799,16 +1818,15 @@ function renderSemana(T){
       var isNewDate=dKey!==_prevSkDate;_prevSkDate=dKey;
       var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdTag(g.f)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">.</div>';
       var nd=g.f?daysDiff(T,g.f):null;
-      var pill=nd===null?'':'<span style="background:rgba(99,102,241,.14);color:#4338ca;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap">'+(nd===0?'hoy':'en '+nd+' d')+'</span>';
+      var pill=nd===null?'':'<span style="background:rgba(99,102,241,.14);color:#4338ca;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap">'+(nd===0?'hoy':'en '+nd+(nd===1?' día':' días'))+'</span>';
       skHtml.push('<div style="display:flex;flex-direction:column">'
         +dateTag
         +'<div class="late-card" style="background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.2);width:220px" onclick="showDetail(\''+r.OP+'\')">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px"><span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;min-width:0;color:'+ac(r.AREA)+'">'+opSubInline(g.rows)+'</span>'+pill+'</div>'
-        +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
+        +'<div style="display:block;margin-bottom:3px">'
         +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">'+fOP(r.OP)+(ped(r.OP)?'<span class="ped-ref" style="font-weight:400"> · '+fPed(ped(r.OP))+'</span>':'')+'</span>'
-        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:inline-block;vertical-align:bottom">'+fmtNum(g.cant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
+        +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block;margin-top:2px">'+fmtNum(g.cant)+' pzas · '+(r.MAT||'--')+(r.MESH?' · M'+r.MESH:'')+'</span>'
         +'</div>'
-        +'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:12px">'+(getArts(r.OP)[0]||'&nbsp;')+'</div>'
         +'<div style="display:flex;justify-content:flex-end;margin-top:auto">'+diasAbTxt(r)+'</div>'
         +'</div></div>');
     });
@@ -1817,7 +1835,7 @@ function renderSemana(T){
 
   renderHoy(T,src);
   mostrarSeccion('lcBadges','loCard',late.length>0);mostrarSeccion('rpBadges','rpCard',mnetWarn.length>0);mostrarSeccion('skBadges','skCard',skList.length>0);
-  renderTiles();
+  renderTiles();fitTiles();
   // Al abrir el panel: si hay vencidas se muestran ampliadas; si no, y hay reprogramadas, estas. Despues manda el usuario.
     if(!_secDefault){_secDefault=true;cerrarSeccion('loCard','lcChevron','lcLabel');cerrarSeccion('rpCard','rpChevron','rpLabel');cerrarSeccion('skCard','skChevron','skLabel');abrirSeccion('tdCard','tdChevron','tdLabel');}
   var bizD=0,bizCur=new Date(T);
@@ -1899,11 +1917,10 @@ function renderSemana(T){
           +'<span style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:'+ac(r._area)+'">'+(r._scope==='area'&&r._subs&&r._subs.length>1?r._subs.map(function(sk){return subIcon(sk,r._area);}).join('')+subLabel:(r._scope==='op'?opSubInner(rparts):subIcon(r._sub||r._area,r._area)+subLabel))+'</span>'
           +'<span style="background:'+badgeBg+';color:'+badgeColor+';font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">'+badgeText+'</span>'
           +'</div>'
-          +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
+          +'<div style="display:block;margin-bottom:3px">'
           +'<span style="font-size:12px;font-weight:700;font-family:IBM Plex Mono,monospace;color:var(--accent4)">'+fOP(opId)+(ped(opId)?'<span class="ped-ref" style="font-weight:400"> · '+fPed(ped(opId))+'</span>':'')+'</span>'
-          +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis">'+pzasText+' · '+((rparts[0]&&rparts[0].MAT)||ref.MAT||'--')+(((rparts[0]&&rparts[0].MESH)||ref.MESH)?' · M'+((rparts[0]&&rparts[0].MESH)||ref.MESH):'')+'</span>'
+          +'<span style="font-size:10px;color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:block;margin-top:2px">'+pzasText+' · '+((rparts[0]&&rparts[0].MAT)||ref.MAT||'--')+(((rparts[0]&&rparts[0].MESH)||ref.MESH)?' · M'+((rparts[0]&&rparts[0].MESH)||ref.MESH):'')+'</span>'
           +'</div>'
-          +(arts.length?'<div class="late-desc" style="font-size:10px;color:var(--muted);margin-bottom:5px;line-height:1.4">'+(arts[0]||'').slice(0,70)+'</div>':'')
           +'</div>';
       }).join('')+'</div>';
     });
