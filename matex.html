@@ -310,7 +310,7 @@ html.mo-lock,html.mo-lock body{overflow:hidden!important;overscroll-behavior:non
 /* Filtro de vendedores: mismo degradado de borde que las barras de resumen cuando no caben todos los botones */
 #vendBar{scrollbar-width:none;-ms-overflow-style:none;}
 #vendBar::-webkit-scrollbar{display:none;}
-@media(max-width:640px){#vendBar::after{content:'';flex:0 0 38%}}
+
 #vendBar.has-r{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 38px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 38px),transparent);}
 #vendBar.has-l{-webkit-mask-image:linear-gradient(to right,transparent,#000 38px);mask-image:linear-gradient(to right,transparent,#000 38px);}
 #vendBar.has-l.has-r{-webkit-mask-image:linear-gradient(to right,transparent,#000 38px,#000 calc(100% - 38px),transparent);mask-image:linear-gradient(to right,transparent,#000 38px,#000 calc(100% - 38px),transparent);}
@@ -533,7 +533,6 @@ body.bigOn{overflow:hidden}
 .bg-tl.r{background:#fff5f5;border-color:#fecaca}.bg-tl.r .n{color:#dc2626}
 .bg-tl .bg-rows{display:none;background:#fff;border-top:1px solid #e2e6ee}.bg-tl.open .bg-rows{display:block}
 .bg-r2{position:relative;display:flex;align-items:center;gap:7px;padding:6px 10px;min-height:40px;border-bottom:1px solid #e8ebf1;cursor:pointer;white-space:nowrap}.bg-r2:last-child{border-bottom:0}.bg-r2:active{background:var(--surface2)}
-.bg-r2.late{box-shadow:inset 3px 0 0 #dc2626}.bg-r2.cl{box-shadow:inset 3px 0 0 #34a77c}
 .bg-ic2{flex:none;width:28px;height:28px;border-radius:8px;background:#eef0f5;display:flex;align-items:center;justify-content:center}.bg-ic2 svg,.bg-ic2>span{width:20px!important;height:20px!important}
 .bg-r2 .bg-op{font-size:15px;flex:none}.bg-r2 .bg-pd{font-size:11px;flex:none}
 .bg-sb{font-size:11.5px;font-weight:700;color:#64748b;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -551,6 +550,11 @@ body.bigOn{overflow:hidden}
 .bg-tb .bg-r2{padding:6px 8px}
 @media(max-width:380px){.bg-tb .bg-pd{display:none}}
 .bg-r2 .bg-sb{flex:1 1 0}
+
+.kbt{position:absolute;right:10px;top:50%;transform:translateY(-50%);height:24px;min-width:34px;padding:0 7px;border-radius:12px;border:1px solid var(--border);background:#fff;color:#475569;font:800 10px 'IBM Plex Sans',sans-serif;letter-spacing:.3px;cursor:pointer;z-index:2}
+input[type=search]::-webkit-search-cancel-button{display:none}
+.bg-r1{position:relative}
+@media(max-width:440px){.bg-r2.rp .bg-pd{display:none}}
 </style>
 </head>
 <body>
@@ -943,8 +947,9 @@ function centrarVend(){
   var el=document.getElementById('vendBar');if(!el)return;
   var on=[].slice.call(el.querySelectorAll('.vfb.active'));if(!on.length||el.scrollWidth<=el.clientWidth+2)return;
   var eb=el.getBoundingClientRect(),a=on[0].getBoundingClientRect(),z=on[on.length-1].getBoundingClientRect();
-  var mid=(a.left+z.right)/2,tgt=eb.left+eb.width/2;
-  el.scrollLeft=el.scrollLeft+(mid-tgt);
+  var pad=40;
+  if(z.right>eb.right-pad)el.scrollLeft+=z.right-(eb.right-pad);
+  else if(a.left<eb.left+pad)el.scrollLeft-=(eb.left+pad)-a.left;
 }
 function centrarVendInicial(){_cvUntil=Date.now()+4000;[0,120,400,900,1800].forEach(function(t){setTimeout(centrarVend,t);});}
 syncVendBtns();
@@ -1382,8 +1387,8 @@ function bgRender(){
   var clIt=[];
   (function(){
     var c0=new Date(T.getTime()-7*DAY),c1=new Date(T.getTime()+DAY),by={};
-    TERM.forEach(function(r){
-      if(r.STATUS==='C')return;
+    RAW.forEach(function(r){
+      if((r.STATUS||'').trim().toUpperCase()!=='T')return;
       var ft=pd(r.FTERM);if(!ft||ft<c0||ft>=c1)return;
       if(!vendMatch(r.VENDEDOR)||!matchSearch(r.OP,ped(r.OP)))return;
       (by[r.OP]=by[r.OP]||{ref:r,rows:[]});
@@ -1425,16 +1430,16 @@ function bgRender(){
     if(x._done)tags+='<span class="bg-tg g">ENTREGADA</span>';
     if(mode==='cl')tags+='<span class="bg-tg g">'+sd(x.f)+'</span>';
     if(x.late&&mode!=='cl')tags+='<span class="bg-tg r">−'+daysDiff(x.f,T)+'d</span>';
-    if(mode==='nf')tags+='<span class="bg-tg o">→ '+sd(x.f)+'</span>';
-    else if(x.nf&&x.fp&&!x.late)tags+='<span class="bg-tg o" title="antes: '+sd(x.fp)+'">↻ '+(cal?'':'era ')+sd(x.fp)+'</span>';
+    if(mode==='nf'&&x.fp)tags+='<span class="bg-tg o">+'+(function(n){return n+(n===1?' día':' días');})(daysDiff(x.fp,x.f))+'</span>';
+    else if(x.nf&&x.fp&&!x.late)tags+='<span class="bg-tg o">↻ era '+sd(x.fp)+'</span>';
     if((mode==='stock'||mode==='later'||mode==='old')&&x.f&&!x.late)tags+='<span class="bg-tg">'+sd(x.f)+'</span>';
     if(x.par||x.cpar)tags+='<span class="bg-tg p">parcial</span>';
     var pedT=(!prod&&ped(x.op))?'<span class="bg-pd">'+fPed(ped(x.op))+'</span>':'';
-    return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+tags+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b> p</span></div>';
+    return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+(cal&&x.nf&&x.fp&&!x.late?' rp':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+tags+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b> p</span></div>';
   }
   function tile(k,title,arr,mode,cls,fixed,cnt){
     if(!arr.length)return '';
-    var open=fixed||srchOn||_bgOp[k]===true;
+    var open=srchOn||(k==='d0'?_bgOp[k]!==false:_bgOp[k]===true);
     var n=cnt!=null?cnt:ops(arr);
     return '<div class="bg-tl '+(cls||'')+(open?' open':'')+(fixed?' fixed':'')+'" id="bgsec_'+k+'"><div class="bg-th"'+(fixed?'':' onclick="bgToggleSec(\''+k+'\')"')+'><b class="n">'+n+'</b><i>'+title+'</i><div class="scr">'+chipsOf(arr)+'</div>'+(fixed?'':'<span class="cv"></span>')+'</div><div class="bg-rows">'+arr.map(function(x){return row(x,mode);}).join('')+'</div></div>';
   }
@@ -1443,7 +1448,7 @@ function bgRender(){
   var hoyDone=clIt.filter(function(x){return x.f&&key(x.f)===key(d0);}).map(function(x){var y=Object.assign({},x);y._done=1;return y;});
   var hoyAll=hoyA.concat(hoyDone);
   h+='<div class="bg-sech">RESUMEN</div><div class="bg-sum">';
-  h+=tile('d0','Por entregar hoy',hoyAll,'day','g',true,ops(hoyA));
+  h+=tile('d0','Por entregar hoy',hoyAll,'day','g',false,ops(hoyA));
   if(!hoyAll.length&&!lateIt.length&&!nfIt.length&&!stockIt.length&&!clIt.length&&!oldIt.length&&!later.length&&!days.some(function(d,ix){return ix>0&&(dayIt[key(d)]||[]).length;}))h+='<div class="bg-empty">No hay órdenes abiertas con este filtro.</div>';
   h+=tile('late','Vencidas',lateIt,'late','r');
   nfIt.sort(function(a,b){return (+a.op)-(+b.op);});
@@ -2495,6 +2500,27 @@ if(window.matchMedia&&matchMedia('(hover: none)').matches){document.addEventList
 document.addEventListener('mouseover',function(e){var el=e.target.closest&&e.target.closest('[data-sectip]');if(el===cur)return;cur=el;if(!el){tt.style.display='none';return;}tt.textContent=el.getAttribute('data-sectip');tt.style.display='block';place();});
 window.addEventListener('scroll',function(){if(cur)place();},true);})();</script>
 <script>(function(){function upd(){var open=!!document.querySelector('.mo.open');document.documentElement.classList.toggle('mo-lock',open);}
-document.querySelectorAll('.mo').forEach(function(m){new MutationObserver(upd).observe(m,{attributes:true,attributeFilter:['class']});});upd();})();</script>
+document.querySelectorAll('.mo').forEach(function(m){new MutationObserver(upd).observe(m,{attributes:true,attributeFilter:['class']});});upd();})();
+// Buscador: teclado numerico por defecto (movil) con alternador 123/ABC dentro del campo
+(function(){
+  var touch=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
+  [['searchBox'],['bgS']].forEach(function(a){
+    var inp=document.getElementById(a[0]);if(!inp)return;
+    if(!touch)return;
+    inp.setAttribute('inputmode','numeric');
+    var host=inp.parentNode;host.style.position='relative';
+    inp.style.paddingRight='46px';
+    var b=document.createElement('button');b.type='button';b.className='kbt';b.textContent='ABC';b.setAttribute('aria-label','Cambiar teclado');
+    b.addEventListener('mousedown',function(e){e.preventDefault();});
+    b.addEventListener('click',function(e){
+      e.preventDefault();e.stopPropagation();
+      var num=inp.getAttribute('inputmode')==='numeric';
+      inp.setAttribute('inputmode',num?'text':'numeric');b.textContent=num?'123':'ABC';
+      inp.blur();setTimeout(function(){inp.focus();},60);
+    });
+    host.appendChild(b);
+  });
+})();
+</script>
 </body>
 </html>
