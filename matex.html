@@ -542,7 +542,7 @@ body.bigOn{overflow:hidden}
 
 .bg-sech{font-size:11px;font-weight:800;letter-spacing:1.2px;color:#64748b;padding:6px 14px 6px;display:flex;align-items:center;gap:8px}
 .bg-sech button{margin-left:auto;font:700 12px 'IBM Plex Sans',sans-serif;letter-spacing:0;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:99px;padding:3px 12px;cursor:pointer;white-space:nowrap}
-.bg-sech.tm{background:var(--accent);color:#fff;margin:0 12px;border-radius:10px;padding:6px 12px}.bg-sech.tm button{background:#fff;color:var(--accent);border-color:#fff}
+.bg-sech.tm{background:var(--accent);color:#fff;margin:2px 12px 12px;border-radius:10px;padding:8px 12px}.bg-sech.tm button{background:#fff;color:var(--accent);border-color:#fff}
 .bg-sum{padding-bottom:4px}
 .bg-cal{background:#fff;margin-top:10px;padding-bottom:18px}.bg-cs{color:#1e293b;padding:12px 14px 4px}
 .bg-tlw{position:relative;padding:4px 12px 6px}.bg-tlw:before{content:"";position:absolute;left:29px;top:16px;bottom:16px;width:2px;background:#cbd5e1}
@@ -1629,7 +1629,7 @@ function bgRender(){
   var hoyDone=clIt.filter(function(x){return x.f&&key(x.f)===key(d0);}).map(function(x){var y=Object.assign({},x);y._done=1;return y;});
   var hoyAll=hoyA.map(function(x){var y=Object.assign({},x);y._pend=1;return y;}).concat(hoyDone);
   h+='<div class="bg-sech'+(_tmr?' tm':'')+'"><span>'+'RESUMEN \u00b7 '+(_tmr?(((T-realToday())===864e5)?'MA\u00d1ANA':'SIGUIENTE D\u00cdA'):'HOY')+' \u00b7 '+_fdl(T).toUpperCase()+'</span>'+(_tmr?'<button onclick="setTmr(false)">\u25c4 Volver a hoy</button>':'<button onclick="setTmr(true)">'+(new Date().getHours()>=18?'\ud83c\udf19 ':'')+'Ver ma\u00f1ana \u25ba</button>')+'</div><div class="bg-sum">';
-  h+=tile('d0',_tmr?'Por entregar ma\u00f1ana':'Por entregar hoy',hoyAll,'day','g',false,ops(hoyA));
+  h+=tile('d0',_tmr?'Entregas ma\u00f1ana':'Entregas hoy',hoyAll,'day','g',false,ops(hoyA));
   if(!hoyAll.length&&!lateIt.length&&!nfIt.length&&!stockIt.length&&!clIt.length&&!oldIt.length&&!later.length&&!days.some(function(d,ix){return ix>0&&(dayIt[key(d)]||[]).length;}))h+='<div class="bg-empty">No hay órdenes abiertas con este filtro.</div>';
   h+=tile('late','Vencidas',lateIt,'late','r');
   nfIt.sort(function(a,b){return (+a.op)-(+b.op);});
