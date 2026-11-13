@@ -549,7 +549,9 @@ body.bigOn{overflow:hidden}
 .bg-ic2{flex:none;width:28px;height:28px;border-radius:8px;background:#eef0f5;display:flex;align-items:center;justify-content:center}.bg-ic2 svg,.bg-ic2>span{width:20px!important;height:20px!important}
 .bg-r2 .bg-op{font-size:15px;flex:none}.bg-r2 .bg-pd{font-size:11px;flex:none}
 .bg-sb{font-size:11.5px;font-weight:700;color:#64748b;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.bg-r2 .bg-tg{flex:none}
+.bg-r2 .bg-tg{flex:none}.bg-rs{flex:none;display:flex;gap:5px;margin-left:auto}.bg-rs+.bg-q2{margin-left:0}
+@media(max-width:640px){#bgsec_d0 .bg-sb{flex:none;width:40px}#bgsec_d0 .bg-rs{gap:3px}#bgsec_d0 .bg-pd.e{min-width:46px}#bgsec_d0 .bg-r2{gap:5px}}
+@media(max-width:375px){#bgsec_d0 .bg-sb{width:30px}}
 .bg-q2{margin-left:auto;flex:none;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#64748b}.bg-q2 b{font-size:15px;color:#1e293b}
 
 .bg-sech{font-size:11px;font-weight:800;letter-spacing:1.2px;color:#64748b;padding:6px 14px 6px;display:flex;align-items:center;gap:8px}
@@ -574,6 +576,7 @@ input[type=search]::-webkit-search-cancel-button{display:none}
 @media(max-width:900px){.tface .tn b{font-size:21px!important}}
 .tface{padding:11px 12px 10px!important}.tface .tn{gap:9px}.tface .tc{margin-top:7px}
 
+@media(max-width:640px){.pmx,.erax{display:none}}
 .bg-tg.pe{background:rgba(217,119,6,.14);color:#b45309;font-weight:800}#td .td-tag.pe{background:#fef3c7;color:#b45309}
 :root[data-theme=dark] .bg-tg.pe,:root[data-theme=dark] #td .td-tag.pe{background:rgba(251,191,36,.16);color:#fbbf24}
 #tmrBar{display:flex;align-items:center;gap:10px;margin:0 0 8px;font-size:12px;color:var(--muted)}
@@ -1446,7 +1449,7 @@ function renderHoy(T,src){
   bar.innerHTML=gl.length?'<span style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;white-space:nowrap">'+gl.map(badgeIconHtml).join('')+'</span>':'';
   var row=function(x,done){
     var ic=subIcon(x.sub,x.area)||'';var ps=pedShort(x.op);
-    return '<div class="td-row'+(done?' d':'')+'" onclick="showDetail(\''+x.op+'\')"><span>'+ic+'</span><span class="td-op">'+fOP(x.op)+'</span><span class="td-ped op-ped">'+(ps||'')+'</span><span class="td-sub"><b>'+x.sub+'</b>'+(done?'<span class="td-tag">ENTREGADA</span>':(_tmr?'':'<span class="td-tag pe">PENDIENTE</span>'))+'</span><span class="td-desc">'+(function(){var a=getArts(x.op)||[];var n=a.length-1;return '<span class="td-dt">'+(a[0]||'')+'</span>'+(n>0?'<span class="td-more">(+'+n+(n===1?' art\u00edculo':' art\u00edculos')+')</span>':'');})()+'</span><span class="td-q">'+fmtNum(x.cant)+' <small>pzas</small></span></div>';
+    return '<div class="td-row'+(done?' d':'')+'" onclick="showDetail(\''+x.op+'\')"><span>'+ic+'</span><span class="td-op">'+fOP(x.op)+'</span><span class="td-ped op-ped">'+(ps||'')+'</span><span class="td-sub"><b>'+x.sub+'</b>'+(done?'<span class="td-tag">ENTREGADA</span>':(_tmr?'':'<span class="td-tag pe">PEND<span class="pmx">IENTE</span></span>'))+'</span><span class="td-desc">'+(function(){var a=getArts(x.op)||[];var n=a.length-1;return '<span class="td-dt">'+(a[0]||'')+'</span>'+(n>0?'<span class="td-more">(+'+n+(n===1?' art\u00edculo':' art\u00edculos')+')</span>':'');})()+'</span><span class="td-q">'+fmtNum(x.cant)+' <small>pzas</small></span></div>';
   };
   var html=L.sort(function(a,b){return String(a.op).localeCompare(String(b.op));}).map(function(x){return row(x,false);}).join('')+D.map(function(x){return row(x,true);}).join('');
   document.getElementById('td').innerHTML=html;
@@ -1617,26 +1620,27 @@ function bgRender(){
     var m={};arr.forEach(function(x){x.sl.forEach(function(q){var e=m[q.n]=m[q.n]||{c:0,sub:q.sub,area:q.area};e.c+=x.cl?(x.sl.length===1?x.cant:q.c):q.c;});});
     return Object.keys(m).sort(function(a,b){return m[b].c-m[a].c;}).map(function(k){var e=m[k];return '<span class="bg-ch"><span class="bg-ci">'+(subIcon(e.sub,e.area)||'')+'</span>'+fmtNum(e.c)+'</span>';}).join('');
   }
-  function row(x,mode,cal){
+  function row(x,mode,cal,sl){
     var main=x.sl[0],ic=subIcon(main.sub,main.area)||'';
     var subTxt=x.sl.map(function(q){return q.n;}).join(' + ');
-    var tags='';
-    if(x._done)tags+='<span class="bg-tg g">ENTREGADA</span>';
-    else if(x._pend&&!_tmr)tags+='<span class="bg-tg pe">PENDIENTE</span>';
+    var tags='',st='';
+    if(x._done)st='<span class="bg-tg g">ENTREGADA</span>';
+    else if(x._pend&&!_tmr)st='<span class="bg-tg pe">PEND<span class="pmx">IENTE</span></span>';
     if(mode==='cl')tags+='<span class="bg-tg g">'+sd(x.f)+'</span>';
     if(x.late&&mode!=='cl')tags+='<span class="bg-tg r">−'+daysDiff(x.f,T)+'d</span>';
     if(mode==='nf'&&x.fp)tags+='<span class="bg-tg o">+'+(function(n){return n+(n===1?' día':' días');})(daysDiff(x.fp,x.f))+'</span>';
-    else if(x.nf&&x.fp&&!x.late)tags+='<span class="bg-tg o">↻ era '+sd(x.fp)+'</span>';
+    else if(x.nf&&x.fp&&!x.late)tags+='<span class="bg-tg o">↻ <span class="erax">era </span>'+sd(x.fp)+'</span>';
     if((mode==='stock'||mode==='later'||mode==='old')&&x.f&&!x.late)tags+='<span class="bg-tg">'+sd(x.f)+'</span>';
     if(x.par||x.cpar)tags+='<span class="bg-tg p">parcial</span>';
-    var pedT=(!prod&&ped(x.op))?'<span class="bg-pd">'+fPed(ped(x.op))+'</span>':'';
-    return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+(cal&&x.nf&&x.fp&&!x.late?' rp':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+tags+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b> p</span></div>';
+    var pedT=(!prod&&ped(x.op))?'<span class="bg-pd">'+fPed(ped(x.op))+'</span>':((!prod&&sl)?'<span class="bg-pd e"></span>':'');
+    return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+(cal&&x.nf&&x.fp&&!x.late?' rp':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+(sl?st+(tags?'<span class="bg-rs">'+tags+'</span>':''):st+tags)+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b> p</span></div>';
   }
   function tile(k,title,arr,mode,cls,fixed,cnt){
     if(!arr.length)return '';
     var open=srchOn||(k==='d0'?_bgOp[k]!==false:_bgOp[k]===true);
     var n=cnt!=null?cnt:ops(arr);
-    return '<div class="bg-tl '+(cls||'')+(open?' open':'')+(fixed?' fixed':'')+'" id="bgsec_'+k+'"><div class="bg-th"'+(fixed?'':' onclick="bgToggleSec(\''+k+'\')"')+'><b class="n">'+n+'</b><i>'+title+'</i><div class="scr">'+chipsOf(arr)+'</div>'+(fixed?'':'<span class="cv"></span>')+'</div><div class="bg-rows">'+arr.map(function(x){return row(x,mode);}).join('')+'</div></div>';
+    var sl=null;if(k==='d0'){sl={st:arr.some(function(x){return x._done||(x._pend&&!_tmr);}),rs:arr.some(function(x){return (x.nf&&x.fp&&!x.late)||x.par||x.cpar;})};}
+    return '<div class="bg-tl '+(cls||'')+(open?' open':'')+(fixed?' fixed':'')+'" id="bgsec_'+k+'"><div class="bg-th"'+(fixed?'':' onclick="bgToggleSec(\''+k+'\')"')+'><b class="n">'+n+'</b><i>'+title+'</i><div class="scr">'+chipsOf(arr)+'</div>'+(fixed?'':'<span class="cv"></span>')+'</div><div class="bg-rows">'+arr.map(function(x){return row(x,mode,null,sl);}).join('')+'</div></div>';
   }
   // Hoy (fija): programadas + cerradas hoy
   var d0=days[0],hoyA=(dayIt[key(d0)]||[]).sort(aoSort);
