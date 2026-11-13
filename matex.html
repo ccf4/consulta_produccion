@@ -754,6 +754,9 @@ input[type=search]::-webkit-search-cancel-button{display:none}
 .kx.rp,#td .td-era,#bgsec_d0 .bg-tg.o{background:#fdf1e8;color:var(--warn)}
 :root[data-theme=dark] .kx.rp,:root[data-theme=dark] #td .td-era,:root[data-theme=dark] #bgsec_d0 .bg-tg.o{background:rgba(251,146,60,.16);color:#fb923c}
 #td .td-tag.pe,.bg-tg.pe{color:var(--muted)!important}
+.tface .tn i .kx{display:inline-flex;width:20px;height:20px;margin-left:6px;margin-top:-6px;margin-bottom:-6px;vertical-align:middle;position:relative;top:-1px;letter-spacing:0}.tface .tn i .kx svg{width:12px;height:12px}
+#td .td-tag.pe{padding-left:8px;padding-right:8px}.bg-tg.pe{padding-left:7px;padding-right:7px}
+@media(max-width:640px){#bgsec_d0 .bg-r2 .bg-pd,#bgsec_d0 .bg-tg.pe{display:none}#bgsec_d0 .bg-sb{flex:1 1 0;width:auto;min-width:0}}
 </style>
 </head>
 <body>
@@ -1420,7 +1423,7 @@ function renderTiles(){
       var tt={'HOY':(_tmr?(((today()-realToday())===864e5)?'Entregas ma\u00f1ana':'Entregas'):'Entregas hoy')+' \u00b7 '+_fdl(today()),'VENCIDAS':'Vencidas','REPROGRAMADAS':'Reprogramadas','STOCK':'Stock'}[c[2]];
       hh.innerHTML='<div>'+tt+'</div>';}
     var f=h.querySelector('.tface');if(!f){f=document.createElement('div');f.className='tface';h.appendChild(f);}
-    f.innerHTML='<div class="tn"><b>'+n+'</b><i>'+({'HOY':(_tmr?'\u00d3RDENES POR ENTREGAR MA\u00d1ANA':'\u00d3RDENES POR ENTREGAR HOY'),'VENCIDAS':'\u00d3RDENES VENCIDAS','REPROGRAMADAS':'\u00d3RDENES REPROGRAMADAS','STOCK':'\u00d3RDENES DE STOCK'}[c[2]]||c[2])+'</i>'+(c[2]==='REPROGRAMADAS'?kxIcon('rp'):(c[2]==='STOCK'?kxIcon('sk'):''))+'</div><div class="tc">'+chips+'</div><span class="tchev" aria-hidden="true"><span class="tmt">Ver detalle</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
+    f.innerHTML='<div class="tn"><b>'+n+'</b><i>'+({'HOY':(_tmr?'\u00d3RDENES POR ENTREGAR MA\u00d1ANA':'\u00d3RDENES POR ENTREGAR HOY'),'VENCIDAS':'\u00d3RDENES VENCIDAS','REPROGRAMADAS':'\u00d3RDENES REPROGRAMADAS','STOCK':'\u00d3RDENES DE STOCK'}[c[2]]||c[2]).replace(/(\S+)$/,function(w){return (c[2]==='REPROGRAMADAS'||c[2]==='STOCK')?'<span style="white-space:nowrap">'+w+(c[2]==='STOCK'?kxIcon('sk'):kxIcon('rp'))+'</span>':w;})+'</i></div><div class="tc">'+chips+'</div><span class="tchev" aria-hidden="true"><span class="tmt">Ver detalle</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
   });
 }
 
@@ -1444,12 +1447,25 @@ function fitTiles(){
   });
 }
 window.addEventListener('resize',function(){try{renderTiles();fitTiles();syncChevrons();}catch(e){}});
+function revealCard(card){
+  // al abrir una seccion, si queda fuera de pantalla, recorre la vista para que se vea desde su encabezado
+  setTimeout(function(){
+    try{
+      var hd=document.querySelector('header'),top0=hd?hd.getBoundingClientRect().bottom:0;
+      var r=card.getBoundingClientRect();
+      if(r.top>=top0&&r.top<window.innerHeight*0.55)return;
+      var y=window.pageYOffset+r.top-top0-10;
+      window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+    }catch(e){}
+  },60);
+}
 function toggleHoySection(){
   var card=document.getElementById('hoyCard'),chev=document.getElementById('tdChevron'),label=document.getElementById('tdLabel');
   var open=card.style.display!=='none';
   card.style.display=open?'none':'block';
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
+  if(!open)revealCard(card);
 }
 function renderHoy(T,src){
   var ok={};src.forEach(function(d){ok[String(d.OP)]=1;});
@@ -1483,6 +1499,7 @@ function toggleLateSection(){
   card.style.display=open?'none':'block';
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
+  if(!open)revealCard(card);
 }
 var _secDefault=false;
 function cerrarSeccion(cardId,chevId,labelId){
@@ -1540,6 +1557,7 @@ function toggleClSection(){
   card.style.display=open?'none':'block';
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
+  if(!open)revealCard(card);
 }
 function toggleStockSection(){
   var card=document.getElementById('skCard'),chev=document.getElementById('skChevron'),label=document.getElementById('skLabel');
@@ -1547,6 +1565,7 @@ function toggleStockSection(){
   card.style.display=open?'none':'block';
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
+  if(!open)revealCard(card);
 }
 function toggleReprogSection(){
   var card=document.getElementById('rpCard'),chev=document.getElementById('rpChevron'),label=document.getElementById('rpLabel');
@@ -1554,6 +1573,7 @@ function toggleReprogSection(){
   card.style.display=open?'none':'block';
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
+  if(!open)revealCard(card);
 }
 // ===== Vista ampliada (agenda compacta) =====
 var _bgOpen=false,_bgCol={cl:true},_bgOp={};
