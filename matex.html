@@ -789,6 +789,8 @@ input[type=search]::-webkit-search-cancel-button{display:none}
 #bgsec_d0 .bg-r2>.bg-tg.g{margin-left:auto;margin-right:auto}
 #bgsec_d0 .bg-r2>.bg-tg.g{font-size:11px;padding:1px 6px}
 }
+
+.bg-tg.rpg{display:inline-flex;align-items:center;gap:4px}.bg-tg.rpg svg{width:14px;height:14px;flex:none}
 </style>
 </head>
 <body>
@@ -1704,11 +1706,11 @@ function bgRender(){
     if(mode==='cl')tags+='<span class="bg-tg g">'+sd(x.f)+'</span>';
     if(x.late&&mode!=='cl')tags+='<span class="bg-tg r">−'+daysDiff(x.f,T)+'d</span>';
     if(mode==='nf'&&x.fp)tags+='<span class="bg-tg o">+'+(function(n){return n+(n===1?' día':' días');})(daysDiff(x.fp,x.f))+'</span>';
-    else if(x.nf&&x.fp&&!x.late)tags+='<span class="bg-tg o">↻ <span class="erax">era </span>'+sd(x.fp)+'</span>';
+    else if(x.nf&&x.fp&&!x.late)tags+=sl?'<span class="bg-tg o rpg">'+_KX_RP+'<span><span class="erax">era </span>'+sd(x.fp)+'</span></span>':'<span class="bg-tg o">↻ <span class="erax">era </span>'+sd(x.fp)+'</span>';
     if((mode==='stock'||mode==='later'||mode==='old')&&x.f&&!x.late)tags+='<span class="bg-tg">'+sd(x.f)+'</span>';
     if((x.par||x.cpar)&&!x._pend)tags+='<span class="bg-tg p">parcial</span>';
     var pedT=(!prod&&ped(x.op))?'<span class="bg-pd">'+fPed(ped(x.op))+'</span>':((!prod&&sl)?'<span class="bg-pd e"></span>':'');
-    return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+(cal&&x.nf&&x.fp&&!x.late?' rp':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+(sl?'<span class="bg-kx">'+kxIcon(x.stock?'sk':((x.nf&&x.fp&&!x.late)?'rp':''))+'</span>'+st+(tags?'<span class="bg-rs">'+tags+'</span>':''):st+tags)+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b><span class="pu"> p</span></span></div>';
+    return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+(cal&&x.nf&&x.fp&&!x.late?' rp':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+(sl?'<span class="bg-kx">'+kxIcon(x.stock?'sk':'')+'</span>'+st+(tags?'<span class="bg-rs">'+tags+'</span>':''):st+tags)+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b><span class="pu"> p</span></span></div>';
   }
   function tile(k,title,arr,mode,cls,fixed,cnt){
     if(!arr.length)return '';
@@ -1718,7 +1720,7 @@ function bgRender(){
     return '<div class="bg-tl '+(cls||'')+(open?' open':'')+(fixed?' fixed':'')+'" id="bgsec_'+k+'"><div class="bg-th"'+(fixed?'':' onclick="bgToggleSec(\''+k+'\')"')+'><b class="n">'+n+'</b><i>'+title+'</i><div class="scr">'+chipsOf(arr)+'</div>'+(fixed?'':'<span class="cv"></span>')+'</div><div class="bg-rows">'+arr.map(function(x){return row(x,mode,null,sl);}).join('')+'</div></div>';
   }
   // Hoy (fija): programadas + cerradas hoy
-  var d0=days[0],hoyA=(dayIt[key(d0)]||[]).filter(function(x){return !x.old;}).concat(stockIt.filter(function(x){return x.f&&!x.late&&key(x.f)===key(d0);})).sort(aoSort);
+  var d0=days[0],hoyA=(dayIt[key(d0)]||[]).filter(function(x){return !x.old;}).concat(stockIt.filter(function(x){return x.f&&!x.late&&key(x.f)===key(d0);})).sort(function(a,b){return String(a.op).localeCompare(String(b.op));});
   var hoyDone=clIt.filter(function(x){return x.f&&key(x.f)===key(d0);}).map(function(x){var y=Object.assign({},x);y._done=1;return y;});
   var hoyAll=hoyA.map(function(x){var y=Object.assign({},x);y._pend=1;return y;}).concat(hoyDone);
   h+='<div class="bg-sech'+(_tmr?' tm':'')+'"><span>'+'RESUMEN \u00b7 '+(_tmr?(((T-realToday())===864e5)?'MA\u00d1ANA':'SIGUIENTE D\u00cdA'):'HOY')+' \u00b7 '+_fdl(T).toUpperCase()+'</span>'+(_tmr?'<button onclick="setTmr(false)">\u25c4 Volver a hoy</button>':'<button onclick="setTmr(true)">'+(new Date().getHours()>=18?'':'')+'Ver ma\u00f1ana \u25ba</button>')+'</div><div class="bg-sum">';
