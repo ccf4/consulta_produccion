@@ -1635,7 +1635,7 @@ function bgRender(){
     if(mode==='nf'&&x.fp)tags+='<span class="bg-tg o">+'+(function(n){return n+(n===1?' día':' días');})(daysDiff(x.fp,x.f))+'</span>';
     else if(x.nf&&x.fp&&!x.late)tags+='<span class="bg-tg o">↻ <span class="erax">era </span>'+sd(x.fp)+'</span>';
     if((mode==='stock'||mode==='later'||mode==='old')&&x.f&&!x.late)tags+='<span class="bg-tg">'+sd(x.f)+'</span>';
-    if(x.par||x.cpar)tags+='<span class="bg-tg p">parcial</span>';
+    if((x.par||x.cpar)&&!x._pend)tags+='<span class="bg-tg p">parcial</span>';
     var pedT=(!prod&&ped(x.op))?'<span class="bg-pd">'+fPed(ped(x.op))+'</span>':((!prod&&sl)?'<span class="bg-pd e"></span>':'');
     return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+(cal&&x.nf&&x.fp&&!x.late?' rp':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+(sl?st+(tags?'<span class="bg-rs">'+tags+'</span>':''):st+tags)+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b> p</span></div>';
   }
@@ -1643,7 +1643,7 @@ function bgRender(){
     if(!arr.length)return '';
     var open=srchOn||(k==='d0'?_bgOp[k]!==false:_bgOp[k]===true);
     var n=cnt!=null?cnt:ops(arr);
-    var sl=null;if(k==='d0'){sl={st:arr.some(function(x){return x._done||(x._pend&&!_tmr);}),rs:arr.some(function(x){return (x.nf&&x.fp&&!x.late)||x.par||x.cpar;})};}
+    var sl=null;if(k==='d0'){sl={st:arr.some(function(x){return x._done||(x._pend&&!_tmr);}),rs:arr.some(function(x){return (x.nf&&x.fp&&!x.late)||((x.par||x.cpar)&&!x._pend);})};}
     return '<div class="bg-tl '+(cls||'')+(open?' open':'')+(fixed?' fixed':'')+'" id="bgsec_'+k+'"><div class="bg-th"'+(fixed?'':' onclick="bgToggleSec(\''+k+'\')"')+'><b class="n">'+n+'</b><i>'+title+'</i><div class="scr">'+chipsOf(arr)+'</div>'+(fixed?'':'<span class="cv"></span>')+'</div><div class="bg-rows">'+arr.map(function(x){return row(x,mode,null,sl);}).join('')+'</div></div>';
   }
   // Hoy (fija): programadas + cerradas hoy
@@ -2267,8 +2267,8 @@ function renderSemana(T){
         var a=p.AREA,s=normSub(p.SUBAREA)||p.SUBAREA||'';
         if(!a||!s)return;
         var k=a+'|'+s;
-        if(!clBadgeMap[k]){clBadgeMap[k]={area:a,sub:s,total:0};clBadgeOrder.push(k);}
-        clBadgeMap[k].total+=(parseInt(p.CANT)||0);
+        if(!clBadgeMap[k]){clBadgeMap[k]={area:a,sub:s,total:0,ops:{}};clBadgeOrder.push(k);}
+        clBadgeMap[k].total+=(parseInt(p.CANT)||0);clBadgeMap[k].ops[String(p.OP)]=1;
       });
     });
     var clItems=clBadgeOrder.map(function(k){
@@ -2276,7 +2276,7 @@ function renderSemana(T){
       var ic=subIcon(g.sub,g.area);
       if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,var(--icbase));vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
       else ic=ic.replace('margin-right:5px','margin-right:2px');
-      return '<span data-tip="'+subTip(g.area,g.sub)+'" style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+      return '<span data-tip="'+subTip(g.area,g.sub)+'"'+hkAttrs(g)+' style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
     }).join('');
     document.getElementById('clBadges').innerHTML=clItems?'<span style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;white-space:nowrap"><span style="display:flex;align-items:center;gap:6px;background:#dff3e7;border-radius:8px;padding:4px 8px;flex-shrink:0;color:var(--accent3)" title="Entregadas"><span style="display:flex;align-items:center;gap:16px;color:var(--text)">'+clItems+'</span></span></span>':'';
     document.getElementById('cl').innerHTML=clHtml;
@@ -2787,7 +2787,7 @@ document.querySelectorAll('.mo').forEach(function(m){new MutationObserver(upd).o
   function clear(){document.querySelectorAll('.hk').forEach(function(e){e.classList.remove('hk');});}
   function apply(chip){
     var st=chip.closest('.st');if(!st)return;
-    var cid=null;for(var k in MAP)if(st.classList.contains(k))cid=MAP[k];
+    var cid=null;for(var k in MAP)if(st.classList.contains(k))cid=MAP[k];if(chip.closest('#clBadges'))cid='cl';
     var ops=(chip.getAttribute('data-ops')||'').split(',').filter(Boolean);
     var key=(chip.getAttribute('data-hk')||'').split('|'),area=key[0],sub=key.slice(1).join('|');
     ops.forEach(function(op){
@@ -2808,7 +2808,7 @@ document.querySelectorAll('.mo').forEach(function(m){new MutationObserver(upd).o
     });
   }
   document.addEventListener('mouseover',function(ev){
-    var c=ev.target.closest&&ev.target.closest('.tc [data-hk]');
+    var c=ev.target.closest&&ev.target.closest('.tc [data-hk],#clBadges [data-hk]');
     if(c===cur)return;clear();cur=c;if(c)apply(c);
   });
   document.addEventListener('mouseout',function(ev){if(cur&&!(ev.relatedTarget&&cur.contains(ev.relatedTarget))){clear();cur=null;}});
