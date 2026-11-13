@@ -765,6 +765,18 @@ input[type=search]::-webkit-search-cancel-button{display:none}
 #bgsec_d0 .bg-r2>.bg-tg.g{margin-left:auto;margin-right:auto}#bgsec_d0 .bg-r2:has(>.bg-tg.g) .bg-tg.p{display:none}#bgsec_d0 .bg-r2:has(>.bg-tg.g) .bg-q2{margin-left:0}
 }
 @media(max-width:375px){#bgsec_d0 .bg-sb{width:56px;font-size:12px}#bgsec_d0 .bg-r2 .bg-tg{font-size:11.5px;padding:2px 5px}#bgsec_d0 .bg-r2 .bg-op{font-size:15px}#bgsec_d0 .bg-q2 b{font-size:15px}}
+
+@media(max-width:640px){
+#bgsec_d0 .bg-r2{gap:6px}
+#bgsec_d0 .bg-pd,#bgsec_d0 .bg-tg.pe{display:none}
+#bgsec_d0 .bg-sb{flex:0 1 96px;width:auto;min-width:0}
+#bgsec_d0 .bg-kx{width:16px;flex:none}
+#bgsec_d0 .bg-r2>.bg-tg,#bgsec_d0 .bg-r2>.bg-rs{margin-left:auto}
+#bgsec_d0 .bg-q2{flex:none;margin-left:0;width:50px;text-align:right}
+#bgsec_d0 .bg-q2 .pu{display:none}
+#bgsec_d0 .bg-q2{margin-left:auto}
+#bgsec_d0 .bg-r2>.bg-tg:not(.pe)~.bg-q2,#bgsec_d0 .bg-r2>.bg-rs~.bg-q2{margin-left:0}
+}
 </style>
 </head>
 <body>
@@ -1684,7 +1696,7 @@ function bgRender(){
     if((mode==='stock'||mode==='later'||mode==='old')&&x.f&&!x.late)tags+='<span class="bg-tg">'+sd(x.f)+'</span>';
     if((x.par||x.cpar)&&!x._pend)tags+='<span class="bg-tg p">parcial</span>';
     var pedT=(!prod&&ped(x.op))?'<span class="bg-pd">'+fPed(ped(x.op))+'</span>':((!prod&&sl)?'<span class="bg-pd e"></span>':'');
-    return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+(cal&&x.nf&&x.fp&&!x.late?' rp':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+(sl?'<span class="bg-kx">'+kxIcon(x.stock?'sk':((x.nf&&x.fp&&!x.late)?'rp':''))+'</span>'+st+(tags?'<span class="bg-rs">'+tags+'</span>':''):st+tags)+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b> p</span></div>';
+    return '<div class="bg-r2'+(x.late&&mode!=='cl'?' late':'')+(mode==='cl'||x._done?' cl':'')+(cal&&x.nf&&x.fp&&!x.late?' rp':'')+'" onclick="showDetail(\''+x.op+'\')"><span class="bg-ic2">'+ic+'</span><b class="bg-op">'+fOP(x.op)+'</b>'+pedT+'<span class="bg-sb">'+subTxt+'</span>'+(sl?'<span class="bg-kx">'+kxIcon(x.stock?'sk':((x.nf&&x.fp&&!x.late)?'rp':''))+'</span>'+st+(tags?'<span class="bg-rs">'+tags+'</span>':''):st+tags)+'<span class="bg-q2"><b>'+fmtNum(x.cant)+'</b><span class="pu"> p</span></span></div>';
   }
   function tile(k,title,arr,mode,cls,fixed,cnt){
     if(!arr.length)return '';
