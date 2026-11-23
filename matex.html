@@ -865,14 +865,14 @@ body.tvOn #todV{display:flex}body.tvOn{overflow:hidden}
 @media(max-width:1280px){.tv-main{grid-template-columns:230px minmax(0,1fr) 300px}.tv-s{flex-basis:180px}}
 
 @media(min-width:901px){
-#td .td-row{grid-template-columns:30px 118px minmax(80px,.5fr) minmax(110px,.55fr) 96px 22px 96px minmax(0,4fr) 112px;column-gap:8px}
+#td .td-row{grid-template-columns:30px 118px minmax(80px,.5fr) minmax(110px,.55fr) 96px 22px 96px 112px minmax(0,4fr);column-gap:8px}
 #td .td-sub{display:contents}
 #td .td-row>span:nth-child(1){grid-column:1}#td .td-op{grid-column:2}#td .td-ped{grid-column:3}
 #td .td-sub>b{grid-column:4;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #td .td-q{grid-column:5;text-align:right}
 #td .td-ico{grid-column:6;margin-left:0}
 #td .td-sub>.td-tag{grid-column:7;margin-left:0;justify-self:start}
-#td .td-desc{grid-column:8}#td .td-ec{grid-column:9}
+#td .td-ec{grid-column:8;text-align:left}#td .td-desc{grid-column:9}
 #td .td-row>*{grid-row:1}
 }
 
@@ -889,7 +889,7 @@ body.tvOn #todV{display:flex}body.tvOn{overflow:hidden}
 </head>
 <body>
 <header>
-  <div class="hdr-brand"><button class="bigbtn" onclick="bgOpen()" title="Vista ampliada" aria-label="Vista ampliada"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="19" r="5.5"/><circle cx="23" cy="19" r="5.5"/><path d="M14.5 18.5c1-1.2 2-1.2 3 0"/><path d="M3.5 18.5L5 10M28.5 18.5L27 10"/></svg></button><button class="bigbtn thbtn" id="themeBtn" onclick="toggleTema()" title="Modo oscuro" aria-label="Cambiar entre modo claro y oscuro"></button><div class="hb-t" style="min-width:0"><div class="logo">Consulta de Entregas</div><div class="title">Ordenes de Produccion</div></div></div>
+  <div class="hdr-brand"><button class="bigbtn" onclick="bgOpen()" title="Vista ampliada" aria-label="Vista ampliada"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="19" r="5.5"/><circle cx="23" cy="19" r="5.5"/><path d="M14.5 18.5c1-1.2 2-1.2 3 0"/><path d="M3.5 18.5L5 10M28.5 18.5L27 10"/></svg></button><div class="hb-t" style="min-width:0"><div class="logo">Consulta de Entregas</div><div class="title">Ordenes de Produccion</div></div></div>
   <div class="hdr-search" style="gap:8px">
     <input id="searchBox" class="search-input" type="search" enterkeyhint="search" autocomplete="off" placeholder="Buscar orden o pedido" oninput="refreshAll()">
   </div>
@@ -898,6 +898,7 @@ body.tvOn #todV{display:flex}body.tvOn{overflow:hidden}
       <div style="grid-column:1/-1;font-size:9px;letter-spacing:.6px;opacity:.6;text-transform:uppercase;margin-bottom:2px;text-align:center">Última actualización</div>
       <span style="opacity:.75" class="entregas-row">Entregas:</span><span style="text-align:right" class="entregas-row">23/nov/26</span><span class="entregas-row">10:45</span>
     </div>
+    <button class="bigbtn thbtn" id="themeBtn" onclick="toggleTema()" title="Modo oscuro" aria-label="Cambiar entre modo claro y oscuro"></button>
     <button id="refreshBtn" onclick="refreshPage()" title="Actualizar datos" style="flex-shrink:0;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">&#8635;</button>
   </div>
 </header>
