@@ -929,6 +929,8 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 #td .td-row.td-stock .td-ico,#ag .td-row.td-stock .td-ico{justify-self:center}
 #td .td-row.td-stock:not(:has(.td-tag)) .td-ico,#ag .td-row.td-stock:not(:has(.td-tag)) .td-ico{grid-column:6 / 8;margin-left:10px}
 }
+/* Ocultar/Ver detalle dentro de las secciones desplegadas: mismo tamano que los demas botones de seccion (las cajas de resumen no se tocan) */
+.sec-tg{gap:5px}.sec-tg .tmt{font-size:12px}.sec-tg svg{width:16px;height:16px;stroke-width:2.5}
 </style>
 </head>
 <body>
@@ -3306,11 +3308,14 @@ document.querySelectorAll('.mo').forEach(function(m){new MutationObserver(upd).o
 })();
 </script>
 <script>
-/* Boton Ocultar / Ver detalle: "Ocultar" siempre en gris; solo "Ver detalle" va en azul */
+/* Boton Ocultar / Ver detalle: "Ocultar" siempre gris y sin negritas; solo "Ver detalle" va en azul */
 (function(){
-  function paint(el){var p=el.parentElement;if(!p)return;p.style.color=(el.textContent.trim()==='Ocultar')?'var(--muted)':'var(--accent)';}
-  function all(){document.querySelectorAll('.lc-label').forEach(paint);}
-  function start(){all();new MutationObserver(function(ms){var seen=[];ms.forEach(function(m){var t=m.target;var el=t.nodeType===3?t.parentElement:t;if(el&&el.closest){el=el.classList&&el.classList.contains('lc-label')?el:el.closest('.lc-label');if(el&&seen.indexOf(el)<0){seen.push(el);paint(el);}}});if(document.querySelector('.lc-label:not([data-p])'))all();}).observe(document.body,{subtree:true,childList:true,characterData:true});}
+  var SEL='.lc-label,.tmt';
+  function paint(el){var oc=el.textContent.trim()==='Ocultar';
+    if(el.classList.contains('tmt')){if(oc){el.style.setProperty('font-weight','500','important');el.style.setProperty('color','var(--muted)','important');}else{el.style.removeProperty('font-weight');el.style.removeProperty('color');}return;}
+    var p=el.parentElement;if(!p)return;p.style.color=oc?'var(--muted)':'var(--accent)';p.style.fontWeight=oc?'500':'600';}
+  function all(){document.querySelectorAll(SEL).forEach(paint);}
+  function start(){all();var q=0;new MutationObserver(function(){if(q)return;q=1;requestAnimationFrame(function(){q=0;all();});}).observe(document.body,{subtree:true,childList:true,characterData:true});}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
 </script>
