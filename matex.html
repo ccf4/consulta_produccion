@@ -931,6 +931,8 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 }
 /* Ocultar/Ver detalle dentro de las secciones desplegadas: mismo tamano que los demas botones de seccion (las cajas de resumen no se tocan) */
 .sec-tg{gap:5px;margin-right:-10px}.sec-tg .tmt{font-size:12px}.sec-tg svg{width:16px;height:16px;stroke-width:2.5}
+/* barras de resumen de la agenda, desplegadas: sin borde gris en la cajita de piezas */
+#ag .st.ag-st:has(+ .ag-card:not([style*="none"])) span[id$="Badges"]>span>span{border-color:transparent!important;background:transparent!important}
 </style>
 </head>
 <body>
@@ -984,7 +986,7 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
     <div class="week-dots" id="weekDots"></div>
     <div id="ag"></div>
     <div id="extraSecs">
-      <div class="st" onclick="toggleClSection()" style="margin-top:20px;cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;transition:background .1s;overflow:hidden" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--surface2)'"><span class="wk-summary-title" style="flex-shrink:0"><span class="wk-tc"><span data-sectip="Órdenes entregadas en los últimos 5 días hábiles." class="sum-lab sum-ttl">Entregadas última semana</span><span id="cc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span class="pz-wrap"><span class="pz-sep"></span><span class="pz-lab">piezas:</span></span></span><span id="clBadges" style="display:flex;align-items:center;gap:6px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span><span class="wk-toggle" style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:5px;color:var(--accent);font-size:12px;font-weight:600"><span id="clLabel" class="lc-label">Ocultar</span><svg id="clChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;transition:transform .15s;transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+      <div class="st" onclick="toggleClSection()" style="margin-top:20px;cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;transition:background .1s;overflow:hidden" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--surface2)'"><span class="wk-summary-title" style="flex-shrink:0"><span class="wk-tc"><span data-sectip="Órdenes entregadas en los últimos 5 días hábiles." class="sum-lab sum-ttl">Entregas últimos 7 días</span><span id="cc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span class="pz-wrap"><span class="pz-sep"></span><span class="pz-lab">piezas:</span></span></span><span id="clBadges" style="display:flex;align-items:center;gap:6px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span><span class="wk-toggle" style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:5px;color:var(--accent);font-size:12px;font-weight:600"><span id="clLabel" class="lc-label">Ocultar</span><svg id="clChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;transition:transform .15s;transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
       <div class="card" id="clCard" style="margin-top:8px"><div class="card-body" id="cl" style="padding:12px"></div></div>
     </div>
   </div>
@@ -2293,7 +2295,7 @@ function renderAgenda(T,src){
     var key='w'+off,ops={},badge={};
     W.days.forEach(function(d){d.rows.forEach(function(g){ops[g.op]=1;var bk=g.area+'|'+g.sub;var b=badge[bk]||(badge[bk]={area:g.area,sub:g.sub,total:0,ops:{}});b.total+=g.cant;b.ops[g.op]=1;});});
     var rng=(ws.getMonth()===we.getMonth()?ws.getDate()+' \u2013 '+we.getDate()+' '+mon(we):ws.getDate()+' '+mon(ws)+' \u2013 '+we.getDate()+' '+mon(we));
-    var title=off===0?'Resto de la semana':(off===1?'Pr\u00f3xima semana':rng);
+    var title=off===0?'Programadas resto de la semana':(off===1?'Pr\u00f3xima semana':rng);
     var extra=off===1?' \u00b7 '+rng:'';
     var open=q?true:(agState[key]!==undefined?agState[key]:ix===0);
     var bodyH='';
