@@ -910,6 +910,25 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 #ag .st.ag-st:has(+ .ag-card:not([style*="none"])){margin-bottom:0!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;background:var(--surface)!important;border-bottom:0!important}
 #ag .ag-card:not([style*="none"]){margin-top:0!important;border-top:none;border-top-left-radius:0;border-top-right-radius:0}
 #ag .ag-card>.card-body{padding:6px 15px 15px!important}
+/* ===== Indicador de stock en las filas (Hoy y agenda): icono + la palabra "stock" dentro de la misma pastilla ===== */
+#td .td-row.td-stock .td-ico,#ag .td-row.td-stock .td-ico{width:auto}
+.kx.kw .kt{display:none}   /* sin espacio para la palabra: queda solo el icono, igual que antes */
+@media(min-width:901px){#td .td-row,#ag .td-row{grid-template-columns:30px 118px 94px 86px 84px 62px 96px minmax(0,1fr) 124px}}
+@media(min-width:520px){
+.kx.kw{width:auto;gap:4px;padding:0 8px 0 5px;border-radius:7px;font-size:11px;font-weight:700;line-height:1;white-space:nowrap}
+.kx.kw .kt{display:inline}
+}
+@media(min-width:520px) and (max-width:599px){#td .td-row.d .kx.kw{width:20px;gap:0;padding:0}#td .td-row.d .kx.kw .kt{display:none}}
+@media(min-width:375px) and (max-width:430px) and (hover:none){
+#td .td-row.td-stock .td-sub,#ag .td-row.td-stock .td-sub{grid-template-columns:minmax(0,92px) auto auto}
+#ag .kx.kw,#td .td-row:not(:has(.td-tag)) .kx.kw{width:auto;gap:3px;padding:0 6px 0 4px;border-radius:7px;font-size:10px;font-weight:700;line-height:1;white-space:nowrap}
+#ag .kx.kw .kt,#td .td-row:not(:has(.td-tag)) .kx.kw .kt{display:inline}
+}
+/* stock: en escritorio la pastilla va centrada entre la columna de pzas y lo que sigue (descripcion, o la etiqueta PENDIENTE/ENTREGADA en Hoy) */
+@media(min-width:901px){
+#td .td-row.td-stock .td-ico,#ag .td-row.td-stock .td-ico{justify-self:center}
+#td .td-row.td-stock:not(:has(.td-tag)) .td-ico,#ag .td-row.td-stock:not(:has(.td-tag)) .td-ico{grid-column:6 / 8;margin-left:10px}
+}
 </style>
 </head>
 <body>
@@ -1041,7 +1060,7 @@ const STOCK_OPS=["26122","30550","31328","31361","31441","31579"];
 var _STK={};STOCK_OPS.forEach(function(o){_STK[String(o)]=1;});
 function isStock(op){return !!_STK[String(op)];}
 var _KX_RP='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>',_KX_SK='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
-function kxIcon(k){return k==='rp'?'<span class="kx rp" title="Reprogramada">'+_KX_RP+'</span>':(k==='sk'?'<span class="kx sk" title="Stock">'+_KX_SK+'</span>':'');}
+function kxIcon(k,t){return k==='rp'?'<span class="kx rp" title="Reprogramada">'+_KX_RP+'</span>':(k==='sk'?'<span class="kx sk'+(t?' kw':'')+'" title="Stock">'+_KX_SK+(t?'<span class="kt">'+t+'</span>':'')+'</span>':'');}
 // Para OPs de stock la partida "representante" es la abierta con fecha mas proxima (cada entrega programada tiene su fecha)
 function repRow(cur,r){
   if(!cur)return r;
@@ -1632,8 +1651,8 @@ function toggleHoySection(){
   if(!open)revealCard(card);
 }
 function tdRowHtml(x,done,noTag){
-    var ic=subIcon(x.sub,x.area)||'';var ps=pedShort(x.op);
-    return '<div class="td-row'+(done?' d':'')+'" onclick="showDetail(\''+x.op+'\')"><span>'+ic+'</span><span class="td-op">'+fOP(x.op)+'</span><span class="td-ped op-ped">'+(ps||'')+'</span><span class="td-sub"><b>'+x.sub+'</b><span class="td-ico">'+kxIcon(isStock(x.op)?'sk':(x.era?'rp':''))+'</span>'+(done?'<span class="td-tag">ENTREGADA</span>':(noTag?'':'<span class="td-tag pe">PEND<span class="pmx">IENTE</span></span>'))+'</span><span class="td-desc">'+(function(){var a=getArts(x.op)||[];var n=a.length-1;var _d=a[0]||(function(){var r0=RAW.filter(function(r){return String(r.OP)===String(x.op);})[0];if(!r0)return '';var t=(r0.TROQUEL1||'').toString().trim(),sb=(x.sub||'').toUpperCase(),o=sb;if(/^\d+(\.\d+)?$/.test(t))o+=' DE '+t+' MM';if(r0.MESH)o+=', MALLA '+r0.MESH;if(r0.MAT)o+=', '+r0.MAT;return o;})();return '<span class="td-dt">'+_d+'</span>'+(n>0?'<span class="td-more">(+'+n+(n===1?' art\u00edculo':' art\u00edculos')+')</span>':'');})()+'</span><span class="td-ec">'+(x.era&&!done?'<span class="td-era">'+_KX_RP+'era '+x.era+'</span>':'')+'</span><span class="td-q">'+fmtNum(x.cant)+' <small>pzas</small></span></div>';
+    var ic=subIcon(x.sub,x.area)||'';var ps=pedShort(x.op);var stk=isStock(x.op);
+    return '<div class="td-row'+(done?' d':'')+(stk?' td-stock':'')+'" onclick="showDetail(\''+x.op+'\')"><span>'+ic+'</span><span class="td-op">'+fOP(x.op)+'</span><span class="td-ped op-ped">'+(ps||'')+'</span><span class="td-sub"><b>'+x.sub+'</b><span class="td-ico">'+(stk?kxIcon('sk','stock'):kxIcon(x.era?'rp':''))+'</span>'+(done?'<span class="td-tag">ENTREGADA</span>':(noTag?'':'<span class="td-tag pe">PEND<span class="pmx">IENTE</span></span>'))+'</span><span class="td-desc">'+(function(){var a=getArts(x.op)||[];var n=a.length-1;var _d=a[0]||(function(){var r0=RAW.filter(function(r){return String(r.OP)===String(x.op);})[0];if(!r0)return '';var t=(r0.TROQUEL1||'').toString().trim(),sb=(x.sub||'').toUpperCase(),o=sb;if(/^\d+(\.\d+)?$/.test(t))o+=' DE '+t+' MM';if(r0.MESH)o+=', MALLA '+r0.MESH;if(r0.MAT)o+=', '+r0.MAT;return o;})();return '<span class="td-dt">'+_d+'</span>'+(n>0?'<span class="td-more">(+'+n+(n===1?' art\u00edculo':' art\u00edculos')+')</span>':'');})()+'</span><span class="td-ec">'+(x.era&&!done?'<span class="td-era">'+_KX_RP+'era '+x.era+'</span>':'')+'</span><span class="td-q">'+fmtNum(x.cant)+' <small>pzas</small></span></div>';
   }
 function renderHoy(T,src){
   var ok={};src.forEach(function(d){ok[String(d.OP)]=1;});
@@ -1905,7 +1924,12 @@ function bgRender(){
   var s=document.getElementById('bgS');if(s&&document.activeElement!==s)s.value=document.getElementById('searchBox').value;
   [document.getElementById('bgVend')].forEach(function(el){if(!el)return;function upd(){var max=el.scrollWidth-el.clientWidth,sl=el.scrollLeft;el.classList.toggle('has-l',sl>2);el.classList.toggle('has-r',max>2&&sl<max-2);}if(!el._bg){el._bg=1;el.addEventListener('scroll',upd,{passive:true});}upd();});
 }
-function refreshAll(){var T=today();renderSemana(T);try{window._searchOpen&&window._searchOpen();layoutPanels();}catch(e){}renderTable();if(_bgOpen)bgRender();try{tvRender();}catch(e){}}
+// Secciones de arriba (Vencidas / Reprogramadas / Stock / Cerradas): al escribir la primera letra de busqueda se guarda cuales estaban abiertas
+// (antes de que la busqueda las abra u oculte); al borrar el texto, _searchOpen las deja exactamente como estaban.
+var _srchSnap=null;
+var _SRCH_SEC=[['loCard','lcChevron','lcLabel'],['rpCard','rpChevron','rpLabel'],['skCard','skChevron','skLabel'],['clCard','clChevron','clLabel']];
+function _srchTake(){var q=((document.getElementById('searchBox')||{}).value||'').trim();if(!q||_srchSnap)return;_srchSnap={};_SRCH_SEC.forEach(function(c){var e=document.getElementById(c[0]);if(e)_srchSnap[c[0]]=e.style.display!=='none';});}
+function refreshAll(){var T=today();try{_srchTake();}catch(e){}renderSemana(T);try{window._searchOpen&&window._searchOpen();layoutPanels();}catch(e){}renderTable();if(_bgOpen)bgRender();try{tvRender();}catch(e){}}
 
 // MODALS
 function showDetail(op){
@@ -2467,7 +2491,12 @@ function renderSemana(T){
   if(!hideSinAsig)renderAgenda(T,src);
   mostrarSeccion('lcBadges','loCard',late.length>0);mostrarSeccion('rpBadges','rpCard',mnetWarn.length>0);mostrarSeccion('skBadges','skCard',skList.length>0);
   renderTiles();fitTiles();
-  window._searchOpen=function(){var q=((document.getElementById('searchBox')||{}).value||'').trim();if(!q)return;[['loCard','lcChevron','lcLabel'],['rpCard','rpChevron','rpLabel'],['skCard','skChevron','skLabel'],['clCard','clChevron','clLabel']].forEach(function(c){var e=document.getElementById(c[0]);if(e&&e.querySelector('.late-card')){abrirSeccion(c[0],c[1],c[2]);}});};
+  window._searchOpen=function(){var q=((document.getElementById('searchBox')||{}).value||'').trim();
+    if(!q){   // se borro la busqueda: cada seccion vuelve a como estaba antes de buscar
+      if(_srchSnap){var sn=_srchSnap;_srchSnap=null;_SRCH_SEC.forEach(function(c){var e=document.getElementById(c[0]);if(!e||sn[c[0]]===undefined)return;var on=e.style.display!=='none';if(sn[c[0]]&&!on)abrirSeccion(c[0],c[1],c[2]);else if(!sn[c[0]]&&on)cerrarSeccion(c[0],c[1],c[2]);});}
+      return;
+    }
+    _SRCH_SEC.forEach(function(c){var e=document.getElementById(c[0]);if(e&&e.querySelector('.late-card')){abrirSeccion(c[0],c[1],c[2]);}});};
   // Al abrir el panel: si hay vencidas se muestran ampliadas; si no, y hay reprogramadas, estas. Despues manda el usuario.
     if(!_secDefault){_secDefault=true;cerrarSeccion('loCard','lcChevron','lcLabel');cerrarSeccion('rpCard','rpChevron','rpLabel');cerrarSeccion('skCard','skChevron','skLabel');abrirSeccion('hoyCard','tdChevron','tdLabel');if(vflt.length){if(late.length>0)abrirSeccion('loCard','lcChevron','lcLabel');if(mnetWarn.length>0)abrirSeccion('rpCard','rpChevron','rpLabel');}}
   layoutPanels();
@@ -3274,6 +3303,15 @@ document.querySelectorAll('.mo').forEach(function(m){new MutationObserver(upd).o
     if(c===cur)return;clear();cur=c;if(c)apply(c);
   });
   document.addEventListener('mouseout',function(ev){if(cur&&!(ev.relatedTarget&&cur.contains(ev.relatedTarget))){clear();cur=null;}});
+})();
+</script>
+<script>
+/* Boton Ocultar / Ver detalle: "Ocultar" siempre en gris; solo "Ver detalle" va en azul */
+(function(){
+  function paint(el){var p=el.parentElement;if(!p)return;p.style.color=(el.textContent.trim()==='Ocultar')?'var(--muted)':'var(--accent)';}
+  function all(){document.querySelectorAll('.lc-label').forEach(paint);}
+  function start(){all();new MutationObserver(function(ms){var seen=[];ms.forEach(function(m){var t=m.target;var el=t.nodeType===3?t.parentElement:t;if(el&&el.closest){el=el.classList&&el.classList.contains('lc-label')?el:el.closest('.lc-label');if(el&&seen.indexOf(el)<0){seen.push(el);paint(el);}}});if(document.querySelector('.lc-label:not([data-p])'))all();}).observe(document.body,{subtree:true,childList:true,characterData:true});}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
 </script>
 </body>
