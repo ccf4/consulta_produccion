@@ -875,6 +875,10 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 #td .td-ec,#ag .td-ec{grid-column:8}
 #td .td-row:not(:has(.td-era)) .td-desc,#ag .td-row:not(:has(.td-era)) .td-desc{grid-column:7 / 9}
 }
+/* cajas de resumen: contorno de color y relleno solo cuando estan desplegadas; cerradas = fondo blanco y contorno gris, mismo grosor (1px) */
+#secRow>.st.open,:root[data-theme=dark] #secRow>.st.open{outline:none!important}
+#secRow>.st.st.t-hoy:not(.open),#secRow>.st.st.t-venc:not(.open),#secRow>.st.st.t-rp:not(.open),#secRow>.st.st.t-sk:not(.open){background:#fff!important;border:1px solid var(--border)!important}
+:root[data-theme=dark] #secRow>.st.st.t-hoy:not(.open),:root[data-theme=dark] #secRow>.st.st.t-venc:not(.open),:root[data-theme=dark] #secRow>.st.st.t-rp:not(.open),:root[data-theme=dark] #secRow>.st.st.t-sk:not(.open){background:var(--surface)!important;border:1px solid var(--border)!important}
 /* Ocultar/Ver detalle dentro de las secciones desplegadas: mismo tamano que los demas botones de seccion (las cajas de resumen no se tocan) */
 .sec-tg{gap:5px;margin-right:-10px}.sec-tg .tmt{font-size:12px}.sec-tg svg{width:16px;height:16px;stroke-width:2.5}
 /* barras de resumen de la agenda, desplegadas: sin borde gris en la cajita de piezas */
