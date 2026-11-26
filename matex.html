@@ -882,6 +882,8 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 /* barras de resumen por subarea: cantidad de ordenes junto a las piezas, "(8 ord.)"; en las cajas de resumen del inicio no se muestra para no cambiar su tamano */
 [data-oc]::after{content:attr(data-oc);color:var(--muted);font-weight:400;margin-left:4px;white-space:nowrap}
 #secRow [data-oc]::after{display:none}
+/* cajas de resumen del inicio: nombre de la subarea junto a las piezas ("6,227 discos"); si no cabe, continua en la siguiente linea */
+#secRow .tc [data-nm]::before{content:attr(data-nm);order:1;font-weight:600;color:var(--text);margin:0 0 0 4px;white-space:nowrap}
 /* Pendiente por area y subarea: titulo arriba y un bloque por area (encabezado + tarjetitas de sus subareas); los bloques se acomodan lado a lado para no dejar espacios vacios */
 #ptBar{flex-direction:column;align-items:stretch!important;gap:6px!important}
 #ptBar .wk-summary-title{padding:0}#ptBar .pz-wrap{display:none}
@@ -1576,7 +1578,8 @@ function renderTiles(){
     var sp=[].slice.call(bd.querySelectorAll('span')).filter(function(x){return x.querySelector('svg')&&/\d/.test(x.textContent)&&x.textContent.trim().length<8;});
     var u=[];sp.forEach(function(x){if(!u.some(function(y){return y.contains(x)||x.contains(y);}))u.push(x);});
     var chips=u.map(function(x){return x.outerHTML;}).join('');
-    if(c[2]==='REPROGRAMADAS'||c[2]==='STOCK'){chips=[].slice.call(bd.querySelectorAll('[data-hk]')).map(function(x){return x.outerHTML;}).join('');}
+    var _hkc=[].slice.call(bd.querySelectorAll('[data-hk]')).map(function(x){return x.outerHTML;}).join('');
+    if(c[2]==='REPROGRAMADAS'||c[2]==='STOCK'||_hkc){chips=_hkc;}
     var sub='';
     if(c[2]==='HOY'){var m=cnt.match(/(\d+) entregada/);sub=_tmr?'':(m?m[1]+' ya entregada'+(m[1]==='1'?'':'s'):'ninguna entregada aún');}
     else if(c[2]==='VENCIDAS'){var mx=0,mn=1e9;((document.getElementById('lo')||{}).textContent||'').replace(/(\d+)\s+días?\s+vencid/g,function(_,d){d=+d;mx=Math.max(mx,d);mn=Math.min(mn,d);});sub=mx?(mn===mx?mx+(mx===1?' día':' días')+' de retraso':'de '+mn+' a '+mx+' días de retraso'):'pasaron su fecha';}
@@ -1596,6 +1599,7 @@ function fitTiles(){
     tc.querySelectorAll('.pm').forEach(function(x){x.remove();});
     var ch=[].slice.call(tc.children);ch.forEach(function(x){x.classList.remove('fh');});
     if(!ch.length||!tc.offsetWidth)return;
+    return; /* ya no se recortan chips con "+N": al llevar nombre, los que no caben pasan a la linea siguiente */
     var tops=[];ch.forEach(function(x){var t=x.offsetTop;if(!tops.some(function(y){return Math.abs(y-t)<6;}))tops.push(t);});tops.sort(function(a,b){return a-b;});var maxTop=(tops[1]===undefined?tops[0]:tops[1])+5;
     var over=ch.filter(function(x){return x.offsetTop>maxTop;});
     if(!over.length)return;
