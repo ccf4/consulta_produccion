@@ -879,6 +879,21 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 #secRow>.st.open,:root[data-theme=dark] #secRow>.st.open{outline:none!important}
 #secRow>.st.st.t-hoy:not(.open),#secRow>.st.st.t-venc:not(.open),#secRow>.st.st.t-rp:not(.open),#secRow>.st.st.t-sk:not(.open){background:#fff!important;border:1px solid var(--border)!important}
 :root[data-theme=dark] #secRow>.st.st.t-hoy:not(.open),:root[data-theme=dark] #secRow>.st.st.t-venc:not(.open),:root[data-theme=dark] #secRow>.st.st.t-rp:not(.open),:root[data-theme=dark] #secRow>.st.st.t-sk:not(.open){background:var(--surface)!important;border:1px solid var(--border)!important}
+/* barras de resumen por subarea: cantidad de ordenes junto a las piezas, "(8 ord.)"; en las cajas de resumen del inicio no se muestra para no cambiar su tamano */
+[data-oc]::after{content:attr(data-oc);color:var(--muted);font-weight:400;margin-left:4px;white-space:nowrap}
+#secRow [data-oc]::after{display:none}
+/* Pendiente por area y subarea: titulo arriba y un bloque por area (encabezado + tarjetitas de sus subareas); los bloques se acomodan lado a lado para no dejar espacios vacios */
+#ptBar{flex-direction:column;align-items:stretch!important;gap:6px!important}
+#ptBar .wk-summary-title{padding:0}#ptBar .pz-wrap{display:none}
+#ptBar #ptBadges{display:flex!important;flex-wrap:wrap;align-items:flex-start!important;gap:10px 14px!important;overflow:visible!important;width:100%}
+#ptBar .pa-row{display:flex;flex-direction:column;gap:5px;border-left:3px solid var(--border);padding-left:9px;min-width:0;max-width:100%}
+#ptBar .pa-ar{display:flex;align-items:baseline;gap:8px;white-space:nowrap}#ptBar .pa-ar>b{font-size:11px;letter-spacing:.5px}
+#ptBar .pa-ar span{font-size:11.5px;color:var(--muted)}#ptBar .pa-ar span b{font-size:12px;color:var(--text)}
+#ptBar .pa-subs{display:flex;gap:6px;flex-wrap:wrap;min-width:0}
+#ptBar .pa-c{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:3px 9px 3px 6px}
+#ptBar .pa-n{display:flex;flex-direction:column;line-height:1.2;font-size:13px}#ptBar .pa-n b{font-size:13px;color:var(--text)}
+#ptBar .pa-n i{font-style:normal;font-size:10.5px;color:var(--muted);font-weight:400}
+#ptBar .pa-n small{font-size:10.5px;color:var(--muted);font-weight:400;white-space:nowrap}
 /* Ocultar/Ver detalle dentro de las secciones desplegadas: mismo tamano que los demas botones de seccion (las cajas de resumen no se tocan) */
 .sec-tg{gap:5px;margin-right:-10px}.sec-tg .tmt{font-size:12px}.sec-tg svg{width:16px;height:16px;stroke-width:2.5}
 /* barras de resumen de la agenda, desplegadas: sin borde gris en la cajita de piezas */
@@ -940,7 +955,7 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
     </div>
   </div>
   <div class="view" id="view-todas">
-    <div class="st" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span class="wk-tc"><span class="sum-lab">Pendiente por área y subárea</span><span id="tdCount" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span class="pz-wrap"><span class="pz-sep"></span><span class="pz-lab">piezas:</span></span></span><span id="ptBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div>
+    <div class="st" id="ptBar" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span class="wk-tc"><span class="sum-lab">Pendiente por área y subárea</span><span id="tdCount" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span class="pz-wrap"><span class="pz-sep"></span><span class="pz-lab">piezas:</span></span></span><span id="ptBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div>
     <div class="card" id="tdCard" style="margin-top:8px;margin-bottom:12px"><div class="card-body" id="tdBody" style="padding:6px 12px 10px"></div></div>
     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
       <span class="fl">Estado:</span>
@@ -2178,12 +2193,13 @@ function subTip(area,sub){
   document.addEventListener('touchstart',function(e){var el=target(e);clearTimeout(tm);if(el){show(el);tm=setTimeout(hide,1800);}else hide();},{passive:true});
   window.addEventListener('scroll',hide,true);
 })();
+function ocAttr(g){var o=g.ops||[];var n=Array.isArray(o)?o.length:Object.keys(o).length;return n?' data-oc="('+n+' ord.)"':'';}
 function hkAttrs(g){var o=g.ops||[];if(!Array.isArray(o))o=Object.keys(o);return ' data-hk="'+String(g.area+'|'+normSub(g.sub)).replace(/"/g,'&quot;')+'" data-ops="'+o.join(',')+'"';}
 function badgeIconHtml(g){
   var ic=subIcon(g.sub,g.area);
   if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,var(--icbase));vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
   else ic=ic.replace('margin-right:5px','margin-right:2px');
-  return '<span data-tip="'+subTip(g.area,g.sub)+'"'+hkAttrs(g)+' style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+  return '<span data-tip="'+subTip(g.area,g.sub)+'"'+hkAttrs(g)+ocAttr(g)+' style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
 }
 function nextWeekBadgesHtml(WS){
   var list=weekBadgeList(WS);
@@ -2318,7 +2334,7 @@ function renderSemana(T){
     var ic=subIcon(g.sub,g.area);
     if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,var(--icbase));vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
     else ic=ic.replace('margin-right:5px','margin-right:2px');
-    return '<span data-tip="'+subTip(g.area,g.sub)+'"'+hkAttrs(g)+' style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+    return '<span data-tip="'+subTip(g.area,g.sub)+'"'+hkAttrs(g)+ocAttr(g)+' style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
   }
   var lateGroups=buildIconGroups(late);
   document.getElementById('lcCount').textContent=late.length?' - '+nOrdP(late.length):' - No hay \u00f3rdenes vencidas';
@@ -2560,7 +2576,7 @@ function renderSemana(T){
       var ic=subIcon(g.sub,g.area);
       if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(g.area)+' 12%,var(--icbase));vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(g.area)+'"></span></span>';
       else ic=ic.replace('margin-right:5px','margin-right:2px');
-      return '<span data-tip="'+subTip(g.area,g.sub)+'"'+hkAttrs(g)+' style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
+      return '<span data-tip="'+subTip(g.area,g.sub)+'"'+hkAttrs(g)+ocAttr(g)+' style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(g.total)+'</span>';
     }).join('');
     document.getElementById('clBadges').innerHTML=clItems?'<span style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;white-space:nowrap"><span style="display:flex;align-items:center;gap:6px;background:#dff3e7;border-radius:8px;padding:4px 8px;flex-shrink:0;color:var(--accent3)" title="Entregadas"><span style="display:flex;align-items:center;gap:16px;color:var(--text)">'+clItems+'</span></span></span>':'';
     document.getElementById('cl').innerHTML=clHtml;
@@ -2639,14 +2655,23 @@ function renderResumenAbiertas(d,aF){
   document.getElementById('tdCount').textContent=ids.size?' - '+nOrdP(ids.size):'';
   (function(){
     var bd=document.getElementById('ptBadges');if(!bd)return;
-    var h=list.map(function(r){
-      var tot=r.c.reduce(function(a,b){return a+b;},0);if(!tot)return '';
-      var ic=subIcon(r.s,r.a);
-      if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(r.a)+' 12%,var(--icbase));vertical-align:middle;margin-right:2px;flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(r.a)+'"></span></span>';
-      else ic=ic.replace('margin-right:5px','margin-right:2px');
-      return '<span data-tip="'+subTip(r.a,r.s)+'" style="display:flex;align-items:center;gap:0;font-size:11px;color:var(--text);font-weight:600;flex-shrink:0">'+ic+fmtNum(tot)+'</span>';
+    var areas={},ordA=[];
+    list.forEach(function(r){
+      var A=areas[r.a]=areas[r.a]||{a:r.a,pz:0,ops:{},subs:[]};
+      var tot=r.c.reduce(function(a,b){return a+b;},0);if(!tot)return;
+      var so={};r.o.forEach(function(st){st.forEach(function(op){so[op]=1;A.ops[op]=1;});});
+      A.pz+=tot;A.subs.push({s:r.s,a:r.a,pz:tot,n:Object.keys(so).length});
+    });
+    var h=Object.keys(areas).map(function(k){return areas[k];}).filter(function(A){return A.pz>0;}).map(function(A){
+      var cards=A.subs.map(function(t){
+        var ic=subIcon(t.s,t.a);
+        if(!ic)ic='<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:color-mix(in srgb,'+ac(t.a)+' 12%,var(--icbase));flex-shrink:0"><span style="width:8px;height:8px;border-radius:50%;background:'+ac(t.a)+'"></span></span>';
+        else ic=ic.replace('margin-right:5px','margin-right:0');
+        return '<span class="pa-c" data-tip="'+subTip(t.a,t.s)+'">'+ic+'<span class="pa-n"><span><b>'+fmtNum(t.pz)+'</b> <i>pzas</i></span><small>'+t.s+' \u00b7 '+t.n+' ord.</small></span></span>';
+      }).join('');
+      return '<div class="pa-row" style="border-left-color:'+ac(A.a)+'"><div class="pa-ar"><b style="color:'+ac(A.a)+'">'+String(A.a).toUpperCase()+'</b><span><b>'+Object.keys(A.ops).length+'</b> ord. \u00b7 <b>'+fmtNum(A.pz)+'</b> pzas</span></div><div class="pa-subs">'+cards+'</div></div>';
     }).join('');
-    bd.innerHTML=h?'<span style="display:flex;align-items:center;gap:16px;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:4px 8px;flex-shrink:0">'+h+'</span>':'';
+    bd.innerHTML=h;
   })();
   var body=document.getElementById('tdBody');
   if(!list.length){body.innerHTML='<div style="padding:10px;font-size:12px;color:var(--muted)">Sin piezas pendientes</div>';return;}
@@ -2822,7 +2847,7 @@ function renderTable(){
       '<td><b style="font-family:IBM Plex Mono,monospace">'+fOP(r.OP)+'</b>'+mnetFlag+'</td>'+
       '<td>'+sb(r.XSTATUS)+'</td>'+
       '<td style="font-size:10px;font-weight:600;color:'+ac(r.AREA)+'">'+r.AREA+'</td>'+
-      '<td style="color:var(--muted);font-size:10px">'+r.SUBAREA+'</td>'+
+      '<td style="color:var(--muted);font-size:10px">'+(/^(tubulares?|ftubo|helvex)$/i.test(r.SUBAREA||'')?'Tubular':r.SUBAREA)+'</td>'+
       '<td class="col-ped" style="font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--accent4)">'+(pedShort(r.OP)||'--')+'</td>'+
       '<td style="font-size:10px;font-weight:600">'+(r.VENDEDOR||'--')+'</td>'+
       '<td style="font-family:IBM Plex Mono,monospace">'+fmtNum(parseInt(r.CANT)||0)+'</td>'+
@@ -3020,7 +3045,7 @@ function normSub(s){
   var map={'FTUBO':'Tubular','TAPAS':'Tapas','MANUAL':'Manual','DISCO':'Disco',
     'PACK':'Pack','OBLONGO':'Oblongo','REMALLADO':'Remallado','CRIBA':'Criba',
     'ELIMINADOR':'Eliminador','P.FILTRANTE':'Placa filtrante','EMBOLSADOS':'Embolsados',
-    'TUBULARES':'Tubulares','ARMAR':'Armar','HELVEX':'Tubulares','NUEVO':'Nuevo',
+    'TUBULARES':'Tubular','ARMAR':'Armar','HELVEX':'Tubular','NUEVO':'Nuevo',
     'RINON':'Riñon','RIÑON':'Riñon','TIRAS':'Tiras',
     'PACK RECT / MANUAL':'Packs rectangulares','PACK RECT':'Packs rectangulares',
     'EMPAQUE':'Empaque','ARMAR / PUNTEAR':'Armar / Puntear'};
