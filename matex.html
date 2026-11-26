@@ -901,6 +901,14 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 #ag .ag-st .sh-wrap{order:3;flex:1 0 100%!important;min-width:0;margin-left:-2px}
 #ag .ag-st [data-nm]::before{content:attr(data-nm);order:1;font-weight:600;color:var(--text);margin:0 0 0 4px;white-space:nowrap}
 #ag .ag-st [data-nm]::after{order:2}
+/* stock con pedido (escritorio): el pedido se queda en su columna y la pastilla va entre las piezas y la descripcion */
+@media(min-width:901px){
+#td .td-row.td-sp .td-ico,#ag .td-row.td-sp .td-ico{grid-column:6;justify-self:center;margin-left:10px}
+#td .td-row.td-sp:has(.td-tag) .td-ico{justify-self:end;margin-left:0}
+#td .td-row.td-sp:has(.td-tag) .kx.kw{width:20px;gap:0;padding:0}#td .td-row.td-sp:has(.td-tag) .kx.kw .kt{display:none}
+}
+/* hover de una fila cuya OP tiene otra subarea: resaltado suave (el fuerte queda para el hover de las barras de resumen) */
+#td .td-row.hk2,#ag .td-row.hk2{background:rgba(99,102,241,.07);box-shadow:inset 0 0 0 1px rgba(99,102,241,.28);border-radius:6px}
 /* Ocultar/Ver detalle dentro de las secciones desplegadas: mismo tamano que los demas botones de seccion (las cajas de resumen no se tocan) */
 .sec-tg{gap:5px;margin-right:-10px}.sec-tg .tmt{font-size:12px}.sec-tg svg{width:16px;height:16px;stroke-width:2.5}
 /* barras de resumen de la agenda, desplegadas: sin borde gris en la cajita de piezas */
@@ -1627,7 +1635,7 @@ function toggleHoySection(){
 }
 function tdRowHtml(x,done,noTag){
     var ic=subIcon(x.sub,x.area)||'';var ps=pedShort(x.op);var stk=isStock(x.op);
-    return '<div class="td-row'+(done?' d':'')+(stk?' td-stock':'')+'" onclick="showDetail(\''+x.op+'\')"><span>'+ic+'</span><span class="td-op">'+fOP(x.op)+'</span><span class="td-ped op-ped">'+(ps||'')+'</span><span class="td-sub"><b>'+x.sub+'</b><span class="td-ico">'+(stk?kxIcon('sk','stock'):kxIcon(x.era?'rp':''))+'</span>'+(done?'<span class="td-tag">ENTREGADA</span>':(noTag?'':'<span class="td-tag pe">PEND<span class="pmx">IENTE</span></span>'))+'</span><span class="td-desc">'+(function(){var a=getArts(x.op)||[];var n=a.length-1;var _d=a[0]||(function(){var r0=RAW.filter(function(r){return String(r.OP)===String(x.op);})[0];if(!r0)return '';var t=(r0.TROQUEL1||'').toString().trim(),sb=(x.sub||'').toUpperCase(),o=sb;if(/^\d+(\.\d+)?$/.test(t))o+=' DE '+t+' MM';if(r0.MESH)o+=', MALLA '+r0.MESH;if(r0.MAT)o+=', '+r0.MAT;return o;})();return '<span class="td-dt">'+_d+'</span>'+(n>0?'<span class="td-more">(+'+n+(n===1?' art\u00edculo':' art\u00edculos')+')</span>':'');})()+'</span><span class="td-ec">'+(x.era&&!done?'<span class="td-era">'+_KX_RP+'era '+x.era+'</span>':'')+'</span><span class="td-q">'+fmtNum(x.cant)+' <small>pzas</small></span></div>';
+    return '<div class="td-row'+(done?' d':'')+(stk?' td-stock':'')+(stk&&ps?' td-sp':'')+'" onclick="showDetail(\''+x.op+'\')"><span>'+ic+'</span><span class="td-op">'+fOP(x.op)+'</span><span class="td-ped op-ped">'+(ps||'')+'</span><span class="td-sub"><b>'+x.sub+'</b><span class="td-ico">'+(stk?kxIcon('sk','stock'):kxIcon(x.era?'rp':''))+'</span>'+(done?'<span class="td-tag">ENTREGADA</span>':(noTag?'':'<span class="td-tag pe">PEND<span class="pmx">IENTE</span></span>'))+'</span><span class="td-desc">'+(function(){var a=getArts(x.op)||[];var n=a.length-1;var _d=a[0]||(function(){var r0=RAW.filter(function(r){return String(r.OP)===String(x.op);})[0];if(!r0)return '';var t=(r0.TROQUEL1||'').toString().trim(),sb=(x.sub||'').toUpperCase(),o=sb;if(/^\d+(\.\d+)?$/.test(t))o+=' DE '+t+' MM';if(r0.MESH)o+=', MALLA '+r0.MESH;if(r0.MAT)o+=', '+r0.MAT;return o;})();return '<span class="td-dt">'+_d+'</span>'+(n>0?'<span class="td-more">(+'+n+(n===1?' art\u00edculo':' art\u00edculos')+')</span>':'');})()+'</span><span class="td-ec">'+(x.era&&!done?'<span class="td-era">'+_KX_RP+'era '+x.era+'</span>':'')+'</span><span class="td-q">'+fmtNum(x.cant)+' <small>pzas</small></span></div>';
   }
 function renderHoy(T,src){
   var ok={};src.forEach(function(d){ok[String(d.OP)]=1;});
@@ -2245,7 +2253,6 @@ function agToggle(k){
   if(chev)chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
   agState[k]=!open;
-  if(!open)revealCard(card);
 }
 function renderAgenda(T,src){
   var host=document.getElementById('ag');if(!host)return;
@@ -2279,7 +2286,7 @@ function renderAgenda(T,src){
     var key='w'+off,ops={},badge={};
     W.days.forEach(function(d){d.rows.forEach(function(g){ops[g.op]=1;var bk=g.area+'|'+g.sub;var b=badge[bk]||(badge[bk]={area:g.area,sub:g.sub,total:0,ops:{}});b.total+=g.cant;b.ops[g.op]=1;});});
     var rng=(ws.getMonth()===we.getMonth()?ws.getDate()+' \u2013 '+we.getDate()+' '+mon(we):ws.getDate()+' '+mon(ws)+' \u2013 '+we.getDate()+' '+mon(we));
-    var title=off===0?'Programadas resto de la semana':(off===1?'Pr\u00f3xima semana':rng);
+    var title=off===0?'Programadas resto de la semana':(off===1?'Pr\u00f3xima semana':'Semana del '+rng);
     var extra=off===1?' \u00b7 '+rng:'';
     var open=q?true:(agState[key]!==undefined?agState[key]:ix===0);
     var bodyH='';
@@ -3140,7 +3147,7 @@ document.querySelectorAll('.mo').forEach(function(m){new MutationObserver(upd).o
 // Hover en el total de una subárea (tarjetas de resumen): resalta sus OPs en el calendario semanal y en la ficha desplegada
 (function(){
   var MAP={'t-hoy':'td','t-venc':'lo','t-rp':'rp','t-sk':'sk'},cur=null;
-  function clear(){document.querySelectorAll('.hk').forEach(function(e){e.classList.remove('hk');});try{hkNavClear();}catch(e){}}
+  function clear(){document.querySelectorAll('.hk,.hk2').forEach(function(e){e.classList.remove('hk');e.classList.remove('hk2');});try{hkNavClear();}catch(e){}}
   function apply(chip){
     var st=chip.closest('.st');if(!st)return;
     var cid=null;for(var k in MAP)if(st.classList.contains(k))cid=MAP[k];if(chip.closest('#clBadges'))cid='cl';
@@ -3184,7 +3191,7 @@ document.querySelectorAll('.mo').forEach(function(m){new MutationObserver(upd).o
     }
     all.forEach(function(e){e.classList.add('hk');});
     try{hkNav([op],null,null);}catch(e){}
-    try{var _rs=[].slice.call(document.querySelectorAll('#ag .td-row[onclick^="showDetail(\''+op+'\')"]')).filter(function(e){return e.offsetParent;});if(_rs.length>1)_rs.forEach(function(e){e.classList.add('hk');});}catch(e){}
+    try{var _rs=[].slice.call(document.querySelectorAll('#ag .td-row[onclick^="showDetail(\''+op+'\')"]')).filter(function(e){return e.offsetParent;});if(_rs.length>1)_rs.forEach(function(e){e.classList.add('hk2');});}catch(e){}
   }
   document.addEventListener('mouseover',function(ev){
     var c=ev.target.closest&&ev.target.closest('.tc [data-hk],#clBadges [data-hk],#wgBadges [data-hk],#ag .st [data-hk]');
