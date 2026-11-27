@@ -102,6 +102,7 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}@media(min-width:150
 #loCard:not([style*="none"]),#rpCard:not([style*="none"]),#skCard:not([style*="none"]),#clCard:not([style*="none"]){margin-top:0!important;border-top:none;border-top-left-radius:0;border-top-right-radius:0}
 #loCard>.card-body,#rpCard>.card-body,#skCard>.card-body,#clCard>.card-body{padding:0 15px 15px!important}
 #cl>.cl-day:first-child>div:first-child{margin-top:0!important}@media(min-width:641px){#cl.cl-srch{display:flex!important;flex-wrap:wrap;gap:0 28px;align-items:flex-start}#cl.cl-srch>.cl-day{flex:0 1 auto;min-width:0}#cl.cl-srch>.cl-day>div:first-child{margin-top:0!important}#cl.cl-srch .late-cards{display:flex;flex-wrap:wrap}#cl.cl-srch .late-card{width:240px;flex:0 0 240px}}
+@media(min-width:901px){html.flt-on #ag .ag-st .sh-wrap{order:2!important;flex:1 1 0!important;min-width:260px;margin-left:6px}html.flt-on #ag .ag-st .wk-toggle{order:3!important}html.flt-on #clBar .sh-wrap,html.flt-on #clBar #clBadges{order:2!important;flex:1 1 0!important;min-width:260px;margin-left:6px}html.flt-on #clBar .wk-toggle{order:3!important}}
 html body #secRow>.card{grid-column:1/-1!important}html body #secRow>#loCard,html body #secRow>#rpCard,html body #secRow>#skCard{border:1px solid var(--border)!important;border-radius:12px!important;margin-top:0!important}@media(min-width:901px){html body #secRow>#loCard:not([style*="none"]):not(.srch-0):has(~#rpCard:not([style*="none"]):not(.srch-0)){grid-column:span var(--lo-sp,4)!important}html body #secRow>#loCard:not([style*="none"]):not(.srch-0)~#rpCard:not([style*="none"]):not(.srch-0){grid-column:span var(--rp-sp,8)!important}}
 .st{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0;}
@@ -1695,6 +1696,7 @@ function syncMarks(){
 }
 var CHV='<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
 function applySrchHide(){
+  try{document.documentElement.classList.toggle('flt-on',((document.getElementById('searchBox')||{}).value||'').trim()!==''||(window.vflt&&vflt.length>0));}catch(e){}
   var on=((document.getElementById('searchBox')||{}).value||'').trim()!=='';
   var cnt=function(sel){var o={};document.querySelectorAll(sel+' [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)o[m[1]]=1;});return Object.keys(o).length;};
   try{var nl=cnt('#lo'),nr=cnt('#rp'),rw=document.getElementById('secRow');
