@@ -911,6 +911,74 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 }
 /* hover de una fila cuya OP tiene otra subarea: resaltado suave (el fuerte queda para el hover de las barras de resumen) */
 #td .td-row.hk2,#ag .td-row.hk2{background:rgba(99,102,241,.07);box-shadow:inset 0 0 0 1px rgba(99,102,241,.28);border-radius:6px}
+/* caja de total (no se despliega): fondo gris claro, borde punteado y sin chevron; las demas cajas muestran con cuales se cruzan */
+@media(min-width:901px){#secRow{grid-template-columns:repeat(4,minmax(0,1fr))}#secRow>.st{grid-column:auto}}
+#secRow>#totTile{order:0;background:var(--surface2)!important;border:1px dashed var(--border)!important;cursor:default;box-shadow:none!important}
+#totTile .tn b{color:var(--text)}#totTile .tn i{white-space:normal}
+.tface .tx{font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.25}
+@media(max-width:900px){#secRow>#totTile{grid-column:1/-1}#totTile .tface{display:flex;align-items:center;gap:10px;flex-wrap:wrap}#totTile .tx{margin:0}}
+/* nueva fila de resumen: Total · Por entregar hoy · Vencidas · Proximas entregas; reprogramadas y stock pasan a marcas (siguen abriendo su detalle) */
+#secRow>.st.t-sk{display:none!important}
+#secRow>#proxTile{order:1;cursor:pointer}
+#proxTile .tn b{color:var(--accent)}
+#marksRow{grid-column:1/-1;order:2;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#marksRow .mk{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px 11px;font-size:12px;cursor:pointer;color:var(--text)}
+#marksRow .mk b{font-size:13px}#marksRow .mk small{font-size:10.5px;color:var(--muted)}
+#marksRow .mk svg{width:11px;height:11px;color:var(--accent);transition:transform .15s}#marksRow .mk.on svg{transform:rotate(180deg)}
+#marksRow .mk-rp{border-color:#fdba74}#marksRow .mk-sk{border-color:#c4b5fd}
+#marksRow .mk-rp.on{background:#fff7ed}#marksRow .mk-sk.on{background:#f5f3ff}
+:root[data-theme=dark] #marksRow .mk-rp.on{background:rgba(251,146,60,.10)}:root[data-theme=dark] #marksRow .mk-sk.on{background:rgba(167,139,250,.12)}
+@media(max-width:900px){#secRow>#proxTile{grid-column:1/-1}#marksRow .mk{padding:4px 9px}#marksRow .mk small{display:none}}
+#secRow>#totTile{background:var(--surface2)!important;border:1px solid var(--surface2)!important}
+#totTile .tmk{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+#totTile .mk{display:flex;align-items:center;gap:7px;padding:4px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:12px;cursor:pointer;color:var(--text)}
+#totTile .mk b{font-size:13px}#totTile .mk small{display:none}#totTile .mk svg:last-child{margin-left:auto;width:11px;height:11px;color:var(--accent);transition:transform .15s}#totTile .mk.on svg:last-child{transform:rotate(180deg)}
+#totTile .mk svg:first-child{width:14px;height:14px}
+#totTile .mk-rp{border-color:#fdba74}#totTile .mk-sk{border-color:#c4b5fd}
+#totTile .mk-rp.on{background:#fff7ed}#totTile .mk-sk.on{background:#f5f3ff}
+:root[data-theme=dark] #totTile .mk-rp.on{background:rgba(251,146,60,.10)}:root[data-theme=dark] #totTile .mk-sk.on{background:rgba(167,139,250,.12)}
+#totTile .tmk,#marksRow{display:none!important}
+/* acento del color de cada caja en su detalle */
+/* ajustes resumen */
+#secRow>#totTile{align-self:start}#totTile .tface{padding:8px 12px}#totTile .tn{margin:0}
+.tface .tx.tm{font-weight:400;display:flex;flex-wrap:wrap;gap:3px 12px;align-items:center;margin-top:5px}.tface .tx.tm .tmi{display:inline-flex;align-items:center;gap:5px;font-weight:400}
+.tface .tx.tm .kx{width:18px;height:18px}.tface .tx.tm .kx svg{width:11px;height:11px}
+@media(min-width:901px){#td .td-era{margin-right:32px}#ag .td-era{margin-right:26px}}
+#secRow>#hoyCard{border-left:1px solid var(--border)!important}
+#hoyCard>.sec-h>div:first-child{display:inline-block;background:#d1fae5;color:#047857;border:1px solid #34d399;border-radius:99px;padding:2px 12px;font-weight:700}
+:root[data-theme=dark] #hoyCard>.sec-h>div:first-child{background:rgba(52,211,153,.16);color:#6ee7b7;border-color:rgba(52,211,153,.6)}
+#ag{--x:0}
+#secRow>.st:not(#totTile):not(.t-sk){display:flex!important;flex-direction:column;align-items:stretch!important;justify-content:flex-start!important}#secRow>.st:not(#totTile):not(.t-sk)>.tface{width:100%;flex:1;display:flex;flex-direction:column}
+.tface .tx.tm{margin-top:auto;padding-top:5px}
+.tface .tx.tm .tmb{cursor:pointer;border:1px solid var(--border);border-radius:99px;padding:0 8px 0 2px;margin:-1px 0;background:var(--surface)}
+.tface .tx.tm .tmb .cv{width:10px;height:10px;color:var(--accent);transition:transform .15s}.tface .tx.tm .tmb.on .cv{transform:rotate(180deg)}
+.tface .tx.tm .tmb.on{background:var(--surface2)}
+#hoyCard>.sec-h>div:first-child{background:#ecfdf5!important;border:0!important;color:#047857;font-weight:600;margin-left:-12px;padding:2px 12px}
+:root[data-theme=dark] #hoyCard>.sec-h>div:first-child{background:rgba(52,211,153,.16)!important;color:#6ee7b7}
+/* columna 1: total + entregas 7 dias */
+#col1{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;min-width:0;order:0}#col1>#entTile{grid-column:span 3}
+#col1>#totTile,#col1>#entTile{flex:1;border-radius:12px;position:relative;display:flex;align-items:center}
+#col1>#totTile{background:var(--surface2);border:1px solid var(--surface2)}
+#col1>#entTile{background:var(--surface);border:1px solid var(--border);cursor:pointer}
+#col1>#entTile.on{border-color:#34d399}
+:root[data-theme=dark] #col1>#entTile.on{border-color:rgba(52,211,153,.7)}
+#col1 .tface{padding:6px 12px;width:100%}#col1 .tface .tn{margin:0}
+#entTile .ecv{position:absolute;right:10px;top:50%;margin-top:-5px;width:10px;height:10px;color:var(--accent);transition:transform .15s}#entTile.on .ecv{transform:rotate(180deg)}
+#extraSecs>.st{display:none!important}
+#secRow>#clCard{order:0!important}
+.tface .tx.tm:not(:has(.tmb)){justify-content:flex-end;text-align:right}
+@media(max-width:900px){#col1{grid-template-columns:repeat(2,minmax(0,1fr))}#secRow>.st.t-rp{grid-column:1/-1}}
+#entTile .tn i{line-height:1.15}
+
+#entTile .tface{display:flex;align-items:center;gap:14px;padding-right:34px;flex-wrap:wrap}#col1 #entTile .tn,#col1 #totTile .tn{flex:none;width:max-content;padding-right:0!important}#entTile .tn i{flex:none;white-space:nowrap}
+#col1 #entTile .tface{padding:6px 34px 6px 12px!important}#entTile .ech{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;min-width:0;flex:1 1 320px}
+#entTile .ech>span,#entTile .ech>span>span{flex:0 1 auto!important;min-width:0!important;max-width:100%}
+@media(max-width:900px){#col1{grid-template-columns:1fr}#col1>#entTile{grid-column:auto}}
+#entTile .ech [data-nm]::before{content:attr(data-nm);order:1;font-weight:600;color:var(--text);margin:0 0 0 4px;white-space:nowrap}
+#entTile [data-oc]::after{display:none}
+#entTile .ech>span{flex-wrap:wrap!important;white-space:normal!important;row-gap:4px}
+#entTile .ech>span>span{background:transparent!important;padding:0!important;flex-wrap:wrap;row-gap:4px;column-gap:16px!important}#entTile .ech>span>span>span{display:flex!important;flex-wrap:wrap!important;row-gap:5px;column-gap:11px!important;min-width:0}
+html body #secRow#secRow .srch-0.srch-0.srch-0{display:none!important}
 /* Ocultar/Ver detalle dentro de las secciones desplegadas: mismo tamano que los demas botones de seccion (las cajas de resumen no se tocan) */
 .sec-tg{gap:5px;margin-right:-10px}.sec-tg .tmt{font-size:12px}.sec-tg svg{width:16px;height:16px;stroke-width:2.5}
 /* barras de resumen de la agenda, desplegadas: sin borde gris en la cajita de piezas */
@@ -933,7 +1001,7 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
   </div>
 </header>
 <div class="tabs" style="align-items:center">
-  <div class="tab active" onclick="switchTab('semana')">Semanal</div>
+  <div class="tab active" onclick="switchTab('semana')">Resumen</div>
   <div class="tab" onclick="switchTab('todas')">Todas las órdenes</div>
   <div id="vendBar" style="display:flex;gap:6px;align-items:center;margin-left:auto;min-width:0;flex-shrink:1;overflow-x:auto;padding:6px 0 6px 10px;-webkit-overflow-scrolling:touch">
     <div class="fb vfb" data-v="LF" onclick="filterVend('LF',this)">LF</div>
@@ -963,7 +1031,7 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
       <div class="nwl" id="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span id="plText">--</span></div>
       <button class="nb" id="btnN" onclick="changeWeek(1)" aria-label="Semana siguiente" title="Semana siguiente"><span class="wk-t">siguiente semana</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
     </div>
-    <div class="card"><div class="card-body wg-body" style="padding:12px"><div class="st" style="display:flex;align-items:center;gap:8px;background:transparent;border:none;border-radius:0;padding:0 4px 10px;margin-left:-4px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span class="wk-tc"><span data-sectip="Órdenes con entrega programada en la semana de la consulta." id="wgTitle" class="sum-lab sum-ttl">Entregas programadas de la semana</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span class="pz-wrap"><span class="pz-sep"></span><span class="pz-lab">piezas:</span></span></span><span id="wgBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div><div id="wgCalWrap" style="overflow-x:auto"><div id="wg"></div></div><div id="wgGantt" style="display:none"></div></div></div>
+    <div class="card"><div class="card-body wg-body" style="padding:12px"><div class="st" style="display:flex;align-items:center;gap:8px;background:transparent;border:none;border-radius:0;padding:0 4px 10px;margin-left:-4px;overflow:hidden"><span class="wk-summary-title" style="flex-shrink:0"><span class="wk-tc"><span data-sectip="Órdenes con entrega programada a partir de mañana, semana por semana." id="wgTitle" class="sum-lab sum-ttl">Próximas entregas</span><span id="wc" style="font-size:11px;color:var(--muted);font-weight:400"></span></span><span class="pz-wrap"><span class="pz-sep"></span><span class="pz-lab">piezas:</span></span></span><span id="wgBadges" style="display:flex;align-items:center;gap:16px;overflow-x:auto;flex:1;min-width:0;-webkit-overflow-scrolling:touch"></span></div><div id="wgCalWrap" style="overflow-x:auto"><div id="wg"></div></div><div id="wgGantt" style="display:none"></div></div></div>
     <div class="week-dots" id="weekDots"></div>
     <div id="ag"></div>
     <div id="extraSecs">
@@ -1592,8 +1660,83 @@ function renderTiles(){
     var f=h.querySelector('.tface');if(!f){f=document.createElement('div');f.className='tface';h.appendChild(f);}
     f.innerHTML='<div class="tn"><b>'+n+'</b><i>'+({'HOY':(_tmr?'\u00d3RDENES POR ENTREGAR MA\u00d1ANA':'\u00d3RDENES POR ENTREGAR HOY'),'VENCIDAS':'\u00d3RDENES VENCIDAS','REPROGRAMADAS':'\u00d3RDENES REPROGRAMADAS','STOCK':'\u00d3RDENES DE STOCK'}[c[2]]||c[2]).replace(/(\S+)$/,function(w){return (c[2]==='REPROGRAMADAS'||c[2]==='STOCK')?'<span style="white-space:nowrap">'+w+(c[2]==='STOCK'?kxIcon('sk'):kxIcon('rp'))+'</span>':w;})+'</i></div><div class="tc">'+chips+'</div><span class="tchev" aria-hidden="true"><span class="tmt">Ver detalle</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>';
   });
+  try{renderTotTile();}catch(e){}
 }
 
+
+function irSemanas(){
+  var w0=document.getElementById('agc_w0');if(w0&&w0.style.display!=='none')agToggle('w0');
+  var t=document.getElementById('ag');if(!t)return;
+  var hd=document.querySelector('header'),top0=hd?hd.getBoundingClientRect().bottom:0;
+  window.scrollTo({top:Math.max(0,window.pageYOffset+t.getBoundingClientRect().top-top0-10),behavior:'smooth'});
+}
+function syncMarks(){
+  [['mkRp','rpCard'],['mkSk','skCard']].forEach(function(x){var m=document.getElementById(x[0]),c=document.getElementById(x[1]);if(m&&c)m.classList.toggle('on',c.style.display!=='none');});
+}
+var CHV='<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+function applySrchHide(){
+  var on=((document.getElementById('searchBox')||{}).value||'').trim()!=='';
+  var cnt=function(sel){var o={};document.querySelectorAll(sel+' [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)o[m[1]]=1;});return Object.keys(o).length;};
+  [['.t-hoy','hoyCard','#td'],['.t-venc','loCard','#lo'],['.t-rp','rpCard','#rp'],['#proxTile',null,'#ag'],['#entTile','clCard','#cl']].forEach(function(x){
+    var t=document.querySelector('#secRow '+x[0]);if(!t)return;
+    var c=x[1]?document.getElementById(x[1]):null,z=on&&cnt(x[2])===0;
+    t.classList.toggle('srch-0',z);if(c)c.classList.toggle('srch-0',z);
+  });
+}
+function renderTotTile(){
+  var row=document.getElementById('secRow');if(!row)return;
+  var ids=function(sel){var o={};document.querySelectorAll(sel+' [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)o[m[1]]=1;});return o;};
+  var S={hoy:ids('#td'),venc:ids('#lo'),rp:ids('#rp'),sk:ids('#sk'),prog:ids('#ag')};
+  var ab={};RAW.forEach(function(r){if((r.STATUS||'').trim().toUpperCase()==='V')ab[String(r.OP)]=1;});
+  var seen={};Object.keys(S).forEach(function(k){Object.keys(S[k]).forEach(function(o){seen[o]=1;});});var tot=Object.keys(seen).filter(function(o){return ab[o];}).length;
+  var hid=Object.keys(ab).filter(function(o){return !seen[o];}).length;
+  var t=document.getElementById('totTile');
+  var col=document.getElementById('col1');if(!col){col=document.createElement('div');col.id='col1';row.insertBefore(col,row.firstChild);}
+  if(!t){t=document.createElement('div');t.id='totTile';col.appendChild(t);}
+  var et=document.getElementById('entTile');
+  if(!et){et=document.createElement('div');et.id='entTile';et.setAttribute('onclick','toggleClSection()');et.title='Entregas de los \u00faltimos 7 d\u00edas';col.appendChild(et);}
+  var _eo={};document.querySelectorAll('#cl [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)_eo[m[1]]=1;});var nEnt=Object.keys(_eo).length;
+  et.innerHTML='<div class="tface"><div class="tn"><b>'+nEnt+'</b><i>ENTREGADAS \u00daLTIMOS 7 D\u00cdAS</i></div><div class="ech">'+((document.getElementById('clBadges')||{}).innerHTML||'')+'</div><svg class="ecv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>';
+  var clc=document.getElementById('clCard');
+  if(clc&&clc.parentNode!==row){var sh=document.createElement('div');sh.className='sec-h';sh.innerHTML='<div>Entregas \u00faltimos 7 d\u00edas <span id="clHdrN" style="font-size:11px;color:var(--muted);font-weight:400"></span></div><span class="sec-tg" onclick="toggleClSection()" title="Ocultar detalle"><span class="tmt">Ocultar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"></polyline></svg></span>';clc.insertBefore(sh,clc.firstChild);clc.style.display='none';row.appendChild(clc);}
+  var hn=document.getElementById('clHdrN');if(hn)hn.textContent='\u00b7 '+nEnt+(nEnt===1?' orden':' \u00f3rdenes');
+  et.classList.toggle('on',!!clc&&clc.style.display!=='none');
+  try{applySrchHide();}catch(e){}
+  if(!window._entObs&&document.getElementById('cl')){window._entObs=new MutationObserver(function(){var o={};document.querySelectorAll('#cl [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)o[m[1]]=1;});var k=Object.keys(o).length,bb=document.querySelector('#entTile .tn b');if(bb)bb.textContent=k;try{applySrchHide();}catch(e){}var h2=document.getElementById('clHdrN');if(h2)h2.textContent='\u00b7 '+k+(k===1?' orden':' \u00f3rdenes');});window._entObs.observe(document.getElementById('cl'),{childList:true,subtree:true});}
+  if(!window._entObs2&&document.getElementById('clBadges')){window._entObs2=new MutationObserver(function(){var e=document.querySelector('#entTile .ech'),b=document.getElementById('clBadges');if(e&&b)e.innerHTML=b.innerHTML;});window._entObs2.observe(document.getElementById('clBadges'),{childList:true,subtree:true});}
+  t.innerHTML='<div class="tface"><div class="tn"><b>'+tot+'</b><i>\u00d3RDENES ABIERTAS</i></div></div>';t.title=hid?'No incluye '+hid+' orden'+(hid===1?'':'es')+' abierta'+(hid===1?'':'s')+' con m\u00e1s de 100 d\u00edas de emitida'+(hid===1?'':'s')+' (se ven en Todas las \u00f3rdenes)':'';
+  /* tarjeta "Proximas entregas" (no se despliega: lleva a las semanas) y fila de marcas (reprogramadas / stock) */
+  var n=function(a,b){var c=0;Object.keys(a).forEach(function(o){if(b[o])c++;});return c;};
+  var wk={w0:0,w1:0,later:0,tot:0};
+  document.querySelectorAll('#ag .ag-st').forEach(function(st){var m=(st.getAttribute('onclick')||'').match(/agToggle\('w(\d+)'\)/);if(!m)return;var tt=st.querySelector('.wk-summary-title');var c=tt&&/(\d+) \u00f3rden/.test(tt.textContent)?+RegExp.$1:(tt&&/1 orden/.test(tt.textContent)?1:0);var k=+m[1];if(k===0)wk.w0+=c;else if(k===1)wk.w1+=c;else wk.later+=c;wk.tot+=c;});
+  var pr=document.getElementById('proxTile');
+  if(!pr){pr=document.createElement('div');pr.id='proxTile';pr.className='st';pr.setAttribute('onclick','irSemanas()');var lc=document.getElementById('rpCard')||document.getElementById('loCard');row.insertBefore(pr,lc?lc.nextSibling:null);}
+  var pp=[];if(wk.w0)pp.push(wk.w0+' esta semana');if(wk.w1)pp.push(wk.w1+' siguiente semana');if(wk.later)pp.push(wk.later+' despu\u00e9s');
+  pr.innerHTML='<div class="tface"><div class="tn"><b>'+wk.tot+'</b><i>PR\u00d3XIMAS ENTREGAS</i></div><div class="tx">'+pp.join(' \u00b7 ')+'</div>'+(function(){var b=n(S.sk,S.prog),q=[];if(b)q.push('<span class="tmi tmb" id="mkSk" onclick="event.stopPropagation();toggleStockSection();syncMarks()">'+kxIcon('sk')+b+' de stock'+CHV+'</span>');return q.length?'<div class="tx tm">'+q.join('')+'</div>':'';})()+'<span class="tchev" aria-hidden="true"><span class="tmt">Ver semanas</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>';
+  var mk=document.getElementById('marksRow');
+  if(!mk){mk=document.createElement('div');mk.id='marksRow';row.appendChild(mk);}
+  var nrp=Object.keys(S.rp).length,nsk=Object.keys(S.sk).length;
+  var _w0=ids('#agc_w0'),_w1=ids('#agc_w1');var wkParts=function(a){var c0=n(a,_w0),c1=n(a,_w1),cl=n(a,S.prog)-c0-c1,r=[];if(c0)r.push([c0,'esta semana','esta semana']);if(c1)r.push([c1,'siguiente semana','siguiente semana']);if(cl>0)r.push([cl,'despu\u00e9s','despu\u00e9s']);return r;};
+  var sub=function(a,b){return [[n(a,S.hoy),'hoy'],[n(a,S.venc),'vencidas'],[n(a,S.prog),'en semanas']].filter(function(x){return x[0]>0;}).map(function(x){return x[0]+' '+x[1];}).join(' \u00b7 ');};
+  mk.innerHTML='';var _unused=(nrp?'<span class="mk mk-rp" id="mkRp" onclick="toggleReprogSection();syncMarks()">'+kxIcon('rp')+'<b>'+nrp+'</b> reprogramadas<small>'+sub(S.rp)+'</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>':'')+(nsk?'<span class="mk mk-sk" id="mkSk" onclick="toggleStockSection();syncMarks()">'+kxIcon('sk')+'<b>'+nsk+'</b> de stock<small>'+sub(S.sk)+'</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>':'');
+  mk.style.display='none';
+  var tf=t.querySelector('.tface'),oldx=tf.querySelector('.tx'),rows=document.createElement('div');rows.className='tmk';
+  try{syncMarks();}catch(e){}
+  var n=function(a,b){var c=0;Object.keys(a).forEach(function(o){if(b[o])c++;});return c;};
+  var pl=function(k,sg,pl_){return k+' '+(k===1?sg:pl_);};
+  var lines={
+    'tdBadges':[[n(S.hoy,S.rp),'tambi\u00e9n reprogramada','tambi\u00e9n reprogramadas'],[n(S.hoy,S.sk),'de stock','de stock']],
+    'lcBadges':[[n(S.venc,S.rp),'tambi\u00e9n reprogramada','tambi\u00e9n reprogramadas'],[n(S.venc,S.sk),'de stock','de stock']],
+    'rpBadges':[[n(S.rp,S.hoy),'hoy','hoy'],[n(S.rp,S.venc),'vencida','vencidas'],].concat(wkParts(S.rp)),
+    'skBadges':[[n(S.sk,S.hoy),'hoy','hoy'],[n(S.sk,S.venc),'vencida','vencidas'],].concat(wkParts(S.sk))};
+  Object.keys(lines).forEach(function(id){
+    var bd=document.getElementById(id);var h=bd&&bd.closest('.st');var f=h&&h.querySelector('.tface');if(!f)return;
+    var old=f.querySelector('.tx');if(old)old.remove();
+    var parts=lines[id].filter(function(x){return x[0]>0;}).map(function(x){return x[0]+' '+(x[0]===1?x[1]:x[2]);});
+    if(!parts.length)return;
+    var d=document.createElement('div');d.className='tx tm';d.innerHTML=lines[id].filter(function(x){return x[0]>0;}).map(function(x){return '<span class="tmi">'+kxIcon(/stock/.test(x[1])?'sk':'rp')+x[0]+' '+(x[0]===1?x[1]:x[2])+'</span>';}).join('');f.appendChild(d);
+  });
+}
 function fitTiles(){
   document.querySelectorAll('#secRow .tface .tc').forEach(function(tc){
     tc.querySelectorAll('.pm').forEach(function(x){x.remove();});
@@ -1690,7 +1833,7 @@ function abrirSeccion(cardId,chevId,labelId){
 
 
 function syncChevrons(){
-  document.querySelectorAll('#secRow>.st').forEach(function(h){
+  document.querySelectorAll('#secRow>.st:not(#proxTile):not(#totTile)').forEach(function(h){
     var c=h.nextElementSibling,ch=h.querySelector('.tchev');if(!c||!ch)return;
     var on=c.style.display!=='none';ch.classList.toggle('on',on);h.classList.toggle('open',on);var mt=ch.querySelector('.tmt');if(mt)mt.textContent=on?'Ocultar':'Ver detalle';h.title=on?'Ocultar detalle':'Ver detalle';
   });
@@ -1729,6 +1872,7 @@ function toggleClSection(){
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
   if(!open)revealCard(card);
+  var _e=document.getElementById('entTile');if(_e)_e.classList.toggle('on',!open);
 }
 function toggleStockSection(){
   var card=document.getElementById('skCard'),chev=document.getElementById('skChevron'),label=document.getElementById('skLabel');
@@ -2290,7 +2434,7 @@ function renderAgenda(T,src){
     var key='w'+off,ops={},badge={};
     W.days.forEach(function(d){d.rows.forEach(function(g){ops[g.op]=1;var bk=g.area+'|'+g.sub;var b=badge[bk]||(badge[bk]={area:g.area,sub:g.sub,total:0,ops:{}});b.total+=g.cant;b.ops[g.op]=1;});});
     var rng=(ws.getMonth()===we.getMonth()?ws.getDate()+' \u2013 '+we.getDate()+' '+mon(we):ws.getDate()+' '+mon(ws)+' \u2013 '+we.getDate()+' '+mon(we));
-    var title=off===0?'Programadas resto de la semana':(off===1?'Pr\u00f3xima semana':'Semana del '+rng);
+    var title=off===0?'Entregas programadas semana actual':(off===1?'Pr\u00f3xima semana':'Semana del '+rng);
     var extra=off===1?' \u00b7 '+rng:'';
     var open=q?true:(agState[key]!==undefined?agState[key]:ix===0);
     var bodyH='';
@@ -2320,7 +2464,7 @@ function renderSemana(T){
   document.getElementById('btnN').disabled=proxOff>=mx;
   document.getElementById('plText').textContent=fwk(WS);
   document.getElementById('pl').classList.toggle('cur',proxOff===0);
-  document.getElementById('wgTitle').textContent='Entregas programadas de la semana';
+  document.getElementById('wgTitle').textContent='Pr\u00f3ximas entregas';
   renderWeekDots(T,mx,mn);
   buildGrid(WS,'wg','wc',null,'wgBadges');
   renderWeekGantt(WS,T);
