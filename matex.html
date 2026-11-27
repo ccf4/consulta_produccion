@@ -948,7 +948,7 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 #hoyCard>.sec-h>div:first-child{display:inline-block;background:#d1fae5;color:#047857;border:1px solid #34d399;border-radius:99px;padding:2px 12px;font-weight:700}
 :root[data-theme=dark] #hoyCard>.sec-h>div:first-child{background:rgba(52,211,153,.16);color:#6ee7b7;border-color:rgba(52,211,153,.6)}
 #ag{--x:0}
-#secRow>.st:not(#totTile):not(.t-sk){display:flex!important;flex-direction:column;align-items:stretch!important;justify-content:flex-start!important}#secRow>.st:not(#totTile):not(.t-sk)>.tface{width:100%;flex:1;display:flex;flex-direction:column}
+#secRow>.st:not(#totTile):not(.t-sk):not(#clBar){display:flex!important;flex-direction:column;align-items:stretch!important;justify-content:flex-start!important}#secRow>.st:not(#totTile):not(.t-sk):not(#clBar)>.tface{width:100%;flex:1;display:flex;flex-direction:column}
 .tface .tx.tm{margin-top:auto;padding-top:5px}
 .tface .tx.tm .tmb{cursor:pointer;border:1px solid var(--border);border-radius:99px;padding:0 8px 0 2px;margin:-1px 0;background:var(--surface)}
 .tface .tx.tm .tmb .cv{width:10px;height:10px;color:var(--accent);transition:transform .15s}.tface .tx.tm .tmb.on .cv{transform:rotate(180deg)}
@@ -965,7 +965,7 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 #col1 .tface{padding:6px 12px;width:100%}#col1 .tface .tn{margin:0}
 #entTile .ecv{position:absolute;right:10px;top:50%;margin-top:-5px;width:10px;height:10px;color:var(--accent);transition:transform .15s}#entTile.on .ecv{transform:rotate(180deg)}
 #extraSecs>.st{display:none!important}
-#secRow>#clCard{order:0!important}
+
 .tface .tx.tm:not(:has(.tmb)){justify-content:flex-end;text-align:right}
 @media(max-width:900px){#col1{grid-template-columns:repeat(2,minmax(0,1fr))}#secRow>.st.t-rp{grid-column:1/-1}}
 #entTile .tn i{line-height:1.15}
@@ -979,6 +979,22 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 #entTile .ech>span{flex-wrap:wrap!important;white-space:normal!important;row-gap:4px}
 #entTile .ech>span>span{background:transparent!important;padding:0!important;flex-wrap:wrap;row-gap:4px;column-gap:16px!important}#entTile .ech>span>span>span{display:flex!important;flex-wrap:wrap!important;row-gap:5px;column-gap:11px!important;min-width:0}
 html body #secRow#secRow .srch-0.srch-0.srch-0{display:none!important}
+/* quitar caja total y tarjeta entregadas; la barra de entregadas va bajo Entregas hoy con el formato de las semanas */
+#col1{display:none!important}
+#secRow>#clBar{grid-column:1/-1!important;order:5;cursor:pointer;display:flex!important;flex-direction:row!important;align-items:center;flex-wrap:wrap!important;row-gap:7px;gap:8px;background:var(--surface2)!important;border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin:0;overflow:hidden}
+#secRow>#clBar:hover{background:var(--surface)!important}
+#clBar .wk-summary-title{order:1;flex-shrink:0}#clBar .pz-wrap{display:none}
+#clBar .wk-toggle{order:2;margin-left:auto}
+#clBar .sh-wrap,#clBar #clBadges{order:3;flex:1 0 100%!important;min-width:0;margin-left:-2px}
+#clBar [data-nm]::before{content:attr(data-nm);order:1;font-weight:600;color:var(--text);margin:0 0 0 4px;white-space:nowrap}
+#clBar [data-nm]::after{order:2}
+#secRow #clBar [data-oc]::after{display:inline}
+#clBar #clBadges>span>span,#clBar .sh-wrap #clBadges>span>span{background:var(--surface)!important;border:1px solid var(--border)!important}
+#clBar:has(+ #clCard:not([style*="none"])) #clBadges>span>span{border-color:transparent!important;background:transparent!important}
+html body #secRow>#clCard:not([style*="none"]){margin-top:0!important;border-top:none!important;border-top-left-radius:0!important;border-top-right-radius:0!important}
+#clCard>.card-body{padding:6px 15px 15px!important}
+#clBar:has(+ #clCard:not([style*="none"])){margin-bottom:-10px!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;background:var(--surface)!important;border-bottom:0!important}
+#secRow>#clCard{order:5;border-color:var(--border)}
 /* Ocultar/Ver detalle dentro de las secciones desplegadas: mismo tamano que los demas botones de seccion (las cajas de resumen no se tocan) */
 .sec-tg{gap:5px;margin-right:-10px}.sec-tg .tmt{font-size:12px}.sec-tg svg{width:16px;height:16px;stroke-width:2.5}
 /* barras de resumen de la agenda, desplegadas: sin borde gris en la cajita de piezas */
@@ -1677,7 +1693,7 @@ var CHV='<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 function applySrchHide(){
   var on=((document.getElementById('searchBox')||{}).value||'').trim()!=='';
   var cnt=function(sel){var o={};document.querySelectorAll(sel+' [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)o[m[1]]=1;});return Object.keys(o).length;};
-  [['.t-hoy','hoyCard','#td'],['.t-venc','loCard','#lo'],['.t-rp','rpCard','#rp'],['#proxTile',null,'#ag'],['#entTile','clCard','#cl']].forEach(function(x){
+  [['.t-hoy','hoyCard','#td'],['.t-venc','loCard','#lo'],['.t-rp','rpCard','#rp'],['#proxTile',null,'#ag'],['#clBar','clCard','#cl']].forEach(function(x){
     var t=document.querySelector('#secRow '+x[0]);if(!t)return;
     var c=x[1]?document.getElementById(x[1]):null,z=on&&cnt(x[2])===0;
     t.classList.toggle('srch-0',z);if(c)c.classList.toggle('srch-0',z);
@@ -1698,8 +1714,9 @@ function renderTotTile(){
   var _eo={};document.querySelectorAll('#cl [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)_eo[m[1]]=1;});var nEnt=Object.keys(_eo).length;
   et.innerHTML='<div class="tface"><div class="tn"><b>'+nEnt+'</b><i>ENTREGADAS \u00daLTIMOS 7 D\u00cdAS</i></div><div class="ech">'+((document.getElementById('clBadges')||{}).innerHTML||'')+'</div><svg class="ecv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>';
   var clc=document.getElementById('clCard');
-  if(clc&&clc.parentNode!==row){var sh=document.createElement('div');sh.className='sec-h';sh.innerHTML='<div>Entregas \u00faltimos 7 d\u00edas <span id="clHdrN" style="font-size:11px;color:var(--muted);font-weight:400"></span></div><span class="sec-tg" onclick="toggleClSection()" title="Ocultar detalle"><span class="tmt">Ocultar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"></polyline></svg></span>';clc.insertBefore(sh,clc.firstChild);clc.style.display='none';row.appendChild(clc);}
-  var hn=document.getElementById('clHdrN');if(hn)hn.textContent='\u00b7 '+nEnt+(nEnt===1?' orden':' \u00f3rdenes');
+  var bar=document.querySelector('#extraSecs>.st')||document.getElementById('clBar'),hc=document.getElementById('hoyCard');
+  if(clc&&bar&&hc&&bar.parentNode!==row){bar.id='clBar';bar.classList.remove('st');bar.removeAttribute('onmouseenter');bar.removeAttribute('onmouseleave');bar.style.marginTop='';row.insertBefore(bar,hc.nextSibling);row.insertBefore(clc,bar.nextSibling);clc.style.display='none';clc.style.marginTop='8px';var _l=document.getElementById('clLabel'),_c=document.getElementById('clChevron');if(_l)_l.textContent='Ver detalle';if(_c)_c.style.transform='rotate(0deg)';var _t=bar.querySelector('.sum-ttl');if(_t)_t.textContent='Entregadas \u00faltimos 7 d\u00edas';}
+  
   et.classList.toggle('on',!!clc&&clc.style.display!=='none');
   try{applySrchHide();}catch(e){}
   if(!window._entObs&&document.getElementById('cl')){window._entObs=new MutationObserver(function(){var o={};document.querySelectorAll('#cl [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)o[m[1]]=1;});var k=Object.keys(o).length,bb=document.querySelector('#entTile .tn b');if(bb)bb.textContent=k;try{applySrchHide();}catch(e){}var h2=document.getElementById('clHdrN');if(h2)h2.textContent='\u00b7 '+k+(k===1?' orden':' \u00f3rdenes');});window._entObs.observe(document.getElementById('cl'),{childList:true,subtree:true});}
@@ -1871,7 +1888,6 @@ function toggleClSection(){
   card.style.display=open?'none':'block';
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
-  if(!open)revealCard(card);
   var _e=document.getElementById('entTile');if(_e)_e.classList.toggle('on',!open);
 }
 function toggleStockSection(){
