@@ -1780,13 +1780,13 @@ function fitTiles(){
   });
 }
 window.addEventListener('resize',function(){try{renderTiles();fitTiles();syncChevrons();}catch(e){}});
-function revealCard(card){
+function revealCard(card,force){
   // al abrir una seccion: solo si no queda completa a la vista, se recorre para centrarla en pantalla
   setTimeout(function(){
     try{
       var hd=document.querySelector('header'),top0=hd?hd.getBoundingClientRect().bottom:0;
       var r=card.getBoundingClientRect(),vh=window.innerHeight;
-      if(r.top>=top0&&r.bottom<=vh)return;
+      if(!force&&r.top>=top0&&r.bottom<=vh)return;
       var avail=vh-top0,y;
       if(r.height>=avail-20)y=window.pageYOffset+r.top-top0-10;
       else y=window.pageYOffset+r.top-top0-(avail-r.height)/2;
@@ -1911,7 +1911,7 @@ function toggleReprogSection(){
   card.style.display=open?'none':'block';
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
-  if(!open)revealCard(card);
+  if(!open)revealCard(card,true);
 }
 // ===== Vista ampliada (agenda compacta) =====
 var _bgOpen=false,_bgCol={cl:true},_bgOp={};
