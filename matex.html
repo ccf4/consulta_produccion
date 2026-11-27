@@ -989,8 +989,8 @@ html body #secRow#secRow .srch-0.srch-0.srch-0{display:none!important}
 #clBar [data-nm]::before{content:attr(data-nm);order:1;font-weight:600;color:var(--text);margin:0 0 0 4px;white-space:nowrap}
 #clBar [data-nm]::after{order:2}
 #secRow #clBar [data-oc]::after{display:inline}
-#clBar #clBadges>span>span,#clBar .sh-wrap #clBadges>span>span{background:#dff3e7!important;border:0!important}
-:root[data-theme=dark] #clBar #clBadges>span>span{background:rgba(52,211,153,.16)!important}
+#clBar #clBadges>span>span,#clBar .sh-wrap #clBadges>span>span{background:#ecfdf5!important;border:1px solid #a7dcbc!important}
+:root[data-theme=dark] #clBar #clBadges>span>span{background:rgba(52,211,153,.16)!important;border-color:rgba(52,211,153,.45)!important}
 #clBar:has(+ #clCard:not([style*="none"])) #clBadges>span>span{border-color:transparent!important;background:transparent!important}
 html body #secRow>#clCard:not([style*="none"]){margin-top:0!important;border-top:none!important;border-top-left-radius:0!important;border-top-right-radius:0!important}
 #clCard>.card-body{padding:6px 15px 15px!important}
@@ -1890,6 +1890,8 @@ function toggleClSection(){
   chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
   if(label)label.textContent=open?'Ver detalle':'Ocultar';
   var _e=document.getElementById('entTile');if(_e)_e.classList.toggle('on',!open);
+  if(!open){var br=document.getElementById('clBar'),hd=document.querySelector('header');
+    if(br){var top0=(hd?hd.getBoundingClientRect().bottom:0)+10;window.scrollTo({top:Math.max(0,window.pageYOffset+br.getBoundingClientRect().top-top0),behavior:'smooth'});}}
 }
 function toggleStockSection(){
   var card=document.getElementById('skCard'),chev=document.getElementById('skChevron'),label=document.getElementById('skLabel');
@@ -2451,7 +2453,7 @@ function renderAgenda(T,src){
     var key='w'+off,ops={},badge={};
     W.days.forEach(function(d){d.rows.forEach(function(g){ops[g.op]=1;var bk=g.area+'|'+g.sub;var b=badge[bk]||(badge[bk]={area:g.area,sub:g.sub,total:0,ops:{}});b.total+=g.cant;b.ops[g.op]=1;});});
     var rng=(ws.getMonth()===we.getMonth()?ws.getDate()+' \u2013 '+we.getDate()+' '+mon(we):ws.getDate()+' '+mon(ws)+' \u2013 '+we.getDate()+' '+mon(we));
-    var title=off===0?'Entregas programadas semana actual':(off===1?'Pr\u00f3xima semana':'Semana del '+rng);
+    var title=off===0?'Entregas programadas semana actual':(off===1?'Programadas pr\u00f3xima semana':'Programadas semana del '+rng);
     var extra=off===1?' \u00b7 '+rng:'';
     var open=q?true:(agState[key]!==undefined?agState[key]:ix===0);
     var bodyH='';
