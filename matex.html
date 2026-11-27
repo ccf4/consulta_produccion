@@ -101,7 +101,7 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}@media(min-width:150
 .st:has(+ #loCard:not([style*="none"])),.st:has(+ #rpCard:not([style*="none"])),.st:has(+ #skCard:not([style*="none"])),.st:has(+ #clCard:not([style*="none"])){margin-bottom:0!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;background:var(--surface)!important;border-bottom:0!important}
 #loCard:not([style*="none"]),#rpCard:not([style*="none"]),#skCard:not([style*="none"]),#clCard:not([style*="none"]){margin-top:0!important;border-top:none;border-top-left-radius:0;border-top-right-radius:0}
 #loCard>.card-body,#rpCard>.card-body,#skCard>.card-body,#clCard>.card-body{padding:0 15px 15px!important}
-#cl>.cl-day:first-child>div:first-child{margin-top:0!important}@media(min-width:641px){#cl.cl-srch{display:flex!important;flex-wrap:wrap;gap:10px;align-items:flex-start}#cl.cl-srch>.cl-day,#cl.cl-srch .late-cards{display:contents!important}#cl.cl-srch>.cl-day>div:first-child{display:none!important}#cl.cl-srch .late-card{width:240px;flex:0 0 240px;margin-top:20px;position:relative;overflow:visible!important}#cl.cl-srch .late-card[data-d]::before{content:attr(data-d);position:absolute;left:-1px;top:-17px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;line-height:1.3;white-space:nowrap}}
+#cl>.cl-day:first-child>div:first-child{margin-top:0!important}@media(min-width:641px){#cl.cl-srch{display:flex!important;flex-wrap:wrap;gap:10px;align-items:flex-start}#cl.cl-srch>.cl-day,#cl.cl-srch .late-cards{display:contents!important}#cl.cl-srch>.cl-day>div:first-child{display:none!important}#cl.cl-srch .late-card{width:240px;flex:0 0 240px;margin-top:20px;position:relative;overflow:visible!important}#cl.cl-srch .late-card[data-d]::before{content:attr(data-d);position:absolute;left:-1px;top:-17px;font-size:11px;font-weight:600;color:var(--muted);line-height:1.3;white-space:nowrap}}
 @media(min-width:901px){html.flt-on #ag .ag-st .sh-wrap{order:2!important;flex:1 1 0!important;min-width:260px;margin-left:6px}html.flt-on #ag .ag-st .wk-toggle{order:3!important}html.flt-on #clBar .sh-wrap,html.flt-on #clBar #clBadges{order:2!important;flex:1 1 0!important;min-width:260px;margin-left:6px}html.flt-on #clBar .wk-toggle{order:3!important}}
 html body #secRow>.card{grid-column:1/-1!important}#loCard>.sec-h,#rpCard>.sec-h,#skCard>.sec-h{padding-left:15px!important;padding-right:15px!important}html body #secRow>#loCard,html body #secRow>#rpCard,html body #secRow>#skCard{border:1px solid var(--border)!important;border-radius:12px!important;margin-top:0!important}@media(min-width:901px){html body #secRow>#loCard:not([style*="none"]):not(.srch-0):has(~#rpCard:not([style*="none"]):not(.srch-0)){grid-column:span var(--lo-sp,4)!important}html body #secRow>#loCard:not([style*="none"]):not(.srch-0)~#rpCard:not([style*="none"]):not(.srch-0){grid-column:span var(--rp-sp,8)!important}}
 .st{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
@@ -1594,6 +1594,7 @@ function inR(d,s,e){return d&&d>=s&&d<=e;}
 function pd(s){if(!s||!s.trim)return null;s=s.trim();if(!s)return null;var p=s.split('/');if(p.length===3){var m=parseInt(p[0])-1,dy=parseInt(p[1]),y=parseInt(p[2]);var dt=new Date(y,m,dy);if(!isNaN(dt.getTime()))return dt;}var dt2=new Date(s);return isNaN(dt2.getTime())?null:dt2;}
 function fd(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'2-digit'});}
 function fdShort(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});}
+function fdLbl(d){if(!d)return '--';var n=new Date();return (d.toDateString()===n.toDateString()?'Hoy — ':'')+fd(d);}
 function fdTag(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{month:'short'})+' '+d.toLocaleDateString('es-MX',{day:'2-digit'});}
 function fds(d){if(!d)return '--';return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});}
 function fwk(s){return fds(s)+' - '+fds(wkE(s));}
@@ -2566,7 +2567,7 @@ function renderSemana(T){
       var fp=pd(r.Fprod||r.FProm),fe=pd(r.FVALE),daysLate=fp?daysDiff(fp,T):0;
       var dKey=fp?fd(fp):'';
       var isNewDate=dKey!==_prevLateDate;_prevLateDate=dKey;
-      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdTag(fp)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
+      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px;line-height:1.3">'+fdLbl(fp)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
       var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
       var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
@@ -2597,7 +2598,7 @@ function renderSemana(T){
       var esHoy=fprod&&fd(fprod)===fd(T);
       var dKey=fprod?fd(fprod):'';
       var isNewDate=dKey!==_prevWarnDate;_prevWarnDate=dKey;
-      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdTag(fprod)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
+      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px;line-height:1.3">'+fdLbl(fprod)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">&nbsp;</div>';
       var parts=RAW.filter(function(x){return String(x.OP)===String(r.OP);});
       var _cross=parts.some(function(x){return x.AREA!==r.AREA;});
       var totalCant=(_cross?parts:parts.filter(function(x){return x.SUBAREA===r.SUBAREA;})).filter(function(x){return x.STATUS==='V';}).reduce(function(s,x){return s+(parseInt(x.CANT)||0);},0);
@@ -2641,7 +2642,7 @@ function renderSemana(T){
     skList.forEach(function(g){
       var r=g.row,dKey=g.f?fd(g.f):'';
       var isNewDate=dKey!==_prevSkDate;_prevSkDate=dKey;
-      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;line-height:1.3">'+fdTag(g.f)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">.</div>';
+      var dateTag=isNewDate?'<div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px;line-height:1.3">'+fdLbl(g.f)+'</div>':'<div style="font-size:11px;margin-bottom:3px;line-height:1.3;visibility:hidden">.</div>';
       var nd=g.f?daysDiff(T,g.f):null;
       var pill=nd===null?'':'<span style="background:rgba(99,102,241,.14);color:#4338ca;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap">'+(nd===0?'hoy':'en '+nd+(nd===1?' día':' días'))+'</span>';
       skHtml.push('<div style="display:flex;flex-direction:column">'
@@ -2784,7 +2785,7 @@ function renderSemana(T){
     document.getElementById('clBadges').innerHTML=clItems?'<span style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;white-space:nowrap"><span style="display:flex;align-items:center;gap:6px;background:#dff3e7;border-radius:8px;padding:4px 8px;flex-shrink:0;color:var(--accent3)" title="Entregadas"><span style="display:flex;align-items:center;gap:16px;color:var(--text)">'+clItems+'</span></span></span>':'';
     document.getElementById('cl').innerHTML=clHtml;
     document.getElementById('cl').classList.toggle('cl-srch',((document.getElementById('searchBox')||{}).value||'').trim()!==''||vflt.length>0);
-    document.querySelectorAll('#cl>.cl-day').forEach(function(d){var l=d.firstElementChild,c=d.querySelector('.late-card');if(l&&c){var t=l.textContent.trim().split(/\s+/),n=t.length;c.setAttribute('data-d',n>=3?t[n-2]+' '+t[n-3]:l.textContent);}});
+    document.querySelectorAll('#cl>.cl-day').forEach(function(d){var l=d.firstElementChild,c=d.querySelector('.late-card');if(l&&c){c.setAttribute('data-d',l.textContent.trim());}});
   }
   if(hideSinAsig)updateNavHighlight(T,WS);
 }
