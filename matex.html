@@ -100,7 +100,8 @@ main{padding:10px 20px 22px;max-width:1400px;margin:0 auto;}@media(min-width:150
 /* secciones de resumen expandidas: encabezado y detalle forman un solo contenedor */
 .st:has(+ #loCard:not([style*="none"])),.st:has(+ #rpCard:not([style*="none"])),.st:has(+ #skCard:not([style*="none"])),.st:has(+ #clCard:not([style*="none"])){margin-bottom:0!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;background:var(--surface)!important;border-bottom:0!important}
 #loCard:not([style*="none"]),#rpCard:not([style*="none"]),#skCard:not([style*="none"]),#clCard:not([style*="none"]){margin-top:0!important;border-top:none;border-top-left-radius:0;border-top-right-radius:0}
-#loCard>.card-body,#rpCard>.card-body,#skCard>.card-body,#clCard>.card-body{padding:6px 15px 15px!important}
+#loCard>.card-body,#rpCard>.card-body,#skCard>.card-body,#clCard>.card-body{padding:0 15px 15px!important}
+html body #secRow>.card{grid-column:1/-1!important}@media(min-width:901px){html body #secRow>#loCard:not([style*="none"]):not(.srch-0):has(~#rpCard:not([style*="none"]):not(.srch-0)){grid-column:span var(--lo-sp,4)!important}html body #secRow>#loCard:not([style*="none"]):not(.srch-0)~#rpCard:not([style*="none"]):not(.srch-0){grid-column:span var(--rp-sp,8)!important}}
 .st{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0;}
 .wknav{display:flex;align-items:center;gap:10px;margin-bottom:12px;justify-content:center;}
@@ -912,7 +913,7 @@ html.agOn .wknav,html.agOn .wknav+.card,html.agOn #weekDots{display:none!importa
 /* hover de una fila cuya OP tiene otra subarea: resaltado suave (el fuerte queda para el hover de las barras de resumen) */
 #td .td-row.hk2,#ag .td-row.hk2{background:rgba(99,102,241,.07);box-shadow:inset 0 0 0 1px rgba(99,102,241,.28);border-radius:6px}
 /* caja de total (no se despliega): fondo gris claro, borde punteado y sin chevron; las demas cajas muestran con cuales se cruzan */
-@media(min-width:901px){#secRow{grid-template-columns:repeat(4,minmax(0,1fr))}#secRow>.st{grid-column:auto}}
+@media(min-width:901px){#secRow{grid-template-columns:repeat(12,minmax(0,1fr))}#secRow>.st{grid-column:span 3}}
 #secRow>#totTile{order:0;background:var(--surface2)!important;border:1px dashed var(--border)!important;cursor:default;box-shadow:none!important}
 #totTile .tn b{color:var(--text)}#totTile .tn i{white-space:normal}
 .tface .tx{font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.25}
@@ -991,6 +992,7 @@ html body #secRow#secRow .srch-0.srch-0.srch-0{display:none!important}
 #secRow #clBar [data-oc]::after{display:inline}
 #clBar #clBadges>span>span,#clBar .sh-wrap #clBadges>span>span{background:#ecfdf5!important;border:1px solid #a7dcbc!important}
 :root[data-theme=dark] #clBar #clBadges>span>span{background:rgba(52,211,153,.16)!important;border-color:rgba(52,211,153,.45)!important}
+@media(min-width:901px){#clBar:has(+ #clCard:not([style*="none"])) .sh-wrap,#clBar:has(+ #clCard:not([style*="none"])) #clBadges{order:2!important;flex:1 1 0!important;min-width:0;margin-left:6px}#clBar:has(+ #clCard:not([style*="none"])) .wk-toggle{order:3!important}}#clBar:has(+ #clCard:not([style*="none"])){padding-bottom:2px!important}#clCard>.card-body>:first-child{margin-top:0!important}
 #clBar:has(+ #clCard:not([style*="none"])) #clBadges>span>span{border-color:transparent!important;background:transparent!important}
 html body #secRow>#clCard:not([style*="none"]){margin-top:0!important;border-top:none!important;border-top-left-radius:0!important;border-top-right-radius:0!important}
 #clCard>.card-body{padding:6px 15px 15px!important}
@@ -1694,6 +1696,8 @@ var CHV='<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 function applySrchHide(){
   var on=((document.getElementById('searchBox')||{}).value||'').trim()!=='';
   var cnt=function(sel){var o={};document.querySelectorAll(sel+' [onclick*="showDetail("]').forEach(function(e){var m=e.getAttribute('onclick').match(/showDetail\('?(\d+)/);if(m)o[m[1]]=1;});return Object.keys(o).length;};
+  try{var nl=document.querySelectorAll('#lo .late-card').length,nr=document.querySelectorAll('#rp .late-card').length,rw=document.getElementById('secRow');
+    if(rw&&nl+nr>0){var mn=window.innerWidth>=1200?3:4,sp=Math.max(mn,Math.min(12-mn,Math.round(12*nl/(nl+nr))));rw.style.setProperty('--lo-sp',sp);rw.style.setProperty('--rp-sp',12-sp);}}catch(e){}
   [['.t-hoy','hoyCard','#td'],['.t-venc','loCard','#lo'],['.t-rp','rpCard','#rp'],['#proxTile',null,'#ag'],['#clBar','clCard','#cl']].forEach(function(x){
     var t=document.querySelector('#secRow '+x[0]);if(!t)return;
     var c=x[1]?document.getElementById(x[1]):null,z=on&&cnt(x[2])===0;
